@@ -151,14 +151,52 @@ def create_app():
         return render_template("university/challenge_detail.html",
                                assignment_id=assignment_id)
 
+    @app.get("/university/projects")
+    def university_projects_list():
+        user = session.get('user')
+        if not user:
+            return redirect('/university/login')
+        if user.get('role') != 'university':
+            return redirect('/university/login')
+        return render_template("university/dashboard.html")
+
+    @app.get("/university/profile")
+    def university_profile():
+        user = session.get('user')
+        if not user:
+            return redirect('/university/login')
+        if user.get('role') != 'university':
+            return redirect('/university/login')
+        return render_template("hei_profile.html")
+
+    @app.get("/university/projects/<int:project_id>/workspace")
+    def university_project_workspace(project_id):
+        user = session.get('user')
+        if not user:
+            return redirect('/university/login')
+        if user.get('role') != 'university':
+            return redirect('/university/login')
+        return render_template("university/project_workspace.html",
+                               project_id=project_id)
+
     # University workspace page
     @app.get("/workspace")
     def university_workspace():
+        user = session.get('user')
+        if not user:
+            return redirect('/university/login')
+        if user.get('role') != 'university':
+            return redirect('/university/login')
         return render_template("university_workspace.html")
 
     # Industry dashboard page
     @app.get("/industry")
     def industry_dashboard():
+        user = session.get('user')
+        if not user:
+            return redirect('/login')
+        if user.get('role') not in ('industry', 'admin'):
+            return redirect('/login')
         return render_template("industry/dashboard.html")
 
     # Public dashboard page
@@ -187,6 +225,8 @@ def create_app():
 
     @app.get("/citizen/problems/<int:problem_id>")
     def citizen_problem_detail(problem_id):
+        if not session.get('user'):
+            return redirect('/login')
         return render_template("citizen/problem_detail.html", problem_id=problem_id)
 
     @app.get("/citizen/problems/<int:problem_id>/verify")
