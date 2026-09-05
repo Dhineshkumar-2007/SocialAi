@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Challenge Detail — SICP Tamil Nadu</title>
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{--ink:#111827;--surface:#f8fafc;--card:#fff;--border:#e2e8f0;--primary:#38bdf8;--primary-deep:#0284c7;--success:#10b981;--danger:#ef4444;--warning:#f59e0b;--purple:#a78bfa;--text:#334155;--muted:#64748b;--radius:14px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--surface);color:var(--ink);line-height:1.6;}
+.nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:16px;}
+.nav a{color:var(--text);text-decoration:none;font-weight:600;font-size:.9rem;}
+.nav a.logo{font-weight:800;font-size:1rem;letter-spacing:-.02em;color:var(--ink);flex:1;}
+.container{max-width:1100px;margin:0 auto;padding:32px 24px;}
+/* Header */
+.challenge-header{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 32px;margin-bottom:24px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.challenge-id{font-size:.78rem;color:var(--muted);font-family:monospace;margin-bottom:8px;}
+.challenge-title{font-size:1.6rem;font-weight:800;letter-spacing:-.02em;margin-bottom:12px;}
+.challenge-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px;}
+.tag{display:inline-flex;align-items:center;padding:4px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.tag-district{background:#f0f9ff;color:#0369a1;}
+.tag-priority-high{background:#fee2e2;color:#b91c1c;}
+.tag-priority-medium{background:#fef9c3;color:#a16207;}
+.tag-priority-low{background:#dcfce7;color:#15803d;}
+.tag-status{background:#ede9fe;color:#6d28d9;}
+.tag-category{background:#f1f5f9;color:#475569;}
+.status-bar{display:flex;align-items:center;gap:8px;margin-top:16px;}
+.status-pill{padding:6px 14px;border-radius:20px;font-size:.8rem;font-weight:700;background:#f1f5f9;color:#475569;border:1px solid var(--border);}
+.status-pill.active{background:#dbeafe;color:#1e40af;border-color:#93c5fd;}
+.map-preview{height:200px;border-radius:10px;border:1px solid var(--border);margin-top:16px;overflow:hidden;}
+/* Tabs */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:24px;}
+.tab{padding:10px 18px;font-weight:600;font-size:.9rem;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap;}
+.tab:hover{color:var(--ink);}
+.tab.active{color:var(--primary-deep);border-bottom-color:var(--primary-deep);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+/* Card */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.card-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin-bottom:12px;}
+/* Info rows */
+.info-row{display:flex;gap:32px;flex-wrap:wrap;margin-bottom:16px;}
+.info-item .label{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;margin-bottom:2px;}
+.info-item .value{font-size:.95rem;font-weight:600;}
+/* AI analysis cards */
+.ai-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px;}
+.ai-card{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:16px;}
+.ai-card .label{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;margin-bottom:4px;}
+.ai-card .value{font-size:1.5rem;font-weight:800;}
+.ai-card .sub{font-size:.82rem;color:var(--muted);}
+/* Skills */
+.tag-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.skill-tag{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.8rem;font-weight:600;background:#dbeafe;color:#1e40af;}
+/* Match cards */
+.match-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;border-left:4px solid var(--primary);}
+.match-card.rejected{border-left-color:#94a3b8;opacity:.7;}
+.match-card.accepted{border-left-color:var(--success);}
+.match-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.match-name{font-size:1.05rem;font-weight:700;}
+.match-score{font-size:1.1rem;font-weight:800;color:var(--primary-deep);}
+.match-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:12px 0;}
+.breakdown-item{background:#f8fafc;border-radius:8px;padding:10px;text-align:center;}
+.breakdown-item .b-label{font-size:.7rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;}
+.breakdown-item .b-value{font-size:1.2rem;font-weight:800;color:var(--ink);}
+.breakdown-item .b-weight{font-size:.7rem;color:var(--muted);}
+/* Assignment timeline */
+.assignment-timeline{position:relative;padding-left:28px;}
+.assignment-timeline::before{content:"";position:absolute;left:8px;top:0;bottom:0;width:2px;background:#e2e8f0;}
+.assignment-event{position:relative;margin-bottom:20px;}
+.assignment-event::before{content:"";position:absolute;left:-24px;top:8px;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px var(--primary);}
+.assignment-event.accepted::before{background:var(--success);box-shadow:0 0 0 2px var(--success);}
+.assignment-event.rejected::before{background:var(--danger);box-shadow:0 0 0 2px var(--danger);}
+.assignment-event.pending::before{background:var(--warning);box-shadow:0 0 0 2px var(--warning);}
+.assignment-event.expired::before{background:#94a3b8;box-shadow:0 0 0 2px #94a3b8;}
+.ae-time{font-size:.75rem;color:var(--muted);font-family:monospace;}
+.ae-title{font-weight:700;margin-bottom:2px;}
+.ae-meta{font-size:.82rem;color:var(--muted);}
+/* Project */
+.project-status{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.progress-bar{height:8px;background:#e2e8f0;border-radius:8px;overflow:hidden;margin-bottom:20px;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--purple));border-radius:8px;transition:width .6s ease;}
+/* Milestones */
+.milestone{position:relative;padding-left:20px;padding-bottom:16px;border-left:2px solid var(--border);margin-left:8px;}
+.milestone:last-child{border-left-color:transparent;}
+.milestone::before{content:"";position:absolute;left:-9px;top:4px;width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid var(--border);}
+.milestone.done::before{background:var(--success);border-color:var(--success);}
+.milestone.active::before{background:var(--primary);border-color:var(--primary);animation:pulse 2s infinite;}
+.milestone-name{font-weight:700;margin-bottom:2px;}
+.milestone-meta{font-size:.8rem;color:var(--muted);}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(56,189,248,.4);}50%{box-shadow:0 0 0 6px rgba(56,189,248,0);}}
+/* Evidence */
+.evidence-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;}
+.evidence-thumb{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#f8fafc;}
+.evidence-thumb img{width:100%;height:140px;object-fit:cover;}
+.evidence-thumb .caption{padding:8px 12px;font-size:.82rem;color:var(--muted);}
+/* Loading/empty */
+.loading{text-align:center;padding:48px;color:var(--muted);}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.empty{text-align:center;padding:32px;color:var(--muted);font-size:.9rem;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:10px;border:none;font-weight:700;font-size:.9rem;cursor:pointer;text-decoration:none;transition:all .15s;}
+.btn-primary{background:var(--primary-deep);color:#fff;}
+.btn-primary:hover{background:#0369a1;}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border);}
+.btn-ghost:hover{background:#f1f5f9;}
+.btn-sm{padding:6px 12px;font-size:.8rem;}
+@media(max-width:640px){.tabs{overflow-x:auto;}.info-row{gap:16px;}.match-breakdown{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="logo">← SICP Tamil Nadu</a>
+  <a href="/">Home</a>
+  <a href="/report">Report</a>
+  <a href="/my-reports">My Reports</a>
+</nav>
+
+<div class="container">
+
+  <!-- Challenge Header -->
+  <div class="challenge-header">
+    <div class="challenge-id" id="challengeId">Loading...</div>
+    <h1 class="challenge-title" id="challengeTitle">Loading challenge...</h1>
+    <div class="challenge-meta" id="challengeMeta"></div>
+    <div class="status-bar" id="statusBar"></div>
+    <div id="mapPreview" class="map-preview" style="display:none;"></div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" data-tab="overview">Overview</div>
+    <div class="tab" data-tab="ai-analysis">AI Analysis</div>
+    <div class="tab" data-tab="evidence">Evidence</div>
+    <div class="tab" data-tab="matching">Matching</div>
+    <div class="tab" data-tab="assignment">Assignment History</div>
+    <div class="tab" data-tab="project">Project</div>
+    <div class="tab" data-tab="impact">Impact</div>
+  </div>
+
+  <!-- OVERVIEW TAB -->
+  <div class="tab-panel active" id="tab-overview">
+    <div class="card">
+      <div class="card-title">Problem Description</div>
+      <p id="problemDescription" style="white-space:pre-wrap;line-height:1.7;">Loading...</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Details</div>
+      <div class="info-row" id="infoRow"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Submission Info</div>
+      <div class="info-row" id="submissionInfo"></div>
+    </div>
+  </div>
+
+  <!-- AI ANALYSIS TAB -->
+  <div class="tab-panel" id="tab-ai-analysis">
+    <div class="card">
+      <div class="card-title">Classification</div>
+      <div class="ai-grid" id="classificationGrid"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Extracted Skills</div>
+      <div class="tag-list" id="skillsList"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Evidence Analysis</div>
+      <div id="evidenceAnalysis"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Duplicate Detection</div>
+      <div id="duplicateDetection"></div>
+    </div>
+  </div>
+
+  <!-- EVIDENCE TAB -->
+  <div class="tab-panel" id="tab-evidence">
+    <div class="card">
+      <div class="card-title">Uploaded Evidence</div>
+      <div class="evidence-grid" id="evidenceGrid"></div>
+    </div>
+  </div>
+
+  <!-- MATCHING TAB -->
+  <div class="tab-panel" id="tab-matching">
+    <div class="card">
+      <div class="card-title">University Recommendations</div>
+      <div id="universityMatches"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Industry Recommendations</div>
+      <div id="industryMatches"></div>
+    </div>
+  </div>
+
+  <!-- ASSIGNMENT HISTORY TAB -->
+  <div class="tab-panel" id="tab-assignment">
+    <div class="card">
+      <div class="card-title">Assignment Lifecycle</div>
+      <div class="assignment-timeline" id="assignmentTimeline"></div>
+    </div>
+  </div>
+
+  <!-- PROJECT TAB -->
+  <div class="tab-panel" id="tab-project">
+    <div id="projectContent">
+      <div class="card">
+        <div class="empty">No project created yet for this challenge. Once a university accepts, a project workspace will be initialized.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPACT TAB -->
+  <div class="tab-panel" id="tab-impact">
+    <div id="impactContent">
+      <div class="card">
+        <div class="empty">Impact metrics will appear here once the project reaches deployment.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Extract problem ID from URL
+const problemId = parseInt(window.location.pathname.split('/').pop());
+
+// ======================== DATA LOADING ========================
+let problemData = {};
+let matchesData = [];
+let industryMatchesData = [];
+let assignmentsData = [];
+let projectData = {};
+let milestonesData = [];
+
+async function loadAll() {
+  try {
+    const [probRes, matchesRes, projRes, indRes, assignRes] = await Promise.allSettled([
+      fetch('/api/problems/' + problemId),
+      fetch('/api/problems/' + problemId + '/matches'),
+      fetch('/api/projects?problem_id=' + problemId).then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch('/api/problems/' + problemId + '/industry-matches').then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch('/api/assignments?problem_id=' + problemId).then(r => r.ok ? r.json() : []).catch(() => [])
+    ]);
+
+    if (probRes.status === 'rejected' || !probRes.value.ok) {
+      document.querySelector('.challenge-header').innerHTML = '<div class="card"><div class="empty">Challenge not found.</div></div>';
+      return;
+    }
+    problemData = await probRes.value.json();
+
+    if (matchesRes.status === 'fulfilled' && matchesRes.value.ok) {
+      matchesData = await matchesRes.value.json();
+    }
+
+    if (indRes.status === 'fulfilled') {
+      industryMatchesData = Array.isArray(indRes.value) ? indRes.value : (indRes.value ? [indRes.value] : []);
+    }
+    if (assignRes.status === 'fulfilled') {
+      assignmentsData = Array.isArray(assignRes.value) ? assignRes.value : (assignRes.value ? [assignRes.value] : []);
+    }
+
+    if (projRes.status === 'fulfilled') {
+      projectData = (Array.isArray(projRes.value) ? projRes.value : [])[0] || {};
+      if (projectData.id) loadMilestones(projectData.id);
+    }
+
+    loadProblemHeader();
+    loadOverview();
+    loadAIAnalysis();
+    loadEvidence();
+    loadMatching();
+    loadAssignmentHistory();
+    loadProject();
+    loadImpact();
+  } catch(err) {
+    console.error('Failed to load challenge:', err);
+  }
+}
+
+async function loadMilestones(projectId) {
+  try {
+    const res = await fetch('/api/projects/' + projectId + '/milestones');
+    if (res.ok) milestonesData = await res.json();
+  } catch(e) {}
+}
+
+// ======================== HEADER ========================
+function loadProblemHeader() {
+  const p = problemData;
+  document.getElementById('challengeId').textContent = 'Challenge #' + p.id;
+  document.getElementById('challengeTitle').textContent = p.title || 'Untitled Challenge';
+
+  const meta = document.getElementById('challengeMeta');
+  const parts = [
+    `<span class="tag tag-district">📍 ${p.district || 'Tamil Nadu'}</span>`,
+    `<span class="tag tag-category">${p.category || 'Uncategorized'}</span>`,
+    `<span class="tag tag-priority-${p.priority_level || 'medium'}">⚠ ${(p.priority_level || 'medium').toUpperCase()} PRIORITY</span>`,
+  ];
+  meta.innerHTML = parts.join('');
+
+  const statusBar = document.getElementById('statusBar');
+  const status = p.status || 'submitted';
+  const statusLabels = {
+    submitted: 'Submitted', analyzed: 'AI Analyzed', assigned: 'Assigned',
+    pending: 'Pending', accepted: 'Accepted', rejected: 'Rejected',
+    in_progress: 'In Progress', completed: 'Completed', resolved: 'Resolved'
+  };
+  statusBar.innerHTML = `<span class="status-pill active">${statusLabels[status] || status}</span>`;
+
+  // Map preview if coordinates exist
+  if (p.latitude && p.longitude) {
+    document.getElementById('mapPreview').style.display = 'block';
+    setTimeout(() => {
+      const mapEl = document.getElementById('mapPreview');
+      const m = L.map(mapEl, { zoomControl: false, dragging: false, scrollWheelZoom: false }).setView([p.latitude, p.longitude], 14);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
+      L.marker([p.latitude, p.longitude]).addTo(m);
+    }, 100);
+  }
+}
+
+// ======================== OVERVIEW TAB ========================
+function loadOverview() {
+  const p = problemData;
+  document.getElementById('problemDescription').textContent = p.description || 'No description provided.';
+
+  document.getElementById('infoRow').innerHTML = `
+    <div class="info-item"><div class="label">Category</div><div class="value">${p.category || '—'}</div></div>
+    <div class="info-item"><div class="label">Subcategory</div><div class="value">${p.subcategory || '—'}</div></div>
+    <div class="info-item"><div class="label">Priority Score</div><div class="value">${(p.priority_score || 0).toFixed(1)}</div></div>
+    <div class="info-item"><div class="label">Evidence Score</div><div class="value">${(p.evidence_score || 0).toFixed(0)}%</div></div>
+  `;
+
+  const submitterLabels = { individual: '👤 Individual Citizen', community: '🏘️ Community Group', pri: '🏛️ Panchayat / PRI', ulb: '🏙️ Urban Local Body', ngo: '🤝 NGO', govt: '🏛️ Govt Department' };
+  document.getElementById('submissionInfo').innerHTML = `
+    <div class="info-item"><div class="label">Submitted by</div><div class="value">${p.reporter_name || submitterLabels[p.submitter_type] || 'Citizen'}</div></div>
+    <div class="info-item"><div class="label">Email</div><div class="value">${p.reporter_email || '—'}</div></div>
+    <div class="info-item"><div class="label">District</div><div class="value">${p.district || '—'}</div></div>
+    <div class="info-item"><div class="label">Submitted</div><div class="value">${new Date(p.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })}</div></div>
+  `;
+}
+
+// ======================== AI ANALYSIS TAB ========================
+function loadAIAnalysis() {
+  const p = problemData;
+  const skills = JSON.parse(p.skills_json || '[]');
+  const evidence = p.evidence || [];
+
+  document.getElementById('classificationGrid').innerHTML = `
+    <div class="ai-card"><div class="label">Category</div><div class="value" style="color:var(--primary-deep);">${p.category || '—'}</div></div>
+    <div class="ai-card"><div class="label">Subcategory</div><div class="value">${p.subcategory || '—'}</div></div>
+    <div class="ai-card"><div class="label">Priority</div><div class="value" style="color:${p.priority_level==='high'?'var(--danger)':p.priority_level==='medium'?'var(--warning)':'var(--success)'};">${(p.priority_level || 'medium').toUpperCase()}</div><div class="sub">Score: ${(p.priority_score || 0).toFixed(1)}</div></div>
+    <div class="ai-card"><div class="label">Evidence Support</div><div class="value">${(p.evidence_score || 0).toFixed(0)}%</div><div class="sub">${p.evidence_caption || 'AI caption'}</div></div>
+  `;
+
+  document.getElementById('skillsList').innerHTML = skills.length
+    ? skills.map(s => `<span class="skill-tag">${s}</span>`).join('')
+    : '<span class="empty">No specific skills extracted</span>';
+
+  const evidenceStatus = {
+    SUPPORTING: { color: 'var(--success)', label: '✓ SUPPORTING' },
+    UNCERTAIN: { color: 'var(--warning)', label: '◑ UNCERTAIN' },
+    MANUAL_REVIEW: { color: 'var(--purple)', label: '◉ MANUAL REVIEW' },
+    IRRELEVANT: { color: 'var(--danger)', label: '✗ IRRELEVANT' },
+    PENDING: { color: '#94a3b8', label: '○ PENDING' },
+    ERROR: { color: 'var(--danger)', label: '⚠ ERROR' }
+  };
+
+  document.getElementById('evidenceAnalysis').innerHTML = evidence.length
+    ? evidence.map(e => {
+        const st = evidenceStatus[e.evidence_status] || evidenceStatus.PENDING;
+        return `<div style="margin-bottom:12px;padding:12px;background:#f8fafc;border-radius:10px;border-left:3px solid ${st.color};">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+            <strong>${e.filename || 'Evidence file'}</strong>
+            <span style="color:${st.color};font-weight:700;font-size:.82rem;">${st.label}</span>
+          </div>
+          <div style="font-size:.85rem;color:var(--muted);">Caption: ${e.caption || '—'}</div>
+          ${e.relevance_reason ? `<div style="font-size:.82rem;color:var(--muted);margin-top:4px;">${e.relevance_reason}</div>` : ''}
+        </div>`;
+      }).join('')
+    : '<div class="empty">No evidence uploaded</div>';
+
+  document.getElementById('duplicateDetection').innerHTML = `<div class="empty">Duplicate detection results are processed during AI analysis and visible to admins.</div>`;
+}
+
+// ======================== EVIDENCE TAB ========================
+function loadEvidence() {
+  const evidence = problemData.evidence || [];
+  document.getElementById('evidenceGrid').innerHTML = evidence.length
+    ? evidence.map(e => {
+        const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(e.filename || '');
+        return `<div class="evidence-thumb">
+          ${isImage ? `<img src="/uploads/${e.filename}" alt="${e.caption || ''}" onerror="this.parentElement.innerHTML='<div style=\\'padding:16px\\'>📄 ${e.filename}</div>'">` : `<div style="padding:32px 16px;text-align:center;color:var(--muted);">📄 ${e.filename}</div>`}
+          <div class="caption">${e.caption || e.filename}</div>
+        </div>`;
+      }).join('')
+    : '<div class="empty">No evidence files uploaded for this challenge.</div>';
+}
+
+// ======================== MATCHING TAB ========================
+function loadMatching() {
+  const breakdown = {
+    semantic: { label: 'Problem Alignment', weight: 40 },
+    skills: { label: 'Faculty Expertise', weight: 25 },
+    labs: { label: 'Lab Equipment', weight: 15 },
+    projects: { label: 'Past Projects', weight: 10 },
+    capacity: { label: 'Available Capacity', weight: 10 }
+  };
+
+  document.getElementById('universityMatches').innerHTML = matchesData.length
+    ? matchesData.map(m => {
+        return `<div class="match-card">
+          <div class="match-header">
+            <div class="match-name">${m.university_name || m.university || 'University #' + m.university_id}</div>
+            <div class="match-score">${((m.final_score || 0) * 100).toFixed(0)}% match</div>
+          </div>
+          <div class="match-breakdown">
+            ${Object.entries(breakdown).map(([k, d]) => {
+              const score = m[k + '_score'] || 0;
+              return `<div class="breakdown-item" title="Weight: ${d.weight}%">
+                <div class="b-label">${d.label}</div>
+                <div class="b-value">${(score * 100).toFixed(0)}%</div>
+                <div class="b-weight">${d.weight}% weight</div>
+              </div>`;
+            }).join('')}
+          </div>
+          ${m.explanation ? `<div style="font-size:.82rem;color:var(--muted);margin-top:8px;">${Array.isArray(m.explanation) ? m.explanation.slice(0,3).join(' · ') : m.explanation}</div>` : ''}
+        </div>`;
+      }).join('')
+    : '<div class="empty">No university matches found yet.</div>';
+
+  document.getElementById('industryMatches').innerHTML = industryMatchesData.length
+    ? industryMatchesData.map(m => `<div class="match-card"><div class="match-name">${m.industry_name || 'Industry'}</div><div style="margin-top:8px;">Match: ${((m.final_score || 0)*100).toFixed(0)}%</div></div>`).join('')
+    : '<div class="empty">Industry matching in progress.</div>';
+}
+
+// ======================== ASSIGNMENT HISTORY TAB ========================
+async function loadAssignmentHistory() {
+  try {
+    const res = await fetch('/api/assignments?problem_id=' + problemId);
+    if (res.ok) assignmentsData = await res.json();
+  } catch(e) {}
+
+  const timeline = document.getElementById('assignmentTimeline');
+  if (!assignmentsData.length) {
+    timeline.innerHTML = '<div class="empty">No assignments yet. Challenge is being matched.</div>';
+    return;
+  }
+
+  timeline.innerHTML = assignmentsData.map(a => {
+    const statusMap = { pending: 'pending', accepted: 'accepted', rejected: 'rejected', in_progress: 'active', completed: 'done', expired: 'expired' };
+    const statusClass = statusMap[a.status] || 'pending';
+    const statusLabel = { pending: 'Offered — Awaiting response', accepted: 'Accepted — Project initiated', rejected: 'Declined', in_progress: 'In Progress', completed: 'Completed', expired: 'Expired — Timed out' };
+    return `<div class="assignment-event ${statusClass}">
+      <div class="ae-time">${new Date(a.created_at).toLocaleString('en-IN')}</div>
+      <div class="ae-title">${a.assignee_name || 'Institution #' + a.assignee_id} — ${statusLabel[a.status] || a.status}</div>
+      <div class="ae-meta">${a.notes || (a.status === 'pending' ? '⏱ 72 hours to respond' : '')}</div>
+    </div>`;
+  }).join('');
+}
+
+// ======================== PROJECT TAB ========================
+function loadProject() {
+  const content = document.getElementById('projectContent');
+  if (!projectData.id) return; // Keep empty state
+
+  const progress = projectData.progress || 0;
+  const stages = ['proposed','planning','development','field_test','deployment','completed'];
+  const stageLabels = { proposed: 'Proposed', planning: 'Planning', development: 'Development', field_test: 'Field Testing', deployment: 'Deployment', completed: 'Completed' };
+
+  content.innerHTML = `
+    <div class="card">
+      <div class="card-title">Project Status</div>
+      <div class="project-status">
+        <span class="status-pill active">${stageLabels[projectData.status] || projectData.status}</span>
+        <span style="color:var(--muted);font-size:.85rem;">${progress}% complete</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${progress}%;"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Milestones</div>
+      <div id="milestonesList">
+        ${milestonesData.length
+          ? milestonesData.map(ms => `<div class="milestone ${ms.status}">
+            <div class="milestone-name">${ms.title}</div>
+            <div class="milestone-meta">${stageLabels[ms.stage] || ms.stage} · ${ms.status}</div>
+          </div>`).join('')
+          : '<div class="empty">No milestones yet.</div>'}
+      </div>
+    </div>
+  `;
+}
+
+// ======================== IMPACT TAB ========================
+async function loadImpact() {
+  const content = document.getElementById('impactContent');
+  if (!projectData.id) return;
+
+  try {
+    const res = await fetch('/api/projects/' + projectData.id + '/impact');
+    if (res.ok) {
+      const data = await res.json();
+      const impact = data.impact_json || {};
+      content.innerHTML = `
+        <div class="card">
+          <div class="card-title">Measured Impact</div>
+          <div class="ai-grid">
+            <div class="ai-card"><div class="label">Citizens Impacted</div><div class="value">${impact.citizens_served || 0}</div></div>
+            <div class="ai-card"><div class="label">Deployment Areas</div><div class="value">${impact.deployment_areas || 0}</div></div>
+            <div class="ai-card"><div class="label">Startups Created</div><div class="value">${impact.startups_created || 0}</div></div>
+            <div class="ai-card"><div class="label">Patents Filed</div><div class="value">${impact.patents_filed || 0}</div></div>
+          </div>
+          ${data.metrics && data.metrics.length ? `<div style="margin-top:16px;"><div class="card-title">Recorded Metrics</div>${data.metrics.map(m => `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);"><span style="font-weight:600;">${m.metric_key}</span><span>${m.metric_value}</span></div>`).join('')}</div>` : ''}
+        </div>
+      `;
+    }
+  } catch(e) {}
+}
+
+// ======================== TABS ========================
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ======================== INIT ========================
+loadAll();
+</script>
+</body>
+</html>

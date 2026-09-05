@@ -1,0 +1,16 @@
+{
+  "short_name": "SocialSolve",
+  "name": "SocialSolve — Community Problems to Solutions",
+  "description": "Report problems, AI matches institutions, track solutions.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#182242",
+  "theme_color": "#182242",
+  "orientation": "portrait",
+  "categories": ["social", "productivity"],
+  "icons": [
+    {"src":"/static/icons/icon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"/static/icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"maskable any"}
+  ]
+}

@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Challenge · SocialSolve</title><link rel="stylesheet" href="/static/css/socialsolve.css"><style>
+.routing-card { padding:14px; border:1px solid var(--line); border-radius:12px; background:#fff }
+.routing-card.active { border:2px solid var(--green); background:var(--mint) }
+.routing-card.declined { opacity:.6 }
+</style></head>
+<body><div class="app">
+<aside class="side"><a class="logo" href="/"><span class="logo-mark">S</span>SocialSolve</a><nav><a href="/university">Overview</a><a class="active" href="#">Challenge details</a><a href="/university/projects">Projects</a><a href="/university/profile">Profile</a></nav></aside>
+<main class="main">
+<div class="top"><div><h1>Challenge Review</h1><p id="sub">Loading…</p></div><a class="btn btn-ghost" href="/university">← Back</a></div>
+
+<div class="grid two" style="align-items:start">
+  <section class="panel">
+    <h3>Problem</h3>
+    <div id="problemBody">Loading…</div>
+  </section>
+  <section class="panel">
+    <h3>AI Institution Match</h3>
+    <div id="matchBody">Loading…</div>
+    <div style="margin-top:18px;display:flex;gap:10px">
+      <button class="btn btn-primary" id="acceptBtn" onclick="acceptChallenge()" style="flex:1">Accept Challenge</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('declineForm').style.display='block'">Decline</button>
+    </div>
+    <div id="declineForm" style="display:none;margin-top:14px;padding:14px;border:1px dashed var(--line);border-radius:10px;background:#f7f9f8">
+      <h4>Why are you declining?</h4>
+      <form onsubmit="event.preventDefault();declineChallenge()">
+        <label><input type="radio" name="reason" value="capacity" checked> No available capacity</label><br>
+        <label><input type="radio" name="reason" value="expertise"> Expertise mismatch</label><br>
+        <label><input type="radio" name="reason" value="resources"> Resources unavailable</label><br>
+        <label><input type="radio" name="reason" value="timeline"> Timeline issue</label><br>
+        <label><input type="radio" name="reason" value="other"> Other</label><br>
+        <textarea id="declineNote" placeholder="Additional explanation (optional)" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:8px;font:inherit"></textarea>
+        <button class="btn btn-soft" type="submit" style="margin-top:10px">Confirm Decline</button>
+      </form>
+    </div>
+    <div id="actionMsg" style="margin-top:10px"></div>
+  </section>
+</div>
+
+<section class="panel" style="margin-top:18px">
+  <h3>Automatic rerouting history</h3>
+  <p class="muted" style="font-size:12px;margin-bottom:12px">Full routing trail for this problem — who was offered it, when, and what they decided.</p>
+  <div id="routingBody" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px"></div>
+</section>
+</main></div></body>
+
+<script>
+const $ = s => document.querySelector(s); const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+const pct = v => Math.round(Math.max(0, Math.min(100, (Number(v) || 0) * 100)));
+
+let assignmentId = null;
+
+async function cfetch(url, opts = {}) {
+  const r = await fetch(url, { credentials: 'same-origin', ...opts });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw Error(d.error || 'Request failed');
+  return d;
+}
+
+function parseReasons(reasons) {
+  if (!reasons) return null;
+  if (typeof reasons === 'object') return reasons;
+  try { return JSON.parse(reasons); } catch { return null; }
+}
+
+function statusBadge(status) {
+  const map = {
+    assigned: ['amber', 'Pending'],
+    pending: ['amber', 'Pending'],
+    accepted: ['green', 'Accepted'],
+    declined: ['red', 'Declined'],
+    pending_review: ['amber', 'Pending review'],
+  };
+  const [cls, label] = map[status] || ['', status || '—'];
+  return `<span class="tag ${cls}">${label}</span>`;
+}
+
+async function loadChallenge() {
+  const path = window.location.pathname;
+  assignmentId = path.split('/').pop();
+  try {
+    const d = await cfetch(`/api/universities/challenges/${assignmentId}`);
+    $('#sub').textContent = `${d.problem_title || 'Challenge'} · ${d.problem_category || ''} · ${statusBadge(d.status)}`;
+    const score = pct(d.score || d.match_score);
+    const reasons = parseReasons(d.reasons || d.match_reasons);
+    const reasonLines = reasons
+      ? Object.entries(reasons).filter(([_, v]) => v && v !== false).map(([k, v]) => `<li>${esc(k.replace(/_/g,' '))}: ${typeof v === 'number' ? Math.round(v*100)+'%' : esc(v)}</li>`).join('')
+      : '<li>Domain and capability match</li>';
+
+    $('#problemBody').innerHTML = `
+      <h2 style="margin-top:4px">${esc(d.problem_title || 'Untitled problem')}</h2>
+      <p>${esc(d.problem_description || '')}</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <span class="tag">${esc(d.problem_category || '—')}</span>
+        <span class="tag ${d.problem_priority === 'high' ? 'red' : ''}">${esc(d.problem_priority || '—')} priority</span>
+      </div>
+      <div style="margin-top:12px"><h4>Evidence (${(d.evidence || []).length})</h4>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          ${(d.evidence || []).map(e => `<img src="/uploads/${esc(e.filename)}" style="width:110px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--line)">`).join('') || '<p class="muted" style="font-size:12px">No evidence images.</p>'}
+        </div>
+      </div>
+      <p class="muted" style="font-size:12px;margin-top:10px">Reported: ${esc((d.problem_created_at || '').slice(0,10))} · Address: ${esc(d.problem_address || d.address || '—')}</p>`;
+
+    $('#matchBody').innerHTML = `
+      <div style="font-weight:800;font-family:Manrope;font-size:28px;color:var(--green)">${score}%</div>
+      <div class="mini-bar" style="margin-top:6px"><i style="width:${score}%"></i></div>
+      <p class="muted" style="font-size:12px;margin-top:4px">AI match confidence</p>
+      <ul style="font-size:13px;color:var(--muted);margin-top:10px;padding-left:16px">${reasonLines}</ul>`;
+
+    $('#routingBody').innerHTML = (d.routing_history || []).length
+      ? (d.routing_history).map(r => `
+        <div class="routing-card ${r.status === 'assigned' ? 'active' : ''} ${r.status === 'declined' ? 'declined' : ''}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div><b>${esc(r.institution_name || '—')}</b></div>
+            ${statusBadge(r.status)}
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-top:6px">
+            Match ${pct(r.score)}% · ${esc((r.assigned_at || '').slice(0,10))}
+          </div>
+          ${r.decline_reason ? `<div style="font-size:11px;color:var(--red);margin-top:4px">Reason: ${esc(r.decline_reason)}</div>` : ''}
+        </div>`).join('')
+      : '<p class="muted" style="font-size:13px">No routing history available.</p>';
+
+    // Disable accept if not pending a decision
+    if (!['assigned', 'pending'].includes(d.status)) {
+      $('#acceptBtn').disabled = true;
+      $('#acceptBtn').textContent = d.status === 'accepted' ? 'Accepted' : 'Not available';
+    }
+  } catch (e) {
+    $('#problemBody').innerHTML = `<p style="color:var(--red)">Failed to load challenge: ${esc(e.message)}</p>`;
+  }
+}
+
+async function acceptChallenge() {
+  $('#acceptBtn').disabled = true;
+  $('#acceptBtn').textContent = 'Accepting…';
+  try {
+    const r = await fetch(`/api/university/challenges/${assignmentId}/accept`, {
+      method: 'POST', credentials: 'same-origin'
+    });
+    const d = await r.json();
+    if (!r.ok) throw Error(d.error || 'Failed');
+    $('#actionMsg').innerHTML = '<p style="color:var(--green2);font-weight:700">Challenge accepted! Redirecting…</p>';
+    setTimeout(() => window.location.href = '/university', 1200);
+  } catch (e) {
+    $('#acceptBtn').disabled = false;
+    $('#acceptBtn').textContent = 'Accept Challenge';
+    $('#actionMsg').innerHTML = `<p style="color:var(--red)">${esc(e.message)}</p>`;
+  }
+}
+
+async function declineChallenge() {
+  const reason = document.querySelector('input[name="reason"]:checked')?.value || 'other';
+  const note = document.getElementById('declineNote').value;
+  try {
+    const r = await fetch(`/api/university/challenges/${assignmentId}/decline`, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reason, decline_reason: note }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw Error(d.error || 'Failed');
+    $('#actionMsg').innerHTML = '<p style="color:var(--green2);font-weight:700">Declined. AI will route to the next best match.</p>';
+    document.getElementById('declineForm').style.display = 'none';
+    loadChallenge();
+  } catch (e) {
+    $('#actionMsg').innerHTML = `<p style="color:var(--red)">${esc(e.message)}</p>`;
+  }
+}
+
+loadChallenge();
+</script>
+</html>

@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Create account · SocialSolve</title>
+<link rel="stylesheet" href="/static/css/socialsolve.css">
+<style>
+body{background:#f6f8fb}
+.auth{min-height:100vh;display:grid;place-items:center;padding:32px}
+.card{width:min(980px,100%);background:#fff;border:1px solid #e6eaf0;border-radius:24px;box-shadow:0 20px 60px #17203310;overflow:hidden}
+.head{padding:30px 34px;border-bottom:1px solid #edf0f4}
+.head h1{margin:0 0 8px;font-size:30px}
+.muted{color:#6b7280}
+.types{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:24px 34px 0}
+.type{border:1px solid #dfe4ea;border-radius:16px;padding:16px;cursor:pointer;background:#fff}
+.type.active{border-color:#111827;box-shadow:0 0 0 2px #111827}
+.type strong{display:block;margin-bottom:4px}
+.type small{color:#6b7280}
+.form{padding:24px 34px 34px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{margin-bottom:14px}
+.field label{display:block;font-weight:700;font-size:13px;margin-bottom:7px}
+.field input,.field textarea,.field select{width:100%;padding:12px 13px;border:1px solid #dfe4ea;border-radius:11px;box-sizing:border-box;font:inherit}
+.field textarea{min-height:90px;resize:vertical}
+.section{padding:18px 0;border-top:1px solid #edf0f4;margin-top:8px}
+.section h3{margin:0 0 5px}
+.rowitem{display:grid;grid-template-columns:1fr 1fr 40px;gap:8px;margin-bottom:8px}
+.remove{border:0;border-radius:10px;background:#f1f3f5;cursor:pointer}
+.actions{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+.btn{border:0;border-radius:11px;padding:12px 18px;cursor:pointer;font-weight:700}
+.primary{background:#111827;color:#fff}
+.notice{padding:11px 13px;border-radius:11px;margin-bottom:14px;display:none}
+.notice.error{display:block;background:#fef2f2;color:#991b1b}
+.notice.ok{display:block;background:#ecfdf5;color:#065f46}
+@media(max-width:700px){.types,.grid{grid-template-columns:1fr}.rowitem{grid-template-columns:1fr}.auth{padding:12px}.head,.form,.types{padding-left:18px;padding-right:18px}}
+</style>
+</head>
+<body>
+<main class="auth">
+<div class="card">
+<div class="head">
+  <div class="muted">SOCIALSOLVE &middot; ONE ACCOUNT SYSTEM</div>
+  <h1>Create your SocialSolve account</h1>
+  <p class="muted">People report challenges. Institutions publish capabilities. Government organizations can participate with an accountable position.</p>
+</div>
+
+<div class="types">
+  <button type="button" class="type active" data-type="person"><strong>Person</strong><small>Citizen reporting and tracking community problems.</small></button>
+  <button type="button" class="type" data-type="institution"><strong>Institution</strong><small>University, college, research institute, NGO or industry organization.</small></button>
+  <button type="button" class="type" data-type="government"><strong>Government</strong><small>Department, local body or public-sector participant.</small></button>
+</div>
+
+<form class="form" id="registerForm">
+<div id="notice" class="notice"></div>
+<input type="hidden" id="account_type" value="person">
+
+<!-- ============ COMMON FIELDS ============ -->
+<div class="grid">
+  <div class="field">
+    <label>Full name</label>
+    <input id="name" required>
+  </div>
+  <div class="field">
+    <label>Email</label>
+    <input id="email" type="email" required>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="field">
+    <label>Phone</label>
+    <input id="phone" type="tel">
+  </div>
+  <div class="field">
+    <label>Location</label>
+    <input id="location" placeholder="e.g. Coimbatore">
+  </div>
+</div>
+
+<!-- Password shown for Person and Government -->
+<div class="grid" id="passwordSection">
+  <div class="field"><label>Password</label><input id="password" type="password" required minlength="8"></div>
+  <div class="field"><label>Confirm password</label><input id="password2" type="password" required minlength="8"></div>
+</div>
+
+<!-- ============ PERSON FIELDS ============ -->
+<div id="personFields">
+  <div class="section">
+    <h3>Person account</h3>
+    <p class="muted">Report and track community problems. No professional information required.</p>
+  </div>
+</div>
+
+<!-- ============ INSTITUTION FIELDS ============ -->
+<div id="institutionFields" style="display:none">
+  <div class="section">
+    <h3>Institution profile</h3>
+    <p class="muted">These fields are not decoration: they become the capability profile used by the AI matching engine.</p>
+  </div>
+  <div class="grid">
+    <div class="field"><label>Institution name *</label><input id="inst_name" data-required></div>
+    <div class="field"><label>Institution type *</label><select id="inst_type" data-required><option value="">Select type</option><option>University</option><option>College</option><option>Research Institute</option><option>Medical Institute</option><option>NGO</option><option>Industry</option><option>Other</option></select></div>
+  </div>
+  <div class="field"><label>Description</label><textarea id="description" placeholder="Brief description of the institution"></textarea></div>
+  <div class="grid">
+    <div class="field"><label>Website</label><input id="website" placeholder="https://"></div>
+    <div class="field"><label>State</label><input id="state" value="Tamil Nadu"></div>
+  </div>
+  <div class="field"><label>Research summary</label><textarea id="research_summary" placeholder="Key research areas and strengths"></textarea></div>
+  <div class="field"><label>Expertise summary</label><textarea id="expertise_summary" placeholder="Core expertise and technical capabilities"></textarea></div>
+  <div class="field"><label>Programs summary</label><textarea id="programs_summary" placeholder="Academic programs and courses offered"></textarea></div>
+  <div class="field"><label>Facilities summary</label><textarea id="facilities_summary" placeholder="Labs, equipment, infrastructure available"></textarea></div>
+  <div class="field"><label>Accreditation</label><input id="accreditation" placeholder="NAAC, NBA, etc."></div>
+
+  <div class="section"><h3>Research areas</h3><p class="muted">Each area with keywords helps the AI matcher find the right problems for your institution.</p></div>
+  <div id="researchList"></div>
+  <button type="button" class="btn" style="background:#f1f3f5;margin-bottom:18px" onclick="addResearch()">+ Add research area</button>
+
+  <div class="section"><h3>Labs &amp; facilities</h3></div>
+  <div id="facilityList"></div>
+  <button type="button" class="btn" style="background:#f1f3f5;margin-bottom:18px" onclick="addFacility()">+ Add lab / facility</button>
+
+  <div class="section"><h3>Faculty &amp; experts</h3></div>
+  <div id="facultyList"></div>
+  <button type="button" class="btn" style="background:#f1f3f5;margin-bottom:18px" onclick="addFaculty()">+ Add faculty / expert</button>
+
+  <div class="section"><h3>Previous projects</h3></div>
+  <div id="projectList"></div>
+  <button type="button" class="btn" style="background:#f1f3f5;margin-bottom:18px" onclick="addProject()">+ Add project</button>
+</div>
+
+<!-- ============ GOVERNMENT FIELDS ============ -->
+<div id="governmentFields" style="display:none">
+  <div class="section">
+    <h3>Government details</h3>
+    <p class="muted">An official position and jurisdiction are required for government accounts.</p>
+  </div>
+  <div class="grid">
+    <div class="field"><label>Government organization *</label><input id="govt_org" data-required placeholder="e.g. Tamil Nadu Water Board"></div>
+    <div class="field"><label>Department / agency *</label><input id="department" data-required placeholder="e.g. Public Health"></div>
+  </div>
+  <div class="grid">
+    <div class="field"><label>Official position *</label><input id="position" data-required placeholder="e.g. Executive Engineer"></div>
+    <div class="field"><label>Jurisdiction *</label><input id="jurisdiction" data-required placeholder="e.g. Coimbatore District"></div>
+  </div>
+</div>
+
+<div class="actions">
+  <div id="formMsg"></div>
+  <button class="btn primary" id="submit" type="submit">Create account</button>
+</div>
+</form>
+</div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+
+let selectedType = "person";
+
+/* =========================================================
+   ACCOUNT TYPE
+========================================================= */
+
+function setAccountType(type) {
+
+    selectedType = type;
+
+    // Update hidden account type
+    $("account_type").value = type;
+
+    // Update active button
+    document.querySelectorAll(".type").forEach(card => {
+        card.classList.remove("active");
+    });
+
+    const selectedCard = document.querySelector(
+        `.type[data-type="${type}"]`
+    );
+
+    if (selectedCard) {
+        selectedCard.classList.add("active");
+    }
+
+    // Show / hide account-specific sections
+    $("personFields").style.display =
+        type === "person" ? "block" : "none";
+
+    $("institutionFields").style.display =
+        type === "institution" ? "block" : "none";
+
+    $("governmentFields").style.display =
+        type === "government" ? "block" : "none";
+
+    // Password is required for EVERY account
+    $("passwordSection").style.display = "grid";
+
+    $("password").required = true;
+    $("password2").required = true;
+
+    // Handle institution / government required fields
+    document
+        .querySelectorAll("[data-required]")
+        .forEach(field => {
+
+            const parent =
+                field.closest(
+                    "#institutionFields, #governmentFields"
+                );
+
+            if (!parent) return;
+
+            field.required =
+                parent.style.display !== "none";
+        });
+}
+
+
+/* =========================================================
+   ACCOUNT TYPE BUTTONS
+========================================================= */
+
+document.querySelectorAll(".type").forEach(card => {
+
+    card.addEventListener("click", () => {
+
+        const type = card.dataset.type;
+
+        if (type) {
+            setAccountType(type);
+        }
+
+    });
+
+});
+
+
+/* =========================================================
+   PASSWORD VALIDATION
+========================================================= */
+
+function validatePassword() {
+
+    const password =
+        $("password").value;
+
+    const confirmPassword =
+        $("password2").value;
+
+
+    if (!password) {
+        return "Password is required";
+    }
+
+
+    if (password.length < 8) {
+        return "Password must contain at least 8 characters";
+    }
+
+
+    if (!confirmPassword) {
+        return "Please confirm your password";
+    }
+
+
+    if (password !== confirmPassword) {
+        return "Passwords do not match";
+    }
+
+
+    return null;
+}
+
+
+/* =========================================================
+   REQUIRED FIELD VALIDATION
+========================================================= */
+
+function validateRequiredFields() {
+
+    const fields =
+        document.querySelectorAll(
+            "[data-required]"
+        );
+
+
+    for (const field of fields) {
+
+        const parent =
+            field.closest(
+                "#institutionFields, #governmentFields"
+            );
+
+
+        if (!parent) {
+            continue;
+        }
+
+
+        if (
+            parent.style.display !== "none" &&
+            !field.value.trim()
+        ) {
+
+            const label =
+                field
+                    .closest(".field")
+                    ?.querySelector("label")
+                    ?.textContent
+                    ?.replace("*", "")
+                    ?.trim();
+
+
+            return `${label || "Required field"} is required`;
+        }
+    }
+
+
+    return null;
+}
+
+
+/* =========================================================
+   REGISTRATION
+========================================================= */
+
+$("registerForm").addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+
+        const notice =
+            $("notice");
+
+
+        notice.textContent = "";
+        notice.className = "notice";
+
+
+        /* ---------- PASSWORD ---------- */
+
+        const passwordError =
+            validatePassword();
+
+
+        if (passwordError) {
+
+            notice.textContent =
+                passwordError;
+
+            notice.className =
+                "notice error";
+
+            return;
+        }
+
+
+        /* ---------- REQUIRED FIELDS ---------- */
+
+        const requiredError =
+            validateRequiredFields();
+
+
+        if (requiredError) {
+
+            notice.textContent =
+                requiredError;
+
+            notice.className =
+                "notice error";
+
+            return;
+        }
+
+
+        const type =
+            selectedType;
+
+
+        /* =================================================
+           COMMON PAYLOAD
+        ================================================= */
+
+        const payload = {
+
+            account_type: type,
+
+            name:
+                $("name").value.trim(),
+
+            email:
+                $("email")
+                    .value
+                    .trim()
+                    .toLowerCase(),
+
+            phone:
+                $("phone").value.trim(),
+
+            location:
+                $("location").value.trim(),
+
+            // PASSWORD FOR ALL ACCOUNT TYPES
+            password:
+                $("password").value
+        };
+
+
+        /* =================================================
+           PERSON
+        ================================================= */
+
+        if (type === "person") {
+
+            payload.position = "";
+
+            payload.department = "";
+        }
+
+
+        /* =================================================
+           INSTITUTION / UNIVERSITY
+        ================================================= */
+
+        else if (type === "institution") {
+
+            payload.position = "";
+
+            payload.department = "";
+
+            payload.organization_name =
+                $("inst_name")
+                    .value
+                    .trim();
+
+
+            payload.institution = {
+
+                name:
+                    $("inst_name")
+                        .value
+                        .trim(),
+
+                institution_type:
+                    $("inst_type")
+                        .value,
+
+                description:
+                    $("description")
+                        .value
+                        .trim(),
+
+                city:
+                    $("location")
+                        .value
+                        .trim(),
+
+                state:
+                    $("state")
+                        .value
+                        .trim(),
+
+                website:
+                    $("website")
+                        .value
+                        .trim(),
+
+                accreditation:
+                    $("accreditation")
+                        .value
+                        .trim(),
+
+                address: "",
+
+                research_summary:
+                    $("research_summary")
+                        .value
+                        .trim(),
+
+                expertise_summary:
+                    $("expertise_summary")
+                        .value
+                        .trim(),
+
+                programs_summary:
+                    $("programs_summary")
+                        .value
+                        .trim(),
+
+                facilities_summary:
+                    $("facilities_summary")
+                        .value
+                        .trim(),
+
+                research_areas:
+                    typeof items === "function"
+                        ? items(
+                            "researchList",
+                            "area",
+                            "keywords"
+                        )
+                        : [],
+
+                facilities:
+                    typeof items === "function"
+                        ? items(
+                            "facilityList",
+                            "name",
+                            "capabilities"
+                        )
+                        : [],
+
+                faculty:
+                    typeof items === "function"
+                        ? items(
+                            "facultyList",
+                            "name",
+                            "expertise"
+                        )
+                        : [],
+
+                previous_projects:
+                    typeof items === "function"
+                        ? items(
+                            "projectList",
+                            "title",
+                            "description"
+                        )
+                        : []
+            };
+        }
+
+
+        /* =================================================
+           GOVERNMENT
+        ================================================= */
+
+        else if (type === "government") {
+
+            payload.organization_name =
+                $("govt_org")
+                    .value
+                    .trim();
+
+            payload.department =
+                $("department")
+                    .value
+                    .trim();
+
+            payload.position =
+                $("position")
+                    .value
+                    .trim();
+
+            payload.jurisdiction =
+                $("jurisdiction")
+                    .value
+                    .trim();
+
+        }
+
+
+        /* =================================================
+           SEND TO BACKEND
+        ================================================= */
+
+        try {
+
+            notice.textContent =
+                "Creating your account...";
+
+            notice.className =
+                "notice";
+
+
+            const response =
+                await fetch(
+                    "/api/auth/register/common",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(payload)
+                    }
+                );
+
+
+            let data = {};
+
+            try {
+                data =
+                    await response.json();
+            }
+            catch {
+                data = {};
+            }
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    data.error ||
+                    "Registration failed"
+                );
+            }
+
+
+            /* ---------- SUCCESS ---------- */
+
+            notice.textContent =
+                data.message ||
+                "Account created successfully!";
+
+            notice.className =
+                "notice ok";
+
+
+            $("registerForm").reset();
+
+
+            // Return to Person account
+            setAccountType("person");
+
+
+            /* ---------- REDIRECT ---------- */
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "/login";
+
+            }, 1500);
+
+        }
+
+
+        /* =================================================
+           ERROR
+        ================================================= */
+
+        catch (error) {
+
+            console.error(
+                "Registration error:",
+                error
+            );
+
+
+            notice.textContent =
+                error.message ||
+                "Unable to create account";
+
+            notice.className =
+                "notice error";
+        }
+
+    }
+);
+
+
+/* =========================================================
+   INITIAL STATE
+========================================================= */
+
+// Honour ?type=institution from /university/register redirect
+const params = new URLSearchParams(window.location.search);
+const urlType = params.get('type');
+if (urlType && ['person', 'institution', 'government'].includes(urlType)) {
+    setAccountType(urlType);
+} else {
+    setAccountType("person");
+}
+
+/* =========================================================
+   DYNAMIC LIST HELPERS (research / labs / faculty / projects)
+========================================================= */
+function addItem(listId, inputName, inputPlaceholder, keywordName) {
+    const container = document.getElementById(listId);
+    const div = document.createElement('div');
+    div.className = 'rowitem';
+    div.style.marginBottom = '8px';
+    const kwPlaceholder = keywordName === 'keywords' ? 'Keywords / technologies' :
+        keywordName === 'capabilities' ? 'Capabilities / equipment' :
+        keywordName === 'expertise' ? 'Department + expertise' :
+        keywordName === 'description' ? 'What was solved / built' : 'Keywords';
+    div.innerHTML = `
+        <input name="${inputName}" type="text" placeholder="${inputPlaceholder}" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;font-size:.85rem;box-sizing:border-box;">
+        <input name="${keywordName}" type="text" placeholder="${kwPlaceholder}" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;font-size:.85rem;box-sizing:border-box;">
+        <button type="button" class="remove" onclick="this.parentElement.remove()" style="background:#fee2e2;color:#991b1b;border:none;border-radius:8px;cursor:pointer;padding:6px 10px;font-weight:700;">×</button>`;
+    container.appendChild(div);
+}
+
+function addResearch() { addItem('researchList', 'area', 'Research area', 'keywords'); }
+function addFacility() { addItem('facilityList', 'name', 'Lab / facility name', 'capabilities'); }
+function addFaculty() { addItem('facultyList', 'name', 'Faculty / expert name', 'expertise'); }
+function addProject() { addItem('projectList', 'title', 'Project title', 'description'); }
+
+function items(listId, keyName, keywordName) {
+    const container = document.getElementById(listId);
+    if (!container) return [];
+    const result = [];
+    container.querySelectorAll('.rowitem').forEach(row => {
+        const keyEl = row.querySelector('input[name="' + keyName + '"]');
+        const kwEl = row.querySelector('input[name="' + keywordName + '"]');
+        if (keyEl && keyEl.value.trim()) {
+            const item = {};
+            item[keyName] = keyEl.value.trim();
+            if (keywordName) item[keywordName] = kwEl ? kwEl.value.trim() : '';
+            result.push(item);
+        }
+    });
+    return result;
+}
+
+</script>
+</body>
+</html>

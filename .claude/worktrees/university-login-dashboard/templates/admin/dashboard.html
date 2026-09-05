@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Console — Societal Challenge Intelligence</title>
+  <link rel="stylesheet" href="/static/css/app.css">
+  <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-icon">SC</div>
+          <div>
+            <div class="brand-name">SocietalAI</div>
+            <div class="brand-subtitle">Admin Console</div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#overview" class="nav-item active" data-view="overview">
+          <span class="nav-icon">◆</span>
+          <span>Overview</span>
+        </a>
+        <a href="#problems" class="nav-item" data-view="problems">
+          <span class="nav-icon">●</span>
+          <span>Problems</span>
+        </a>
+        <a href="#assignments" class="nav-item" data-view="assignments">
+          <span class="nav-icon">▲</span>
+          <span>Assignments</span>
+        </a>
+        <a href="#analytics" class="nav-item" data-view="analytics">
+          <span class="nav-icon">■</span>
+          <span>Analytics</span>
+        </a>
+        <a href="#users" class="nav-item" data-view="users">
+          <span class="nav-icon">★</span>
+          <span>Users</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="user-avatar" id="userAvatar">A</div>
+          <div>
+            <div class="user-name" id="userName">Admin</div>
+            <div class="user-role">Administrator</div>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="logout()">Logout</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Bar -->
+      <header class="top-bar">
+        <div>
+          <h1 id="pageTitle">Overview</h1>
+          <p class="page-subtitle" id="pageSubtitle">Real-time system metrics and insights</p>
+        </div>
+        <div class="top-bar-actions">
+          <button class="btn-icon" title="Refresh" onclick="refreshData()">↻</button>
+          <button class="btn-icon" title="Settings">⚙</button>
+          <button class="btn-icon" title="Notifications" onclick="toggleNotifications()">🔔</button>
+        </div>
+      </header>
+
+      <!-- Overview View -->
+      <div id="view-overview" class="view active">
+        <!-- KPI Cards -->
+        <section class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background: rgba(37, 99, 235, 0.1); color: #2563eb;">◆</div>
+            <div>
+              <div class="kpi-value" id="kpiTotal">0</div>
+              <div class="kpi-label">Total Problems</div>
+              <div class="kpi-trend up">↑ 12% this week</div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">●</div>
+            <div>
+              <div class="kpi-value" id="kpiAnalyzed">0</div>
+              <div class="kpi-label">AI Analyzed</div>
+              <div class="kpi-trend up">↑ 8% this week</div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">▲</div>
+            <div>
+              <div class="kpi-value" id="kpiHigh">0</div>
+              <div class="kpi-label">High Priority</div>
+              <div class="kpi-trend down">↓ 3% this week</div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">★</div>
+            <div>
+              <div class="kpi-value" id="kpiActive">0</div>
+              <div class="kpi-label">Active Projects</div>
+              <div class="kpi-trend up">↑ 15% this week</div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background: rgba(99, 102, 241, 0.1); color: #6366f1;">■</div>
+            <div>
+              <div class="kpi-value" id="kpiCompleted">0</div>
+              <div class="kpi-label">Completed</div>
+              <div class="kpi-trend up">↑ 5% this week</div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background: rgba(168, 85, 247, 0.1); color: #a855f7;">◐</div>
+            <div>
+              <div class="kpi-value" id="kpiDuplicates">0</div>
+              <div class="kpi-label">Duplicate Links</div>
+              <div class="kpi-trend up">↑ 2% this week</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Charts -->
+        <section class="charts-grid">
+          <div class="card">
+            <div class="card-header">
+              <h2>Problems by Category</h2>
+              <button class="btn-text">View All</button>
+            </div>
+            <div id="categoryChart" class="chart-container"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2>Recent Activity</h2>
+              <button class="btn-text">View All</button>
+            </div>
+            <div id="activityFeed" class="activity-feed"></div>
+          </div>
+        </section>
+
+        <!-- High Priority Problems -->
+        <section class="card">
+          <div class="card-header">
+            <h2>High Priority Problems</h2>
+            <button class="btn-text" onclick="switchView('problems')">View All</button>
+          </div>
+          <div id="highPriorityList"></div>
+        </section>
+      </div>
+
+      <!-- Problems View -->
+      <div id="view-problems" class="view">
+        <div class="card">
+          <div class="card-header">
+            <h2>All Problems</h2>
+            <div class="search-bar">
+              <input type="text" id="searchInput" placeholder="Search problems..." />
+              <select id="filterStatus">
+                <option value="">All Status</option>
+                <option value="submitted">Submitted</option>
+                <option value="analyzed">Analyzed</option>
+                <option value="assigned">Assigned</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+              <select id="filterPriority">
+                <option value="">All Priority</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="data-table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="problemTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assignments View -->
+      <div id="view-assignments" class="view">
+        <!-- Assignment Stats -->
+        <section class="assignment-stats">
+          <div class="stat-card">
+            <div class="stat-value" id="statTotalAssignments">0</div>
+            <div class="stat-label">Total Assignments</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statPendingAssignments">0</div>
+            <div class="stat-label">Pending</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statAcceptedAssignments">0</div>
+            <div class="stat-label">Accepted</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statCompletedAssignments">0</div>
+            <div class="stat-label">Completed</div>
+          </div>
+        </section>
+
+        <!-- Assignment Tracker Table -->
+        <div class="card">
+          <div class="card-header">
+            <h2>Routing Tracker</h2>
+            <div class="assignment-filters">
+              <input type="text" id="assignmentSearch" placeholder="Search problem or university..." onkeyup="filterAssignments()" />
+              <select id="assignmentStatusFilter" onchange="filterAssignments()">
+                <option value="">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="accepted">Accepted</option>
+                <option value="rejected">Rejected</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+              <select id="assignmentRoundFilter" onchange="filterAssignments()">
+                <option value="">All Rounds</option>
+                <option value="1">Round 1</option>
+                <option value="2">Round 2</option>
+                <option value="3">Round 3</option>
+              </select>
+              <button class="btn-primary" onclick="showNewAssignmentModal()">+ New Assignment</button>
+            </div>
+          </div>
+          <div class="assignment-table-wrapper">
+            <table class="assignment-table">
+              <thead>
+                <tr>
+                  <th>Problem</th>
+                  <th>Current University</th>
+                  <th>Rank</th>
+                  <th>Status</th>
+                  <th>Assigned</th>
+                  <th>Deadline</th>
+                  <th>Round</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="assignmentTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Routing History Section -->
+        <div class="card" id="routingHistoryCard" style="display: none;">
+          <div class="card-header">
+            <h2>Routing History</h2>
+            <button class="btn-text" onclick="closeRoutingHistory()">× Close</button>
+          </div>
+          <div id="routingHistoryContent"></div>
+        </div>
+      </div>
+
+      <!-- Analytics View -->
+      <div id="view-analytics" class="view">
+        <section class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-value" id="analyticsUniversities">0</div>
+            <div class="kpi-label">Universities</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="analyticsIndustry">0</div>
+            <div class="kpi-label">Industry Partners</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="analyticsResolution">0%</div>
+            <div class="kpi-label">Resolution Rate</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="analyticsAvgTime">0d</div>
+            <div class="kpi-label">Avg. Resolution Time</div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h2>System Performance</h2>
+          </div>
+          <div class="metrics-grid">
+            <div class="metric">
+              <div class="metric-label">AI Processing Speed</div>
+              <div class="metric-value">2.3s avg</div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 85%"></div></div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Evidence Verification Accuracy</div>
+              <div class="metric-value">94.2%</div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 94%"></div></div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Match Precision</div>
+              <div class="metric-value">87.5%</div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 87%"></div></div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Duplicate Detection Rate</div>
+              <div class="metric-value">91.8%</div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 92%"></div></div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Users View -->
+      <div id="view-users" class="view">
+        <div class="card">
+          <div class="card-header">
+            <h2>User Management</h2>
+          </div>
+          <div id="usersList"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Problem Detail Modal -->
+  <div id="problemModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Problem Details</h2>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal()">Close</button>
+        <button class="btn-primary" id="modalAssignBtn" onclick="assignFromModal()">Assign</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/admin.js"></script>
+</body>
+</html>

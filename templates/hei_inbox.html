@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Assignment Inbox — SICP Tamil Nadu</title>
+<style>
+:root{--ink:#111827;--surface:#f8fafc;--card:#fff;--border:#e2e8f0;--primary:#38bdf8;--primary-deep:#0284c7;--success:#10b981;--danger:#ef4444;--warning:#f59e0b;--purple:#a78bfa;--text:#334155;--muted:#64748b;--radius:14px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--surface);color:var(--ink);line-height:1.6;}
+.nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:16px;}
+.nav a{color:var(--text);text-decoration:none;font-weight:600;font-size:.9rem;}
+.nav a.logo{font-weight:800;font-size:1.1rem;color:var(--ink);flex:1;letter-spacing:-.02em;}
+.wrap{max-width:1100px;margin:0 auto;padding:40px 24px;}
+h1{font-size:1.7rem;font-weight:800;letter-spacing:-.02em;margin-bottom:4px;}
+.subtitle{color:var(--muted);margin-bottom:28px;font-size:.92rem;}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:24px;}
+.tab{padding:10px 18px;font-weight:600;font-size:.9rem;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap;}
+.tab:hover{color:var(--ink);}
+.tab.active{color:var(--primary-deep);border-bottom-color:var(--primary-deep);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+.assignment-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:transform .1s;}
+.assignment-card:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.06);}
+.assignment-card.pending{border-left:4px solid var(--warning);}
+.assignment-card.accepted{border-left:4px solid var(--success);}
+.assignment-card.rejected{border-left:4px solid #94a3b8;opacity:.75;}
+.assignment-id{font-size:.72rem;font-family:monospace;color:var(--muted);margin-bottom:4px;}
+.assignment-title{font-size:1.1rem;font-weight:700;margin-bottom:8px;}
+.assignment-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;}
+.tag{display:inline-flex;align-items:center;padding:4px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.tag-district{background:#f0f9ff;color:#0369a1;}
+.tag-priority-high{background:#fee2e2;color:#b91c1c;}
+.tag-priority-medium{background:#fef9c3;color:#a16207;}
+.tag-priority-low{background:#dcfce7;color:#15803d;}
+.tag-category{background:#f1f5f9;color:#475569;}
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:.78rem;font-weight:700;}
+.status-pending{background:#fef9c3;color:#a16207;}
+.status-accepted{background:#dcfce7;color:#15803d;}
+.status-rejected{background:#f1f5f9;color:#64748b;}
+.assignment-description{font-size:.92rem;color:var(--text);margin-bottom:14px;line-height:1.5;}
+.assignment-footer{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--border);margin-top:14px;}
+.assignment-date{font-size:.8rem;color:var(--muted);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:none;font-weight:700;font-size:.82rem;cursor:pointer;text-decoration:none;transition:all .15s;}
+.btn-success{background:var(--success);color:#fff;}
+.btn-success:hover{background:#059669;}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-danger:hover{background:#dc2626;}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border);}
+.btn-ghost:hover{background:#f1f5f9;}
+.btn-group{display:flex;gap:8px;}
+.empty{text-align:center;padding:60px 24px;color:var(--muted);}
+.empty-icon{font-size:3rem;margin-bottom:12px;}
+.loading{text-align:center;padding:48px;color:var(--muted);}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@media(max-width:640px){.assignment-footer{flex-direction:column;align-items:flex-start;gap:10px;}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="logo">SICP Tamil Nadu</a>
+  <a href="/">Public Portal</a>
+  <a href="/university">HEI Dashboard</a>
+  <a href="/hei/inbox">Inbox</a>
+  <a href="/workspace">Workspace</a>
+  <a href="/hei/profile">Profile</a>
+</nav>
+
+<div class="wrap">
+  <h1>Assignment Inbox</h1>
+  <p class="subtitle">Review societal challenges matched to your university. Accept assignments to create projects, or decline with feedback to improve future matching.</p>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="pending">Pending</div>
+    <div class="tab" data-tab="accepted">Accepted</div>
+    <div class="tab" data-tab="rejected">Declined</div>
+    <div class="tab" data-tab="all">All</div>
+  </div>
+
+  <div class="tab-panel active" id="tab-pending">
+    <div id="pendingList"><div class="loading"><span class="spinner"></span>Loading assignments...</div></div>
+  </div>
+
+  <div class="tab-panel" id="tab-accepted">
+    <div id="acceptedList"></div>
+  </div>
+
+  <div class="tab-panel" id="tab-rejected">
+    <div id="rejectedList"></div>
+  </div>
+
+  <div class="tab-panel" id="tab-all">
+    <div id="allList"></div>
+  </div>
+</div>
+
+<script>
+let allAssignments = [];
+let problemsCache = {};
+
+async function loadInbox() {
+  try {
+    const res = await fetch('/api/assignments?assignee_type=university&assignee_id=1');
+    const data = await res.json();
+    allAssignments = Array.isArray(data) ? data : [];
+
+    // Load problem details for each assignment
+    const problemIds = [...new Set(allAssignments.map(a => a.problem_id))];
+    await Promise.all(problemIds.map(async id => {
+      try {
+        const pRes = await fetch('/api/problems/' + id);
+        if (pRes.ok) problemsCache[id] = await pRes.json();
+      } catch(e) {}
+    }));
+
+    renderTab('pending');
+    renderTab('accepted');
+    renderTab('rejected');
+    renderTab('all');
+  } catch(e) {
+    document.getElementById('pendingList').innerHTML = '<div class="empty"><div class="empty-icon">⚠</div>Failed to load assignments.</div>';
+  }
+}
+
+function renderTab(status) {
+  const list = document.getElementById(status + 'List');
+  const filtered = status === 'all' ? allAssignments : allAssignments.filter(a => a.status === status);
+
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><strong>No ${status} assignments.</strong><br>${status === 'pending' ? 'All assignments have been reviewed.' : 'Check the other tabs.'}</div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(a => {
+    const problem = problemsCache[a.problem_id] || {};
+    const priority = problem.priority_level || 'medium';
+    return `<div class="assignment-card ${a.status}">
+      <div class="assignment-id">Assignment #${a.id} · Problem #${a.problem_id}</div>
+      <div class="assignment-title">${problem.title || 'Untitled Challenge'}</div>
+      <div class="assignment-meta">
+        ${problem.district ? `<span class="tag tag-district">📍 ${problem.district}</span>` : ''}
+        ${problem.category ? `<span class="tag tag-category">${problem.category}</span>` : ''}
+        <span class="tag tag-priority-${priority}">⚠ ${priority.toUpperCase()}</span>
+        <span class="status-badge status-${a.status}">${a.status.toUpperCase()}</span>
+      </div>
+      <div class="assignment-description">${(problem.description || '').substring(0, 180)}${(problem.description || '').length > 180 ? '...' : ''}</div>
+      ${a.notes ? `<div style="padding:10px;background:#f8fafc;border-left:3px solid var(--muted);border-radius:6px;font-size:.85rem;color:var(--text);margin-bottom:10px;"><strong>Note:</strong> ${a.notes}</div>` : ''}
+      <div class="assignment-footer">
+        <span class="assignment-date">Assigned ${new Date(a.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })}</span>
+        <div class="btn-group">
+          <a href="/challenges/${a.problem_id}" class="btn btn-ghost">View Details</a>
+          ${a.status === 'pending' ? `
+            <button class="btn btn-success" onclick="acceptAssignment(${a.id})">Accept</button>
+            <button class="btn btn-danger" onclick="declineAssignment(${a.id})">Decline</button>
+          ` : ''}
+          ${a.status === 'accepted' ? `<a href="/workspace?assignment=${a.id}" class="btn btn-ghost">Open Workspace</a>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Tab switching
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+async function acceptAssignment(id) {
+  try {
+    const res = await fetch('/api/university/challenges/' + id + '/accept', { method: 'POST' });
+    if (res.ok) {
+      alert('Assignment accepted! Redirecting to workspace...');
+      window.location.href = '/workspace?assignment=' + id;
+    } else {
+      alert('Failed to accept assignment. Please try again.');
+    }
+  } catch(e) {
+    alert('Network error. Please try again.');
+  }
+}
+
+async function declineAssignment(id) {
+  const reason = prompt('Please provide a brief reason for declining this assignment (helps improve future matching):');
+  if (!reason) return;
+
+  try {
+    const res = await fetch('/api/university/challenges/' + id + '/decline', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reason })
+    });
+    if (res.ok) {
+      alert('Assignment declined. The system will learn from your feedback.');
+      location.reload();
+    } else {
+      alert('Failed to decline assignment. Please try again.');
+    }
+  } catch(e) {
+    alert('Network error. Please try again.');
+  }
+}
+
+loadInbox();
+</script>
+</body>
+</html>

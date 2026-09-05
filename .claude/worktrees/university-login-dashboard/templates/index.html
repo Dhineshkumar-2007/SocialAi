@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Societal Challenge Intelligence Platform</title>
+  <link rel="stylesheet" href="/static/css/app.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">Societal Challenge Intelligence</a>
+    <div class="nav-links">
+      <a href="/">Report</a>
+      <a href="/dashboard">Dashboard</a>
+      <a href="/admin">Admin</a>
+      <a href="/university">University</a>
+      <a href="/industry">Industry</a>
+      <a href="#" onclick="toggleLogin()">Login / Register</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header>
+      <h1>Societal Challenge Intelligence Platform</h1>
+      <p class="subtitle">Report &rarr; Analyze &rarr; Match &rarr; Assign &rarr; Collaborate &rarr; Execute &rarr; Measure</p>
+    </header>
+
+    <section class="card">
+      <h2>Report a Problem</h2>
+      <form id="problemForm" enctype="multipart/form-data">
+        <div class="form-grid">
+          <input name="title" placeholder="Problem title (e.g., Broken streetlights near village bus stop)" required>
+          <textarea name="description" rows="5" placeholder="Describe the problem in detail: where, when, how long, who is affected..." required></textarea>
+        </div>
+        <div class="form-grid two-col">
+          <input name="latitude" type="number" step="any" placeholder="Latitude (optional)">
+          <input name="longitude" type="number" step="any" placeholder="Longitude (optional)">
+        </div>
+        <div class="file-area">
+          <label class="file-label" for="evidence">Upload Evidence (photos / documents)</label>
+          <input type="file" id="evidence" name="evidence" accept="image/*,.pdf" multiple>
+        </div>
+        <button type="submit" class="btn-primary">Submit & Analyze</button>
+      </form>
+    </section>
+
+    <div id="analysisResult" style="margin-top: 20px;"></div>
+
+    <section class="card" id="loginSection" style="display: none;">
+      <h3>Login / Register</h3>
+      <form id="loginForm">
+        <input name="email" type="email" placeholder="Email" required>
+        <input name="password" type="password" placeholder="Password" required>
+        <button type="submit" class="btn-secondary">Login</button>
+        <a href="#" onclick="showRegister()">Register</a>
+      </form>
+      <form id="registerForm" style="display: none; margin-top: 10px;">
+        <input name="email" type="email" placeholder="Email" required>
+        <input name="password" type="password" placeholder="Password" required>
+        <input name="name" placeholder="Full Name" required>
+        <select name="role">
+          <option value="citizen">Citizen</option>
+          <option value="admin">Admin</option>
+          <option value="university">University</option>
+          <option value="industry">Industry</option>
+        </select>
+        <button type="submit" class="btn-secondary">Register</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>Societal Challenge Intelligence Platform — SIH 2026</p>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

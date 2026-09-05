@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Institutions · SocialSolve</title><link rel="stylesheet" href="/static/css/socialsolve.css"></head>
+<body><div class="app"><aside class="side"><a class="logo" href="/"><span class="logo-mark">S</span>SocialSolve</a><nav><a href="/">Home</a><a href="/explore">Explore Problems</a><a href="/explore/solutions">Solutions</a><a class="active" href="/institutions">Institutions</a><a href="/impact">Impact</a></nav></aside>
+<main class="main">
+<div class="top"><h1>Institutions</h1><p>Verified universities and industry partners actively solving community problems.</p></div>
+<section class="panel" style="margin-bottom:18px"><h3>Universities</h3><div id="unis" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px"></div></section>
+<section class="panel"><h3>Industry Partners</h3><div id="indus" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px"></div></section>
+</main></div>
+<script>
+(async () => {
+  try {
+    const d = await (await fetch('/api/institutions')).json();
+    const card = x => `<div class="panel" style="padding:14px"><h4 style="margin:0 0 4px">${x.name || '—'}</h4><p style="font-size:12px;color:var(--muted);margin:0">${x.sector || x.type || '—'}${x.district ? ' · ' + x.district : ''}${x.state ? ', ' + x.state : ''}</p>${x.capacity ? `<p style="font-size:11px;color:var(--muted);margin-top:4px">Capacity: ${x.capacity}</p>` : ''}</div>`;
+    document.getElementById('unis').innerHTML = (d.universities||[]).map(card).join('') || '<p class="muted">No verified universities yet.</p>';
+    document.getElementById('indus').innerHTML = (d.industry_partners||[]).map(card).join('') || '<p class="muted">No industry partners yet.</p>';
+  } catch(e) {}
+})();
+</script></body></html>

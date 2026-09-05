@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Public Impact Dashboard</title><link rel="stylesheet" href="/static/css/app.css"></head>
+<body>
+  <nav class="navbar"><a href="/" class="logo">Societal Challenge Intelligence</a><div class="nav-links"><a href="/">Report</a><a href="/dashboard">Dashboard</a><a href="/admin">Admin</a></div></nav>
+  <main class="container">
+    <header><h1>Public Impact Dashboard</h1><p>Real-time transparency on societal problem resolution across India</p></header>
+    <section class="kpi-grid" id="kpis"></section>
+    <section class="card"><h2>Problems by Category</h2><div id="categoryStats"></div></section>
+  </main>
+  <script>
+    async function load() {
+      const r = await fetch('/api/dashboard/public');
+      const d = await r.json();
+      document.getElementById('kpis').innerHTML = `
+        <div class="kpi"><div class="kpi-value">${d.total_problems || 0}</div><div class="kpi-label">Reported</div></div>
+        <div class="kpi"><div class="kpi-value">${d.problems_by_status?.analyzed || 0}</div><div class="kpi-label">Analyzed</div></div>
+        <div class="kpi"><div class="kpi-value">${d.high_priority_count || 0}</div><div class="kpi-label">High Priority</div></div>
+        <div class="kpi"><div class="kpi-value">${d.universities || 0}</div><div class="kpi-label">Universities</div></div>
+        <div class="kpi"><div class="kpi-value">${d.industry_partners || 0}</div><div class="kpi-label">Industry Partners</div></div>
+        <div class="kpi"><div class="kpi-value">${d.completed_projects || 0}</div><div class="kpi-label">Solved</div></div>
+      `;
+      let cats = '';
+      for (const [k, v] of Object.entries(d.problems_by_category || {})) {
+        cats += `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;"><span>${k}</span><strong>${v}</strong></div>`;
+      }
+      document.getElementById('categoryStats').innerHTML = cats || '<p>No data yet.</p>';
+    }
+    load();
+  </script>
+</body>
+</html>

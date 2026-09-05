@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Impact · SocialSolve</title><link rel="stylesheet" href="/static/css/socialsolve.css"></head>
+<body><div class="app"><aside class="side"><a class="logo" href="/"><span class="logo-mark">S</span>SocialSolve</a><nav><a href="/">Home</a><a href="/explore">Explore Problems</a><a href="/explore/solutions">Solutions</a><a href="/institutions">Institutions</a><a class="active" href="/impact">Impact</a></nav></aside>
+<main class="main"><div class="top"><h1>Impact</h1><p>Real numbers. Real outcomes.</p></div>
+<div id="kpis" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:18px"></div>
+<section class="panel"><h3>Problems by Category</h3><div id="cats" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px"></div></section>
+</main></div>
+<script>
+(async () => {
+  try {
+    const d = await (await fetch('/api/impact')).json();
+    const k = (label, val) => `<div class="panel" style="text-align:center"><p style="font-size:12px;color:var(--muted);margin:0">${label}</p><p style="font-family:Manrope;font-size:28px;font-weight:800;color:var(--green);margin:6px 0 0">${val}</p></div>`;
+    document.getElementById('kpis').innerHTML = [
+      k('Problems Reported', d.total_problems),
+      k('Completed', d.completed_problems),
+      k('In Progress', d.in_progress_problems),
+      k('Verified Universities', d.verified_universities),
+      k('Completed Projects', d.completed_projects),
+      k('People Impacted', (d.people_impacted||0).toLocaleString()),
+    ].join('');
+    document.getElementById('cats').innerHTML = (d.problems_by_category||[]).map(c => `<div style="padding:10px;border:1px solid var(--line);border-radius:10px"><p style="font-size:11px;color:var(--muted);margin:0">${c.category||'—'}</p><p style="font-size:18px;font-weight:700;margin:4px 0 0">${c.count}</p></div>`).join('') || '<p class="muted">No data yet.</p>';
+  } catch(e) {}
+})();
+</script></body></html>

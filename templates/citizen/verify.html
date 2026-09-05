@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Verify Resolution · SocialSolve</title><link rel="stylesheet" href="/static/css/socialsolve.css"></head>
+<body><div class="app">
+<aside class="side"><a class="logo" href="/"><span class="logo-mark">S</span>SocialSolve</a><nav><a href="/">Home</a><a href="/citizen">Overview</a><a href="/citizen/problems">My problems</a><a class="active" href="#">Verify</a></nav></aside>
+<main class="main">
+<div class="top"><div><h1 id="title">Verify Resolution</h1><p id="sub">Loading…</p></div><a class="btn btn-ghost" id="backBtn" href="/citizen/problems">Back</a></div>
+
+<div id="content">
+  <div class="panel" style="max-width:560px">
+    <h3>Is the problem resolved?</h3>
+    <p class="muted" id="problemDesc">Has the institution's solution actually fixed the problem?</p>
+
+    <div id="ratingArea" style="margin-top:18px">
+      <h4>Rate the solution</h4>
+      <div style="display:flex;gap:8px;margin-top:8px" id="stars">
+        <button class="btn btn-soft" onclick="setRating(1)">1</button>
+        <button class="btn btn-soft" onclick="setRating(2)">2</button>
+        <button class="btn btn-soft" onclick="setRating(3)">3</button>
+        <button class="btn btn-soft" onclick="setRating(4)">4</button>
+        <button class="btn btn-soft" onclick="setRating(5)">5</button>
+      </div>
+      <p class="muted" style="font-size:12px;margin-top:4px">1 = Not fixed · 5 = Fully resolved</p>
+    </div>
+
+    <div style="margin-top:14px">
+      <h4>Your feedback</h4>
+      <textarea id="feedback" rows="4" placeholder="Describe what you observed — was the problem solved? Any remaining issues?" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;resize:vertical;margin-top:6px"></textarea>
+    </div>
+
+    <div style="margin-top:14px">
+      <h4>Upload evidence <span class="muted" style="font-weight:normal">(optional)</span></h4>
+      <input type="file" id="evidence" accept="image/*" style="margin-top:6px">
+    </div>
+
+    <div style="margin-top:18px">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+        <input type="checkbox" id="resolved">
+        <span><b>I confirm the problem is resolved</b></span>
+      </label>
+    </div>
+
+    <div id="msg" style="margin-top:12px"></div>
+    <button class="btn btn-primary" style="margin-top:14px" onclick="submitVerify()">Submit Verification</button>
+  </div>
+</div>
+</main></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+const pid = {{ problem_id }};
+let rating = 0;
+
+function setRating(n) {
+  rating = n;
+  $('#stars').querySelectorAll('button').forEach((b, i) => {
+    b.className = i < n ? 'btn btn-primary' : 'btn btn-soft';
+  });
+}
+
+async function loadProblem() {
+  try {
+    const r = await fetch(`/api/problems/${pid}`);
+    const d = await r.json();
+    $('#title').textContent = d.title || 'Verify Resolution';
+    $('#sub').textContent = `${d.category || ''} · ${d.status || ''}`;
+    $('#problemDesc').textContent = d.description || '';
+    $('#backBtn').href = `/citizen/problems/${pid}`;
+  } catch(e) { $('#sub').textContent = 'Could not load problem.'; }
+}
+
+async function submitVerify() {
+  const resolved = $('#resolved').checked;
+  if (!resolved) { $('#msg').innerHTML = '<p style="color:var(--red)">Please confirm the problem is resolved before submitting.</p>'; return; }
+  $('#msg').innerHTML = '<p class="muted">Submitting…</p>';
+  try {
+    const r = await fetch(`/api/problems/${pid}/verify-resolution`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      credentials: 'same-origin',
+      body: JSON.stringify({ user_id: null, is_resolved: resolved, rating, feedback_text: $('#feedback').value }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw Error(d.error || 'Failed');
+    $('#msg').innerHTML = '<p style="color:var(--green2);font-weight:700">Verification submitted. Thank you!</p>';
+    setTimeout(() => window.location.href = '/citizen/problems', 2000);
+  } catch(e) {
+    $('#msg').innerHTML = `<p style="color:var(--red)">${esc(e.message)}</p>`;
+  }
+}
+loadProblem();
+</script>
+</body></html>

@@ -1,0 +1,173 @@
+{
+  "timestamp": "2026-09-04T12:34:44Z",
+  "summary": {
+    "total": 12,
+    "success": 12,
+    "categories": {
+      "Water and sanitation": 1,
+      "Healthcare": 1,
+      "Agriculture": 1,
+      "Education": 1,
+      "Waste management": 2,
+      "Infrastructure": 1,
+      "Energy": 2,
+      "Transportation": 1,
+      "Employment": 1,
+      "Environment": 1
+    },
+    "priorities": {
+      "critical": 5,
+      "medium": 4,
+      "high": 3
+    },
+    "avg_skills": 4.416666666666667,
+    "avg_matches": 20.0,
+    "avg_top_score": 0.3197
+  },
+  "results": [
+    {
+      "problem_id": 143,
+      "title": "Contaminated borewell water causing illness in 200",
+      "classification": "Water and sanitation",
+      "confidence": 0.7,
+      "skills_count": 6,
+      "priority_level": "critical",
+      "priority_score": 81.5,
+      "match_count": 20,
+      "top_match": "National Institute of Technology Tiruchirappalli (NIT Trichy)",
+      "top_match_score": 0.3313
+    },
+    {
+      "problem_id": 144,
+      "title": "District hospital ICU equipment shortage during mo",
+      "classification": "Healthcare",
+      "confidence": 0.994570791721344,
+      "skills_count": 7,
+      "priority_level": "critical",
+      "priority_score": 80.5,
+      "match_count": 20,
+      "top_match": "Anna University (CEG & MIT Campuses)",
+      "top_match_score": 0.3354
+    },
+    {
+      "problem_id": 145,
+      "title": "Paddy crop failure across 500 acres due to soil sa",
+      "classification": "Agriculture",
+      "confidence": 0.6100115776062012,
+      "skills_count": 3,
+      "priority_level": "medium",
+      "priority_score": 38.75,
+      "match_count": 20,
+      "top_match": "Cauvery Engineering University",
+      "top_match_score": 0.3623
+    },
+    {
+      "problem_id": 146,
+      "title": "Primary school building unsafe after structural da",
+      "classification": "Education",
+      "confidence": 0.7826104760169983,
+      "skills_count": 5,
+      "priority_level": "critical",
+      "priority_score": 82.25,
+      "match_count": 20,
+      "top_match": "Amrita Vishwa Vidyapeetham (Coimbatore Campus)",
+      "top_match_score": 0.2897
+    },
+    {
+      "problem_id": 147,
+      "title": "Illegal industrial waste dumping polluting village",
+      "classification": "Waste management",
+      "confidence": 0.667,
+      "skills_count": 4,
+      "priority_level": "high",
+      "priority_score": 63.0,
+      "match_count": 20,
+      "top_match": "National Institute of Technology Tiruchirappalli (NIT Trichy)",
+      "top_match_score": 0.3155
+    },
+    {
+      "problem_id": 148,
+      "title": "Bridge structural damage blocking main transport r",
+      "classification": "Infrastructure",
+      "confidence": 0.7823997139930725,
+      "skills_count": 4,
+      "priority_level": "medium",
+      "priority_score": 52.75,
+      "match_count": 20,
+      "top_match": "National Institute of Technology Tiruchirappalli (NIT Trichy)",
+      "top_match_score": 0.3088
+    },
+    {
+      "problem_id": 149,
+      "title": "Municipal waste collection stopped for 3 weeks in ",
+      "classification": "Waste management",
+      "confidence": 0.7,
+      "skills_count": 2,
+      "priority_level": "medium",
+      "priority_score": 50.25,
+      "match_count": 20,
+      "top_match": "Thiagarajar College of Engineering (TCE)",
+      "top_match_score": 0.3238
+    },
+    {
+      "problem_id": 150,
+      "title": "Village facing 12-hour daily power cuts affecting ",
+      "classification": "Energy",
+      "confidence": 0.902462363243103,
+      "skills_count": 5,
+      "priority_level": "medium",
+      "priority_score": 53.75,
+      "match_count": 20,
+      "top_match": "Indian Institute of Technology Madras (IIT Madras)",
+      "top_match_score": 0.3137
+    },
+    {
+      "problem_id": 151,
+      "title": "Traffic congestion at junction causing accidents a",
+      "classification": "Transportation",
+      "confidence": 0.8065243363380432,
+      "skills_count": 4,
+      "priority_level": "high",
+      "priority_score": 59.0,
+      "match_count": 20,
+      "top_match": "Amrita Vishwa Vidyapeetham (Coimbatore Campus)",
+      "top_match_score": 0.3245
+    },
+    {
+      "problem_id": 152,
+      "title": "500+ unemployed youth need vocational training in ",
+      "classification": "Employment",
+      "confidence": 0.46761682629585266,
+      "skills_count": 5,
+      "priority_level": "high",
+      "priority_score": 74.5,
+      "match_count": 20,
+      "top_match": "Vellore Institute of Technology (VIT)",
+      "top_match_score": 0.2981
+    },
+    {
+      "problem_id": 153,
+      "title": "Stray dogs attack children walking to school daily",
+      "classification": "Environment",
+      "confidence": 0.943482518196106,
+      "skills_count": 6,
+      "priority_level": "critical",
+      "priority_score": 81.5,
+      "match_count": 20,
+      "top_match": "Amrita Vishwa Vidyapeetham (Coimbatore Campus)",
+      "top_match_score": 0.2928
+    },
+    {
+      "problem_id": 154,
+      "title": "Streetlights non-functional in residential area fo",
+      "classification": "Energy",
+      "confidence": 0.5,
+      "skills_count": 2,
+      "priority_level": "critical",
+      "priority_score": 78.25,
+      "match_count": 20,
+      "top_match": "Vellore Institute of Technology (VIT)",
+      "top_match_score": 0.3405
+    }
+  ]
+}

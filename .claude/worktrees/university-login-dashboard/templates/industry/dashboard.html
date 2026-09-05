@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Industry Dashboard</title><link rel="stylesheet" href="/static/css/app.css"></head>
+<body>
+  <nav class="navbar"><a href="/" class="logo">Societal Challenge Intelligence</a><div class="nav-links"><a href="/">Report</a><a href="/industry">Industry</a><a href="#" onclick="logout();return false;">Logout</a></div></nav>
+  <main class="container">
+    <header><h1>Industry Partner Dashboard</h1><p>View relevant societal challenges for CSR and technical collaboration</p></header>
+    <section class="card"><h2>Problems</h2><div id="problemList"></div></section>
+  </main>
+  <script>
+    async function api(ep, opts={}) { const r=await fetch(ep,{...opts,headers:{'Content-Type':'application/json',...(opts.headers||{})},credentials:'same-origin'}); return r.json(); }
+    async function load() {
+      const me=await api('/api/auth/me');
+      if(!me.user||me.user.role!=='industry') { alert('Login as industry required'); location.href='/'; return; }
+      const d=await api('/api/problems');
+      document.getElementById('problemList').innerHTML = d.map(p=>`<div class="problem-row"><div><strong>#${p.id} ${p.title}</strong><span class="badge badge-${p.priority_level}">${(p.priority_level||'medium').toUpperCase()}</span><small>${p.category||'Uncategorized'}</small></div><button class="btn-secondary" onclick="alert('Contact admin to collaborate on problem #${p.id}')">Collaborate</button></div>`).join('')||'<p>No problems found.</p>';
+    }
+    async function logout(){ await api('/api/auth/logout',{method:'POST'}); location.href='/'; }
+    load();
+  </script>
+</body>
+</html>

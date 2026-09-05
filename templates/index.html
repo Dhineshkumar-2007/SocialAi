@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#182242">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SocialSolve">
+<meta name="mobile-web-app-capable" content="yes">
+<title>SocialSolve AI — Turn Community Problems Into Real Solutions</title>
+<link rel="manifest" href="/static/manifest.json">
+<link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Source+Serif+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/socialsolve.css">
+</head>
+<body>
+
+{% include 'components/navbar.html' %}
+
+<header class="hero container" id="top">
+  <div>
+    <span class="eyebrow">AI + community + institutions</span>
+    <h1>Turn Community Problems Into Real Solutions.</h1>
+    <p>Report a problem. Let AI understand it. Connect it with the institution capable of solving it. Track the solution. Measure the impact.</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="/citizen/submit">Report a Problem</a>
+      <a class="btn btn-ghost" href="/explore">Explore Solutions</a>
+      <a class="btn btn-soft" href="/register?type=institution">Join as Institution</a>
+    </div>
+  </div>
+  <aside class="hero-card" aria-label="Problem journey">
+    <div style="font-size:13px;color:#a8c1ba">A problem's journey</div>
+    <div class="flow" style="margin-top:20px">
+      <a href="#" class="flow-row" style="text-decoration:none;color:inherit" aria-label="Community reports problem">
+        <span class="flow-num">01</span>
+        <div><b>Community reports</b><br><small>Problem + location + evidence</small></div>
+      </a>
+      <a href="#" class="flow-row" style="text-decoration:none;color:inherit" aria-label="AI understands">
+        <span class="flow-num">02</span>
+        <div><b>AI understands</b><br><small>Classifies, prioritizes, checks evidence</small></div>
+      </a>
+      <a href="#" class="flow-row" style="text-decoration:none;color:inherit" aria-label="Best institution matched">
+        <span class="flow-num">03</span>
+        <div><b>Best institution</b><br><small>Expertise-based matching with explainability</small></div>
+      </a>
+      <a href="#" class="flow-row" style="text-decoration:none;color:inherit" aria-label="Project and solution">
+        <span class="flow-num">04</span>
+        <div><b>Project &amp; solution</b><br><small>Accepted, built, verified, measured</small></div>
+      </a>
+    </div>
+  </aside>
+</header>
+
+<section class="section" id="how" aria-labelledby="how-heading">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">How it works</span>
+      <h2 id="how-heading">One clear path from complaint to change.</h2>
+      <p>Six steps. No maze. The citizen reports, the AI understands, institutions accept, and together they build verified impact.</p>
+    </div>
+    <div class="steps">
+      <article class="feature">
+        <div style="font-size:24px;font-family:var(--font-display);font-weight:800;color:var(--amber)">01</div>
+        <b>Report</b>
+        <p>Citizen submits problem title, description, location, category, and uploads images or videos.</p>
+      </article>
+      <article class="feature">
+        <div style="font-size:24px;font-family:var(--font-display);font-weight:800;color:var(--amber)">02</div>
+        <b>AI Understands</b>
+        <p>AI analyzes category, severity, priority, required skills, technologies, and evidence relevance.</p>
+      </article>
+      <article class="feature">
+        <div style="font-size:24px;font-family:var(--font-display);font-weight:800;color:var(--amber)">03</div>
+        <b>AI Finds the Right Institution</b>
+        <p>AI compares the problem against departments, research areas, faculty, labs, facilities, technologies, and capacity.</p>
+      </article>
+      <article class="feature">
+        <div style="font-size:24px;font-family:var(--font-display);font-weight:800;color:var(--amber)">04</div>
+        <b>Institution Accepts</b>
+        <p>Institution receives the challenge with match score, reasons, and can accept or decline with explanation.</p>
+      </article>
+      <article class="feature">
+        <div style="font-size:24px;font-family:var(--font-display);font-weight:800;color:var(--amber)">05</div>
+        <b>Project &amp; Milestones</b>
+        <p>Assigned institution creates milestones, updates progress, uploads evidence, and tracks to deployment.</p>
+      </article>
+      <article class="feature">
+        <div style="font-size:24px;font-family:var(--font-display);font-weight:800;color:var(--amber)">06</div>
+        <b>Verification &amp; Impact</b>
+        <p>Citizen verifies the solution. Government measures resolution rate, impact, and institutional performance.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="ecosystem-heading" style="background:#fbfcfb">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center">
+      <div>
+        <span class="eyebrow">The ecosystem</span>
+        <h2 id="ecosystem-heading" style="font-size:clamp(30px,4vw,46px);letter-spacing:-.05em;margin:14px 0 18px">One platform. Four perspectives.</h2>
+        <p style="color:var(--muted);line-height:1.7;font-size:17px">SocialSolve AI isn't four separate websites. It's one connected ecosystem with four views — citizen, institution, government, and admin — all linked by the AI pipeline that turns problems into verified solutions.</p>
+        <div style="margin-top:22px;display:flex;gap:10px;flex-wrap:wrap">
+          <a class="btn btn-primary" href="/citizen/submit">Report a Problem</a>
+          <a class="btn btn-soft" href="/register?type=institution">Join as Institution</a>
+        </div>
+      </div>
+      <div style="background:#10231f;border-radius:24px;padding:28px;color:#fff;box-shadow:var(--shadow)">
+        <h3 style="font-family:var(--font-display);font-weight:700;font-size:20px;margin-bottom:14px">The pipeline</h3>
+        <div style="display:grid;gap:10px">
+          <div style="background:rgba(255,255,255,.08);padding:12px 14px;border-radius:12px"><b>Report</b> — citizen submits evidence</div>
+          <div style="text-align:center;color:#d9efe7">↓ AI</div>
+          <div style="background:rgba(255,255,255,.08);padding:12px 14px;border-radius:12px"><b>Analyze</b> — classification + evidence intelligence</div>
+          <div style="text-align:center;color:#d9efe7">↓ AI</div>
+          <div style="background:rgba(255,255,255,.08);padding:12px 14px;border-radius:12px"><b>Match</b> — institution ranking with explanations</div>
+          <div style="text-align:center;color:#d9efe7">↓ Action</div>
+          <div style="background:rgba(255,255,255,.08);padding:12px 14px;border-radius:12px"><b>Accept → Build → Verify</b> — project workspace, milestones, citizen verification</div>
+          <div style="text-align:center;color:#d9efe7">↓ Impact</div>
+          <div style="background:rgba(255,255,255,.08);padding:12px 14px;border-radius:12px"><b>Measure</b> — government analytics, regional reports</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="impact" aria-labelledby="impact-heading">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Impact</span>
+      <h2 id="impact-heading">Measured, not just claimed.</h2>
+      <p>Every solved problem produces verifiable impact — affected people, resolution time, institutional success rate, and regional change.</p>
+    </div>
+    <div class="stats" role="list" aria-label="Impact statistics">
+      <article class="stat" role="listitem"><small>Problems Reported</small><strong>48,200</strong></article>
+      <article class="stat" role="listitem"><small>Active Problems</small><strong>3,120</strong></article>
+      <article class="stat" role="listitem"><small>Resolved</small><strong>7,890</strong></article>
+      <article class="stat" role="listitem"><small>People Potentially Impacted</small><strong>2.4M+</strong></article>
+    </div>
+  </div>
+</section>
+
+<footer class="footer" role="contentinfo">
+  <div class="container" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+    <div>© 2026 SocialSolve AI · Building a bridge between communities and capability.</div>
+    <nav aria-label="Footer" style="display:flex;gap:16px;font-size:13px;color:var(--muted)">
+      <a href="/about">About</a>
+      <a href="/institutions">Institutions</a>
+      <a href="/impact">Impact</a>
+      <a href="/login">Sign in</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/static/js/sw.js')
+      .then(reg => console.log('SW registered', reg.scope))
+      .catch(err => console.warn('SW registration failed', err));
+  });
+}
+</script>
+</html>

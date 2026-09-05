@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Reports — SICP Tamil Nadu</title>
+<link rel="stylesheet" href="/static/css/app.css">
+<style>
+:root{--ink:#111827;--surface:#f8fafc;--card:#fff;--border:#e2e8f0;--primary:#38bdf8;--primary-deep:#0284c7;--success:#10b981;--danger:#ef4444;--warning:#f59e0b;--purple:#a78bfa;--text:#334155;--muted:#64748b;--radius:14px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--surface);color:var(--ink);line-height:1.6;}
+.nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:16px;}
+.nav a{color:var(--text);text-decoration:none;font-weight:600;font-size:.9rem;}
+.nav a.logo{font-weight:800;font-size:1rem;letter-spacing:-.02em;color:var(--ink);flex:1;}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 24px;}
+h1{font-size:1.6rem;font-weight:800;letter-spacing:-.02em;margin-bottom:4px;}
+.subtitle{color:var(--muted);margin-bottom:32px;font-size:.92rem;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:transform .15s,box-shadow .15s;}
+.card:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.07);}
+.report-id{font-size:.72rem;font-family:monospace;color:var(--muted);margin-bottom:4px;}
+.report-title{font-size:1.05rem;font-weight:700;margin-bottom:8px;}
+.report-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px;}
+.tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;}
+.tag-district{background:#f0f9ff;color:#0369a1;}
+.tag-priority-high{background:#fee2e2;color:#b91c1c;}
+.tag-priority-medium{background:#fef9c3;color:#a16207;}
+.tag-priority-low{background:#dcfce7;color:#15803d;}
+.tag-status{background:#ede9fe;color:#6d28d9;}
+.tag-category{background:#f1f5f9;color:#475569;}
+.report-footer{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border);margin-top:10px;}
+.report-date{font-size:.8rem;color:var(--muted);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:none;font-weight:700;font-size:.82rem;cursor:pointer;text-decoration:none;transition:all .15s;}
+.btn-primary{background:var(--primary-deep);color:#fff;}
+.btn-primary:hover{background:#0369a1;}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border);}
+.btn-ghost:hover{background:#f1f5f9;}
+.empty{text-align:center;padding:60px 24px;color:var(--muted);}
+.empty-icon{font-size:3rem;margin-bottom:12px;}
+.loading{text-align:center;padding:48px;color:var(--muted);}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:.78rem;font-weight:700;}
+.status-submitted{background:#f1f5f9;color:#475569;}
+.status-analyzed{background:#dbeafe;color:#1e40af;}
+.status-assigned{background:#ede9fe;color:#6d28d9;}
+.status-in_progress{background:#fef9c3;color:#a16207;}
+.status-completed{background:#dcfce7;color:#15803d;}
+.status-resolved{background:#dcfce7;color:#15803d;}
+/* Filters */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
+.filter-btn{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:.82rem;font-weight:600;color:var(--muted);transition:all .15s;}
+.filter-btn:hover{border-color:var(--primary);color:var(--primary-deep);}
+.filter-btn.active{background:var(--primary-deep);color:#fff;border-color:var(--primary-deep);}
+@media(max-width:640px){.report-footer{flex-direction:column;align-items:flex-start;gap:8px;}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="logo">← SICP Tamil Nadu</a>
+  <a href="/">Home</a>
+  <a href="/report">Report</a>
+  <a href="/my-reports">My Reports</a>
+</nav>
+
+<div class="wrap">
+  <h1>My Reports</h1>
+  <p class="subtitle">Track the status of challenges you've submitted to Tamil Nadu's Societal Innovation Portal.</p>
+
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="submitted">Submitted</button>
+    <button class="filter-btn" data-filter="analyzed">Analyzed</button>
+    <button class="filter-btn" data-filter="assigned,in_progress">In Progress</button>
+    <button class="filter-btn" data-filter="completed,resolved">Completed</button>
+  </div>
+
+  <div id="reportsList">
+    <div class="loading"><span class="spinner"></span>Loading your reports...</div>
+  </div>
+</div>
+
+<script>
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+const statusLabels = {
+  submitted: 'Submitted', analyzed: 'Analyzed', assigned: 'Assigned',
+  pending: 'Pending', accepted: 'Accepted', in_progress: 'In Progress',
+  completed: 'Completed', resolved: 'Resolved'
+};
+
+const statusClass = {
+  submitted: 'status-submitted', analyzed: 'status-analyzed',
+  assigned: 'status-assigned', in_progress: 'status-analyzed',
+  completed: 'status-completed', resolved: 'status-resolved'
+};
+
+let allReports = [];
+
+async function loadReports() {
+  try {
+    const res = await fetch('/api/problems');
+    const data = await res.json();
+    // Show all — in production, filter by logged-in user
+    allReports = Array.isArray(data) ? data : [];
+    renderReports(allReports);
+  } catch(e) {
+    document.getElementById('reportsList').innerHTML = '<div class="empty"><div class="empty-icon">⚠</div>Failed to load reports. Please try again.</div>';
+  }
+}
+
+function renderReports(reports) {
+  const list = document.getElementById('reportsList');
+  if (!reports.length) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><strong>No reports found.</strong><br>You haven\'t submitted any challenges yet.<br><br><a href="/report" class="btn btn-primary" style="display:inline-flex;margin-top:8px;">Report a Challenge →</a></div>';
+    return;
+  }
+
+  list.innerHTML = reports.map(p => {
+    const priority = p.priority_level || 'medium';
+    const sc = statusClass[p.status] || 'status-submitted';
+    return `<div class="card">
+      <div class="report-id">#${p.id} · ${p.district || 'Tamil Nadu'}</div>
+      <div class="report-title">${p.title || 'Untitled Challenge'}</div>
+      <div class="report-meta">
+        ${p.district ? `<span class="tag tag-district">📍 ${p.district}</span>` : ''}
+        ${p.category ? `<span class="tag tag-category">${p.category}</span>` : ''}
+        <span class="tag tag-priority-${priority}">⚠ ${priority.toUpperCase()}</span>
+        <span class="status-badge ${sc}">${statusLabels[p.status] || p.status}</span>
+      </div>
+      <div class="report-footer">
+        <span class="report-date">Submitted ${new Date(p.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })}</span>
+        <a href="/challenges/${p.id}" class="btn btn-primary btn-sm">View Details →</a>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Filter buttons
+$$('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    $$('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    if (filter === 'all') {
+      renderReports(allReports);
+    } else {
+      const statuses = filter.split(',');
+      renderReports(allReports.filter(p => statuses.includes(p.status)));
+    }
+  });
+});
+
+loadReports();
+</script>
+</body>
+</html>

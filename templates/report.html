@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Report a Challenge — SICP Tamil Nadu</title>
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{--ink:#111827;--surface:#f8fafc;--card:#fff;--border:#e2e8f0;--primary:#38bdf8;--primary-deep:#0284c7;--success:#10b981;--danger:#ef4444;--warning:#f59e0b;--text:#334155;--muted:#64748b;--radius:14px;--shadow:0 1px 3px rgba(0,0,0,.06),0 8px 24px rgba(0,0,0,.04);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--surface);color:var(--ink);line-height:1.55;min-height:100vh;}
+.nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
+.nav a{color:var(--text);text-decoration:none;font-weight:600;font-size:.9rem;margin-right:22px;}
+.nav a.logo{font-weight:800;font-size:1.05rem;letter-spacing:-.02em;color:var(--ink);}
+.wrap{max-width:760px;margin:0 auto;padding:48px 24px;}
+/* Step indicator */
+.steps{display:flex;align-items:center;gap:0;margin-bottom:40px;}
+.step{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;}
+.step::before{content:"";position:absolute;top:18px;left:50%;right:-50%;height:2px;background:var(--border);z-index:0;}
+.step:last-child::before{display:none;}
+.step-num{width:36px;height:36px;border-radius:50%;background:var(--card);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;z-index:1;transition:all .2s;}
+.step-label{font-size:.72rem;color:var(--muted);font-weight:600;text-align:center;margin-top:6px;white-space:nowrap;}
+.step.active .step-num{background:var(--primary-deep);border-color:var(--primary-deep);color:#fff;}
+.step.active .step-label{color:var(--primary-deep);font-weight:700;}
+.step.done .step-num{background:var(--success);border-color:var(--success);color:#fff;}
+.step.done::before{background:var(--success);}
+/* Form card */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px;box-shadow:var(--shadow);margin-bottom:24px;}
+h1{font-size:1.8rem;font-weight:800;letter-spacing:-.02em;margin-bottom:4px;}
+h2{font-size:1.15rem;font-weight:700;margin-bottom:16px;}
+.subtitle{color:var(--muted);margin-bottom:24px;font-size:.92rem;}
+label{display:block;font-weight:600;font-size:.9rem;margin-bottom:6px;color:var(--ink);}
+input,select,textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.95rem;font-family:inherit;background:#fff;color:var(--ink);transition:border-color .15s;margin-bottom:16px;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(56,189,248,.12);}
+textarea{resize:vertical;min-height:130px;}
+.map-container{margin-bottom:16px;}
+#location-map{height:300px;border-radius:10px;border:1.5px solid var(--border);margin-bottom:8px;}
+.map-controls{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.map-btn{padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:5px;transition:all .15s;}
+.map-btn:hover{background:#f1f5f9;}
+.map-btn.active{background:var(--primary-deep);color:#fff;border-color:var(--primary-deep);}
+.location-chip{font-size:.82rem;color:var(--muted);}
+.location-chip span{font-family:monospace;color:var(--primary-deep);font-weight:600;}
+/* File upload */
+.file-zone{border:2px dashed var(--border);border-radius:10px;padding:32px;text-align:center;cursor:pointer;transition:all .15s;margin-bottom:16px;}
+.file-zone:hover{border-color:var(--primary);background:#f0f9ff;}
+.file-zone.dragover{border-color:var(--primary-deep);background:#e0f2fe;}
+.file-zone p{color:var(--muted);font-size:.9rem;}
+.file-zone .hint{font-size:.78rem;color:#94a3b8;margin-top:4px;}
+.file-list{margin-bottom:16px;}
+.file-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f8fafc;border-radius:8px;border:1px solid var(--border);margin-bottom:6px;font-size:.88rem;}
+.file-item span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* Nav buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:10px;border:none;font-weight:700;font-size:.95rem;cursor:pointer;text-decoration:none;transition:all .15s;}
+.btn-primary{background:var(--primary-deep);color:#fff;}
+.btn-primary:hover{background:#0369a1;}
+.btn-primary:disabled{background:#94a3b8;cursor:not-allowed;}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border);}
+.btn-ghost:hover{background:#f1f5f9;}
+.btn-success{background:var(--success);color:#fff;}
+.btn-sm{padding:7px 14px;font-size:.82rem;}
+.actions{display:flex;justify-content:space-between;align-items:center;margin-top:24px;}
+/* Submitter type selector */
+.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.type-card{border:1.5px solid var(--border);border-radius:10px;padding:14px 12px;text-align:center;cursor:pointer;transition:all .15s;font-size:.85rem;font-weight:600;color:var(--muted);}
+.type-card:hover{border-color:var(--primary);color:var(--primary-deep);}
+.type-card.selected{border-color:var(--primary-deep);background:#e0f2fe;color:var(--primary-deep);}
+.type-card input{display:none;}
+/* District selector */
+select{padding:11px 14px;}
+/* Status states */
+.loading{text-align:center;padding:40px;color:var(--muted);}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.alert{padding:14px 16px;border-radius:10px;margin-bottom:16px;font-size:.9rem;}
+.alert-info{background:#dbeafe;color:#1e40af;}
+.alert-success{background:#dcfce7;color:#15803d;}
+.alert-error{background:#fee2e2;color:#b91c1c;}
+/* Review step */
+.review-section{border-bottom:1px solid var(--border);padding-bottom:16px;margin-bottom:16px;}
+.review-section:last-child{border-bottom:none;}
+.review-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;margin-bottom:4px;}
+.review-value{font-size:.95rem;color:var(--ink);}
+/* Submission success */
+.success-page{text-align:center;padding:48px 24px;}
+.success-icon{font-size:4rem;margin-bottom:16px;}
+.issue-id{font-size:2rem;font-weight:800;color:var(--primary-deep);font-family:monospace;letter-spacing:-.02em;}
+/* Progress step animation */
+.step-panel{display:none;}
+.step-panel.active{display:block;}
+.hidden{display:none !important;}
+@media(max-width:640px){.type-grid{grid-template-columns:repeat(2,1fr);}.steps .step-label{font-size:.65rem;}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="logo">← SICP Tamil Nadu</a>
+  <div>
+    <a href="/">Home</a>
+    <a href="/my-reports">My Reports</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <h1>Report a Challenge</h1>
+  <p class="subtitle">Submit a real-world societal problem from Tamil Nadu. AI will analyze and route it to the best university and industry partners.</p>
+
+  <!-- Step Indicator -->
+  <div class="steps" id="stepIndicator">
+    <div class="step active" id="step1-indicator">
+      <div class="step-num">1</div>
+      <div class="step-label">Who &amp; What</div>
+    </div>
+    <div class="step" id="step2-indicator">
+      <div class="step-num">2</div>
+      <div class="step-label">Location</div>
+    </div>
+    <div class="step" id="step3-indicator">
+      <div class="step-num">3</div>
+      <div class="step-label">Evidence</div>
+    </div>
+    <div class="step" id="step4-indicator">
+      <div class="step-num">4</div>
+      <div class="step-label">Review</div>
+    </div>
+    <div class="step" id="step5-indicator">
+      <div class="step-num">✓</div>
+      <div class="step-label">Submit</div>
+    </div>
+  </div>
+
+  <!-- STEP 1: Who & What -->
+  <div class="step-panel active" id="step1">
+    <div class="card">
+      <h2>Who is reporting?</h2>
+      <div class="type-grid" id="submitterTypeGrid">
+        <label class="type-card">
+          <input type="radio" name="submitter_type" value="individual" checked>
+          <div>👤 Individual Citizen</div>
+        </label>
+        <label class="type-card">
+          <input type="radio" name="submitter_type" value="community">
+          <div>🏘️ Community Group</div>
+        </label>
+        <label class="type-card">
+          <input type="radio" name="submitter_type" value="pri">
+          <div>🏛️ Panchayat / PRI</div>
+        </label>
+        <label class="type-card">
+          <input type="radio" name="submitter_type" value="ulb">
+          <div>🏙️ Urban Local Body</div>
+        </label>
+        <label class="type-card">
+          <input type="radio" name="submitter_type" value="ngo">
+          <div>🤝 NGO</div>
+        </label>
+        <label class="type-card">
+          <input type="radio" name="submitter_type" value="govt">
+          <div>🏛️ Govt Department</div>
+        </label>
+      </div>
+
+      <label>Your name or organization</label>
+      <input type="text" id="name" placeholder="Full name or organization name" required>
+
+      <label>Email address</label>
+      <input type="email" id="email" placeholder="your@email.com" required>
+
+      <label>District</label>
+      <select id="district" required>
+        <option value="">Select district...</option>
+        <option>Ariyalur</option><option>Chennai</option><option>Coimbatore</option>
+        <option>Cuddalore</option><option>Dharmapuri</option><option>Dindigul</option>
+        <option>Erode</option><option>Kallakurichi</option><option>Kanchipuram</option>
+        <option>Kanyakumari</option><option>Karur</option><option>Krishnagiri</option>
+        <option>Madurai</option><option>Nagapattinam</option><option>Namakkal</option>
+        <option>Nilgiris</option><option>Perambalur</option><option>Pudukkottai</option>
+        <option>Ramanathapuram</option><option>Ranipet</option><option>Salem</option>
+        <option>Sivaganga</option><option>Tenkasi</option><option>Thanjavur</option>
+        <option>Theni</option><option>Thoothukudi</option><option>Tiruchirappalli</option>
+        <option>Tirunelveli</option><option>Tirupathur</option><option>Tiruppur</option>
+        <option>Tiruvallur</option><option>Tiruvannamalai</option><option>Tiruvarur</option>
+        <option>Vellore</option><option>Viluppuram</option><option>Virudhunagar</option>
+      </select>
+
+      <h2 style="margin-top:16px;">What is the problem?</h2>
+      <label>Challenge title</label>
+      <input type="text" id="title" placeholder="e.g., Non-functional streetlights causing safety issues near village bus stop" required>
+
+      <label>Detailed description</label>
+      <textarea id="description" placeholder="Describe the problem: where exactly, when it started, who is affected, what impact it has, any attempts made to resolve it..." required></textarea>
+
+      <div class="actions">
+        <div></div>
+        <button class="btn btn-primary" onclick="goStep(2)">Next: Location →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: Location -->
+  <div class="step-panel" id="step2">
+    <div class="card">
+      <h2>Where is this problem located?</h2>
+      <p class="subtitle">Pin the exact location on the map. This helps match the challenge to nearby universities and enables district-level analytics.</p>
+      <div class="map-container">
+        <div class="map-controls">
+          <button type="button" class="map-btn active" id="btn-pick-map">📍 Pick on Map</button>
+          <button type="button" class="map-btn" id="btn-use-location">🎯 Use My Location</button>
+          <button type="button" class="map-btn" id="btn-clear-location">✕ Clear</button>
+        </div>
+        <div id="location-map"></div>
+        <div class="location-chip" id="selected-location">No location selected — click on the map to pin the problem.</div>
+        <input type="hidden" id="latitude" name="latitude">
+        <input type="hidden" id="longitude" name="longitude">
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="goStep(1)">← Back</button>
+        <button class="btn btn-primary" onclick="goStep(3)">Next: Evidence →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: Evidence -->
+  <div class="step-panel" id="step3">
+    <div class="card">
+      <h2>Upload evidence</h2>
+      <p class="subtitle">Photos, videos, or documents help AI understand the challenge and increase priority. Supported: JPG, PNG, PDF, MP4.</p>
+      <div class="file-zone" id="fileZone">
+        <p>📁 Drop files here or <strong>click to browse</strong></p>
+        <p class="hint">Max 10 MB per file · Multiple files allowed</p>
+        <input type="file" id="fileInput" accept="image/*,.pdf,.mp4" multiple style="display:none;">
+      </div>
+      <div class="file-list" id="fileList"></div>
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="goStep(2)">← Back</button>
+        <button class="btn btn-primary" onclick="goStep(4)">Next: Review →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: Review -->
+  <div class="step-panel" id="step4">
+    <div class="card">
+      <h2>Review your submission</h2>
+      <p class="subtitle">Check the details below before submitting. You can go back to make changes.</p>
+      <div id="reviewContent"></div>
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="goStep(3)">← Back</button>
+        <button class="btn btn-primary" id="submitBtn" onclick="submitReport()">Submit Challenge →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5: Success -->
+  <div class="step-panel" id="step5">
+    <div class="card success-page">
+      <div class="success-icon">✅</div>
+      <h1 style="margin-bottom:8px;">Submitted!</h1>
+      <p class="subtitle" style="margin-bottom:24px;">Your challenge has been received and is being processed.</p>
+      <div class="issue-id" id="submittedId">#—</div>
+      <p style="color:var(--muted);font-size:.9rem;margin:8px 0 4px;">Your Challenge ID</p>
+      <div class="alert alert-info" style="margin-top:24px;text-align:left;max-width:480px;margin-left:auto;margin-right:auto;">
+        <strong>What happens next?</strong><br>
+        <span style="font-size:.88rem;">1. AI analyzes your challenge (categorization, priority, duplicates)<br>
+        2. Suitable universities and industry partners are identified<br>
+        3. Matched institutions receive the challenge<br>
+        4. You will be notified when a university accepts<br>
+        5. Track progress using your Challenge ID</span>
+      </div>
+      <div style="margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="/" class="btn btn-ghost">← Back to Home</a>
+        <a href="#" id="viewChallengeLink" class="btn btn-primary">View My Challenge →</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ======================== STEP NAVIGATION ========================
+let currentStep = 1;
+function goStep(n) {
+  // Validate before moving forward
+  if (n > currentStep) {
+    if (!validateStep(currentStep)) return;
+  }
+  document.querySelectorAll('.step-panel').forEach((el, i) => {
+    el.classList.toggle('active', i === n - 1);
+  });
+  document.querySelectorAll('.step').forEach((el, i) => {
+    el.classList.remove('active', 'done');
+    if (i < n - 1) el.classList.add('done');
+    else if (i === n - 1) el.classList.add('active');
+  });
+  currentStep = n;
+  if (n === 4) buildReview();
+  if (n === 2) setTimeout(initMap, 100);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function validateStep(step) {
+  if (step === 1) {
+    if (!document.getElementById('title').value.trim()) { alert('Please enter a challenge title.'); return false; }
+    if (!document.getElementById('description').value.trim()) { alert('Please describe the challenge.'); return false; }
+    if (!document.getElementById('district').value) { alert('Please select a district.'); return false; }
+    if (!document.getElementById('name').value.trim()) { alert('Please enter your name.'); return false; }
+    if (!document.getElementById('email').value.trim()) { alert('Please enter your email.'); return false; }
+  }
+  if (step === 2) {
+    if (!document.getElementById('latitude').value) { alert('Please pick a location on the map.'); return false; }
+  }
+  return true;
+}
+
+// ======================== SUBMITTER TYPE CARDS ========================
+document.querySelectorAll('.type-card input').forEach(input => {
+  input.addEventListener('change', () => {
+    document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+    input.closest('.type-card').classList.add('selected');
+  });
+});
+document.querySelector('.type-card input[value="individual"]').closest('.type-card').classList.add('selected');
+
+// ======================== MAP ========================
+let map, marker;
+const TN_CENTER = [11.1271, 78.6569];
+
+function initMap() {
+  if (map) { map.invalidateSize(); return; }
+  map = L.map('location-map').setView(TN_CENTER, 7);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  map.on('click', e => setMarker(e.latlng.lat, e.latlng.lng));
+
+  document.getElementById('btn-pick-map').addEventListener('click', () => {
+    document.getElementById('btn-pick-map').classList.add('active');
+  });
+  document.getElementById('btn-use-location').addEventListener('click', () => {
+    if (!navigator.geolocation) { alert('Geolocation not supported.'); return; }
+    navigator.geolocation.getCurrentPosition(pos => {
+      setMarker(pos.coords.latitude, pos.coords.longitude);
+    }, () => alert('Could not get location.'));
+  });
+  document.getElementById('btn-clear-location').addEventListener('click', () => {
+    if (marker) { map.removeLayer(marker); marker = null; }
+    document.getElementById('latitude').value = '';
+    document.getElementById('longitude').value = '';
+    document.getElementById('selected-location').textContent = 'No location selected — click on the map to pin the problem.';
+    map.setView(TN_CENTER, 7);
+  });
+}
+
+function setMarker(lat, lng) {
+  if (marker) map.removeLayer(marker);
+  marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+  map.setView([lat, lng], 15);
+  document.getElementById('latitude').value = lat.toFixed(6);
+  document.getElementById('longitude').value = lng.toFixed(6);
+  document.getElementById('selected-location').innerHTML = '📍 Pinned: <span>' + lat.toFixed(5) + ', ' + lng.toFixed(5) + '</span>';
+  marker.on('dragend', () => {
+    const ll = marker.getLatLng();
+    document.getElementById('latitude').value = ll.lat.toFixed(6);
+    document.getElementById('longitude').value = ll.lng.toFixed(6);
+    document.getElementById('selected-location').innerHTML = '📍 Pinned: <span>' + ll.lat.toFixed(5) + ', ' + ll.lng.toFixed(5) + '</span>';
+  });
+}
+
+// ======================== FILE UPLOAD ========================
+const fileZone = document.getElementById('fileZone');
+const fileInput = document.getElementById('fileInput');
+const fileList = document.getElementById('fileList');
+const uploadedFiles = [];
+
+fileZone.addEventListener('click', () => fileInput.click());
+fileZone.addEventListener('dragover', e => { e.preventDefault(); fileZone.classList.add('dragover'); });
+fileZone.addEventListener('dragleave', () => fileZone.classList.remove('dragover'));
+fileZone.addEventListener('drop', e => {
+  e.preventDefault();
+  fileZone.classList.remove('dragover');
+  addFiles(Array.from(e.dataTransfer.files));
+});
+fileInput.addEventListener('change', () => addFiles(Array.from(fileInput.files)));
+
+function addFiles(files) {
+  files.forEach(file => {
+    if (uploadedFiles.some(f => f.name === file.name && f.size === file.size)) return;
+    uploadedFiles.push(file);
+  });
+  renderFileList();
+}
+
+function renderFileList() {
+  fileList.innerHTML = uploadedFiles.map((f, i) => `
+    <div class="file-item">
+      <span>📄 ${f.name}</span>
+      <span style="color:var(--muted);font-size:.78rem;">${(f.size/1024/1024).toFixed(1)} MB</span>
+      <button type="button" class="btn btn-sm btn-ghost" onclick="removeFile(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+window.removeFile = function(idx) {
+  uploadedFiles.splice(idx, 1);
+  renderFileList();
+};
+
+// ======================== REVIEW ========================
+function buildReview() {
+  const typeLabels = {
+    individual: '👤 Individual Citizen',
+    community: '🏘️ Community Group',
+    pri: '🏛️ Panchayat / PRI',
+    ulb: '🏙️ Urban Local Body',
+    ngo: '🤝 NGO',
+    govt: '🏛️ Govt Department'
+  };
+  const submitterType = document.querySelector('input[name="submitter_type"]:checked')?.value || 'individual';
+  const lat = document.getElementById('latitude').value;
+  const lng = document.getElementById('longitude').value;
+  document.getElementById('reviewContent').innerHTML = `
+    <div class="review-section">
+      <div class="review-label">Submitted by</div>
+      <div class="review-value">${typeLabels[submitterType]} — ${document.getElementById('name').value}</div>
+      <div class="review-value" style="color:var(--muted);font-size:.85rem;">${document.getElementById('email').value} · ${document.getElementById('district').value} district</div>
+    </div>
+    <div class="review-section">
+      <div class="review-label">Challenge</div>
+      <div class="review-value" style="font-weight:700;font-size:1.05rem;">${document.getElementById('title').value}</div>
+      <div class="review-value" style="color:var(--muted);margin-top:6px;white-space:pre-wrap;">${document.getElementById('description').value}</div>
+    </div>
+    <div class="review-section">
+      <div class="review-label">Location</div>
+      <div class="review-value">${document.getElementById('district').value} district · ${lat ? lat+', '+lng : 'Not set'}</div>
+    </div>
+    <div class="review-section">
+      <div class="review-label">Evidence files</div>
+      <div class="review-value">${uploadedFiles.length === 0 ? 'No files uploaded' : uploadedFiles.map(f => f.name).join(', ')}</div>
+    </div>
+  `;
+}
+
+// ======================== SUBMIT ========================
+async function submitReport() {
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Submitting...';
+
+  const fd = new FormData();
+  fd.append('title', document.getElementById('title').value.trim());
+  fd.append('description', document.getElementById('description').value.trim());
+  fd.append('latitude', document.getElementById('latitude').value);
+  fd.append('longitude', document.getElementById('longitude').value);
+  fd.append('district', document.getElementById('district').value);
+  fd.append('submitter_type', document.querySelector('input[name="submitter_type"]:checked')?.value || 'individual');
+  fd.append('reporter_name', document.getElementById('name').value.trim());
+  fd.append('reporter_email', document.getElementById('email').value.trim());
+  uploadedFiles.forEach(f => fd.append('evidence', f));
+
+  try {
+    const res = await fetch('/api/problems', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Submission failed');
+
+    const pid = data.problem_id;
+    document.getElementById('submittedId').textContent = '#' + pid;
+    document.getElementById('viewChallengeLink').href = '/challenges/' + pid;
+
+    // Trigger AI analysis
+    fetch('/api/problems/' + pid + '/analyze', { method: 'POST' }).catch(() => {});
+
+    goStep(5);
+  } catch(err) {
+    alert('Submission failed: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = 'Submit Challenge →';
+  }
+}
+</script>
+</body>
+</html>

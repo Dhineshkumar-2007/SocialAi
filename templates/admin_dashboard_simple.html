@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Dashboard — SAMAADHAN AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0C14; --surface:#182242; --surface-2:#10231f;
+  --text:#F2F0EB; --sub:#8A9B83; --muted:#64748b;
+  --amber:#C9A227; --amber-dim:rgba(201,162,39,0.15);
+  --green:#4ade80; --green-dim:rgba(74,222,128,0.15);
+  --red:#f87171; --red-dim:rgba(248,113,113,0.15);
+  --blue:#60a5fa; --blue-dim:rgba(96,165,250,0.15);
+  --border:rgba(255,255,255,0.08);
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+header{position:sticky;top:0;z-index:10;background:rgba(10,12,20,0.92);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+header h1{font-family:'DM Sans';font-size:22px;font-weight:800;letter-spacing:-.02em}
+.badge{font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 8px;border-radius:999px;background:var(--amber);color:#0A0C14;font-weight:600}
+.sync{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--sub);margin-left:auto}
+.sync .dot{color:var(--green)}
+main{max-width:1360px;margin:0 auto;padding:28px;display:flex;flex-direction:column;gap:24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:0 var(--radius) var(--radius) 0;padding:22px;box-shadow:0 8px 32px rgba(10,12,20,.15);transition:transform .15s ease,border-color .15s ease}
+.card:hover{transform:translateY(-2px);border-left-color:var(--green)}
+.card h2{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--amber);margin-bottom:14px;font-family:'DM Sans'}
+.card h2 .icon{margin-right:6px}
+.metric{font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:600;color:var(--text);line-height:1}
+.metric-label{font-size:11px;color:var(--sub);margin-top:4px}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mg-item{display:flex;flex-direction:column}
+.mg-item .metric{font-size:22px}
+.tag{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;border-radius:6px;background:var(--amber-dim);color:var(--amber);display:inline-block}
+.tag.ok{background:var(--green-dim);color:var(--green)}
+.tag.warn{background:rgba(251,191,36,0.15);color:#fbbf24}
+.tag.red{background:var(--red-dim);color:var(--red)}
+.tag.blue{background:var(--blue-dim);color:var(--blue)}
+.lifecycle-bar{display:flex;height:8px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,0.06);margin:12px 0;gap:2px}
+.lifecycle-segment{border-radius:999px;transition:width .4s ease}
+.segment-proposed{background:var(--blue)}
+.segment-in-progress{background:var(--amber)}
+.segment-field-testing{background:#a78bfa}
+.segment-deployed{background:var(--green)}
+.segment-completed{background:rgba(74,222,128,0.6)}
+.lifecycle-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--sub);font-family:'JetBrains Mono',monospace}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--sub);text-align:left;padding:10px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:10px 8px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;font-size:12px}
+tr:hover td{background:rgba(255,255,255,0.03)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+button{font-family:'DM Sans',system-ui,sans-serif;font-size:13px;padding:9px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);cursor:pointer;transition:background .15s}
+button:hover{background:rgba(255,255,255,0.1)}
+button.accent{border-color:var(--amber);background:var(--amber-dim);color:var(--amber)}
+button.accent:hover{background:rgba(201,162,39,0.25)}
+button.success{border-color:var(--green);background:var(--green-dim);color:var(--green)}
+button.warn{border-color:#fbbf24;background:rgba(251,191,36,0.1);color:#fbbf24}
+button:disabled{opacity:0.4;cursor:not-allowed}
+.cat-list{display:flex;flex-direction:column;gap:8px}
+.cat-item{display:flex;align-items:center;gap:10px;font-size:12px}
+.cat-bar-wrap{flex:1;background:rgba(255,255,255,0.06);border-radius:999px;height:6px;overflow:hidden}
+.cat-bar{height:100%;border-radius:999px;background:var(--amber);transition:width .5s ease}
+.cat-name{flex:0 0 120px;color:var(--sub);font-family:'JetBrains Mono',monospace;font-size:11px}
+.cat-count{flex:0 0 30px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text)}
+.impact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:8px}
+.impact-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center}
+.impact-card .num{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:600;color:var(--amber)}
+.impact-card .label{font-size:10px;color:var(--sub);margin-top:4px}
+.milestone-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12px}
+.milestone-label{flex:0 0 80px;color:var(--sub);font-family:'JetBrains Mono',monospace;font-size:11px}
+.milestone-bar{flex:1;background:rgba(255,255,255,0.06);border-radius:999px;height:6px}
+.milestone-fill{border-radius:999px;height:100%}
+.bar-amber{background:var(--amber)}
+.bar-green{background:var(--green)}
+.bar-blue{background:var(--blue)}
+.bar-red{background:var(--red)}
+.bar-count{flex:0 0 40px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px}
+.status-pill{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;border-radius:999px;font-weight:500}
+.pill-accepted{background:var(--green-dim);color:var(--green)}
+.pill-rejected{background:var(--red-dim);color:var(--red)}
+.pill-pending{background:var(--amber-dim);color:var(--amber)}
+.pill-in-progress{background:rgba(167,139,250,0.15);color:#a78bfa}
+.pill-field-testing{background:rgba(251,191,36,0.15);color:#fbbf24}
+.pill-deployed{background:var(--green-dim);color:var(--green)}
+.pill-completed{background:rgba(74,222,128,0.25);color:#22d3ee}
+.section-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.skeleton{background:linear-gradient(90deg,rgba(255,255,255,0.04) 0%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.04) 100%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px;height:20px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skeleton-block{background:rgba(255,255,255,0.04);border-radius:12px;padding:22px}
+.error-banner{background:var(--red-dim);border:1px solid rgba(248,113,113,0.3);border-radius:12px;padding:14px;color:var(--red);font-size:13px;margin-bottom:14px}
+</style>
+</head>
+<body>
+<header>
+  <h1>SAMAADHAN</h1>
+  <span class="badge">CONTROL</span>
+  <span id="last-update" class="sync">
+    <span class="dot">●</span> Loading metrics…
+  </span>
+  <button class="accent" onclick="refreshAll()" style="margin-left:8px">↻ Refresh</button>
+</header>
+
+<main>
+  <div class="grid">
+    <section class="card">
+      <h2><span class="icon">📋</span>Problem Pipeline</h2>
+      <div class="mg">
+        <div class="mg-item"><div class="metric" id="total-problems">—</div><div class="metric-label">Total problems</div></div>
+        <div class="mg-item"><div class="metric" id="pending-analysis">—</div><div class="metric-label">Awaiting AI analysis</div></div>
+        <div class="mg-item"><div class="metric" id="analyzed">—</div><div class="metric-label">Analyzed</div></div>
+        <div class="mg-item"><div class="metric" id="high-priority" style="color:var(--red)">—</div><div class="metric-label">High / Critical priority</div></div>
+      </div>
+    </section>
+    <section class="card">
+      <h2><span class="icon">🎓</span>University Pipeline</h2>
+      <div class="mg">
+        <div class="mg-item"><div class="metric" id="verified-unis">—</div><div class="metric-label">Verified institutions</div></div>
+        <div class="mg-item"><div class="metric" id="pending-assignments">—</div><div class="metric-label">Pending assignments</div></div>
+        <div class="mg-item"><div class="metric" id="total-assignments">—</div><div class="metric-label">Total assignments</div></div>
+        <div class="mg-item"><div class="metric" id="timeout-count" style="color:#fbbf24">—</div><div class="metric-label">Timeouts (72h)</div></div>
+      </div>
+    </section>
+    <section class="card">
+      <h2><span class="icon">🚀</span>Project Lifecycle</h2>
+      <div class="mg">
+        <div class="mg-item"><div class="metric" id="active-projects">—</div><div class="metric-label">In progress</div></div>
+        <div class="mg-item"><div class="metric" id="total-projects">—</div><div class="metric-label">Total projects</div></div>
+        <div class="mg-item"><div class="metric" id="completed-projects" style="color:var(--green)">—</div><div class="metric-label">Completed</div></div>
+        <div class="mg-item"><div class="metric" id="deployed-projects" style="color:var(--green)">—</div><div class="metric-label">Deployed</div></div>
+      </div>
+    </section>
+    <section class="card">
+      <h2><span class="icon">🔍</span>AI & Routing</h2>
+      <div class="mg">
+        <div class="mg-item"><div class="metric" id="duplicates">—</div><div class="metric-label">Duplicate links</div></div>
+        <div class="mg-item"><div class="metric" id="declinations" style="color:#fbbf24">—</div><div class="metric-label">Declinations</div></div>
+        <div class="mg-item"><div class="metric" id="milestones-total">—</div><div class="metric-label">Total milestones</div></div>
+        <div class="mg-item"><div class="metric" id="milestones-verified" style="color:var(--green)">—</div><div class="metric-label">Milestones verified</div></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="grid-2">
+    <section class="card">
+      <h2><span class="icon">📊</span>Project Status Distribution</h2>
+      <div class="section-title" style="font-size:12px;color:var(--sub)">Lifecycle — <span id="total-projects-label">0</span> total</div>
+      <div class="lifecycle-bar" id="lifecycle-bar">
+        <div class="lifecycle-segment segment-proposed" id="seg-proposed" style="width:0%"></div>
+        <div class="lifecycle-segment segment-in-progress" id="seg-in-progress" style="width:0%"></div>
+        <div class="lifecycle-segment segment-field-testing" id="seg-field-testing" style="width:0%"></div>
+        <div class="lifecycle-segment segment-deployed" id="seg-deployed" style="width:0%"></div>
+        <div class="lifecycle-segment segment-completed" id="seg-completed" style="width:0%"></div>
+      </div>
+      <div class="lifecycle-legend" id="lifecycle-legend"></div>
+    </section>
+    <section class="card">
+      <h2><span class="icon">📂</span>Problems by Category</h2>
+      <div class="cat-list" id="cat-list"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+    </section>
+  </div>
+
+  <section class="card" style="grid-column:1/-1">
+    <h2><span class="icon">🆕</span>Recent Problems</h2>
+    <div class="table-wrap">
+      <table id="recent-problems-table">
+        <thead><tr><th>#</th><th>Title</th><th>Category</th><th>Priority</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+        <tbody id="recent-problems-body"><tr><td colspan="7" style="text-align:center;color:var(--sub);padding:24px">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="grid-2">
+    <section class="card">
+      <h2><span class="icon">🧠</span>Adaptive Learning — Penalty λ</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>University</th><th>Category</th><th>Penalty λ</th><th>Samples</th><th>Last Reason</th></tr></thead>
+          <tbody id="learning-body"><tr><td colspan="5" style="text-align:center;color:var(--sub);padding:16px">Loading…</td></tr></tbody>
+        </table>
+      </div>
+      <div class="actions">
+        <button class="accent" id="btn-scan" onclick="runTimeoutScan()">▶ Run Timeout Scan</button>
+        <button onclick="location.href='/api/admin/assignment-history'">📜 Audit Log</button>
+        <button onclick="location.href='/api/admin/learning-adjustments'">📉 Full Learning Table</button>
+      </div>
+    </section>
+    <section class="card">
+      <h2><span class="icon">🏁</span>Milestone Progress</h2>
+      <div id="milestone-progress">
+        <div class="milestone-row"><span class="milestone-label">Pending</span><div class="milestone-bar"><div class="milestone-fill bar-amber" id="bar-pending" style="width:0%"></div></div><span class="bar-count" id="count-pending">0</span></div>
+        <div class="milestone-row"><span class="milestone-label">In Progress</span><div class="milestone-bar"><div class="milestone-fill bar-amber" id="bar-in-progress" style="width:0%"></div></div><span class="bar-count" id="count-in-progress">0</span></div>
+        <div class="milestone-row"><span class="milestone-label">Submitted</span><div class="milestone-bar"><div class="milestone-fill bar-amber" id="bar-submitted" style="width:0%"></div></div><span class="bar-count" id="count-submitted">0</span></div>
+        <div class="milestone-row"><span class="milestone-label">Verified</span><div class="milestone-bar"><div class="milestone-fill bar-green" id="bar-verified" style="width:0%"></div></div><span class="bar-count" id="count-verified">0</span></div>
+      </div>
+      <div style="margin-top:16px">
+        <div class="section-title" style="font-size:11px">Impact Metrics</div>
+        <div class="impact-grid" id="impact-grid">
+          <div class="impact-card"><div class="num" id="impact-projects">0</div><div class="label">Active projects</div></div>
+          <div class="impact-card"><div class="num" id="impact-verified">0</div><div class="label">Milestones done</div></div>
+          <div class="impact-card"><div class="num" id="impact-assignments">0</div><div class="label">Assignments</div></div>
+          <div class="impact-card"><div class="num" id="impact-timeouts" style="color:#fbbf24">0</div><div class="label">Timeouts</div></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2><span class="icon">⚡</span>System Health</h2>
+    <div class="grid" style="gap:12px">
+      <div style="display:flex;align-items:center;gap:10px"><div id="health-db" style="width:10px;height:10px;border-radius:50%;background:var(--green)"></div><span style="font-size:13px">Database <span id="health-db-label">connected</span></span></div>
+      <div style="display:flex;align-items:center;gap:10px"><div id="health-api" style="width:10px;height:10px;border-radius:50%;background:var(--amber)"></div><span style="font-size:13px">AI pipeline <span id="health-api-label">operational</span></span></div>
+      <div style="display:flex;align-items:center;gap:10px"><div id="health-assignments" style="width:10px;height:10px;border-radius:50%;background:var(--amber)"></div><span style="font-size:13px"><span id="health-pending-label">0</span> assignments awaiting response</span></div>
+      <div style="display:flex;align-items:center;gap:10px"><div id="health-timeout" style="width:10px;height:10px;border-radius:50%;background:#fbbf24"></div><span style="font-size:13px"><span id="health-timeout-label">0</span> timed-out (72h)</span></div>
+    </div>
+    <div class="actions" style="margin-top:16px">
+      <button class="accent" onclick="runTimeoutScan()">▶ Scan for Timeouts (72h)</button>
+      <button class="warn" onclick="location.href='/api/admin/learning-adjustments'">🧠 View Adaptive Penalty Table</button>
+      <button onclick="location.href='/api/admin/assignment-history'">📜 Assignment Audit Trail</button>
+    </div>
+  </section>
+</main>
+
+<script>
+const STATUS_COLORS={proposed:'#60a5fa',in_progress:'#C9A227',field_testing:'#a78bfa',deployed:'#4ade80',completed:'#22d3ee',accepted:'#4ade80',pending:'#C9A227',rejected:'#f87171'};
+const PRIORITY_COLORS={critical:'red',high:'warn',medium:'blue',low:'ok'};
+function pill(status){const cls=`pill-${status.replace(/_/g,'-')}`;return `<span class="status-pill ${cls}">${status.replace(/_/g,' ')}</span>`;}
+function tagPriority(level){const cls=PRIORITY_COLORS[level]||'blue';return `<span class="tag ${cls}">${level}</span>`;}
+async function refreshAll(){const btn=document.querySelector('button.accent');if(btn){btn.disabled=true;btn.textContent='↻ Loading…';}try{const res=await fetch('/api/dashboard/admin');if(!res.ok)throw new Error('API error '+res.status);const d=await res.json();renderAll(d);}catch(e){console.error('Dashboard refresh failed:',e);document.getElementById('last-update').innerHTML='<span style="color:var(--red)">✗ Failed to load — '+e.message+'</span>';}if(btn){btn.disabled=false;btn.textContent='↻ Refresh';}document.getElementById('last-update').innerHTML='<span class="dot">●</span> Updated '+new Date().toLocaleTimeString();}
+function renderAll(d){set('#total-problems',d.total_problems);set('#pending-analysis',d.pending_ai_analysis);set('#analyzed',d.analyzed);set('#high-priority',d.high_priority);set('#verified-unis',d.verified_universities);set('#pending-assignments',d.pending_assignments);set('#total-assignments',d.total_assignments);set('#timeout-count',d.timeout_count);set('#active-projects',d.active_projects);set('#total-projects',d.total_projects);set('#completed-projects',d.completed_projects);set('#deployed-projects',d.deployed_projects);set('#duplicates',d.duplicate_links);set('#declinations',d.declination_count);set('#milestones-total',d.milestones);set('#milestones-verified',d.milestone_verified);
+const breakdown={};(d.project_status_breakdown||[]).forEach(s=>breakdown[s.status]=s.count);const total=d.total_projects||1;const states=['proposed','in_progress','field_testing','deployed','completed'];const labels=['Proposed','In Progress','Field Testing','Deployed','Completed'];const segs=['seg-proposed','seg-in-progress','seg-field-testing','seg-deployed','seg-completed'];const colors=['#60a5fa','#C9A227','#a78bfa','#4ade80','#22d3ee'];let legendHTML='';states.forEach((s,i)=>{const pct=Math.max(0,Math.round((breakdown[s]||0)/total*100));document.getElementById(segs[i]).style.width=pct+'%';legendHTML+=`<span class="legend-item"><span class="legend-dot" style="background:${colors[i]}"></span>${labels[i]} ${pct}%</span>`;});document.getElementById('lifecycle-legend').innerHTML=legendHTML;document.getElementById('total-projects-label').textContent=total;
+renderCategories(d.problems_by_category||[]);renderRecentProblems(d.recent_problems||[]);renderLearning(d.learning_adjustments||[]);
+const msTotal=d.milestones||1;const statuses=['pending','in_progress','submitted','verified'];const bars=['bar-pending','bar-in-progress','bar-submitted','bar-verified'];const counts=['count-pending','count-in-progress','count-submitted','count-verified'];const milestoneCounts={pending:d.milestone_pending||0,verified:d.milestone_verified||0,in_progress:0,submitted:0};statuses.forEach((s,i)=>{const pct=Math.round((milestoneCounts[s]||0)/msTotal*100);document.getElementById(bars[i]).style.width=pct+'%';document.getElementById(counts[i]).textContent=milestoneCounts[s]||0;});
+set('#impact-projects',d.active_projects);set('#impact-verified',d.milestone_verified);set('#impact-assignments',d.total_assignments);set('#impact-timeouts',d.timeout_count);set('#health-pending-label',d.pending_assignments);set('#health-timeout-label',d.timeout_count);}
+function renderCategories(cats){const container=document.getElementById('cat-list');if(!cats.length){container.innerHTML='<div style="font-size:12px;color:var(--sub);padding:8px 0">No categorized problems yet</div>';return;}const max=Math.max(...cats.map(c=>c.count),1);container.innerHTML=cats.map(c=>{const pct=Math.round(c.count/max*100);return `<div class="cat-item"><span class="cat-name">${c.category||'Unknown'}</span><div class="cat-bar-wrap"><div class="cat-bar" style="width:${pct}%"></div></div><span class="cat-count">${c.count}</span></div>`;}).join('');}
+function renderRecentProblems(problems){const tbody=document.getElementById('recent-problems-body');if(!problems.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--sub);padding:24px">No problems submitted yet</td></tr>';return;}tbody.innerHTML=problems.map(p=>`<tr><td style="font-family:'JetBrains Mono',monospace">#${p.id}</td><td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.title}">${p.title}</td><td><span class="tag blue">${p.category||'—'}</span></td><td>${tagPriority(p.priority_level)}</td><td>${pill(p.status)}</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--sub)">${fmtDate(p.created_at)}</td><td><button onclick="analyzeProblem(${p.id})" style="padding:4px 8px;font-size:11px">AI Analyze</button><button onclick="viewMatches(${p.id})" style="padding:4px 8px;font-size:11px">Matches</button><button onclick="viewHistory(${p.id})" style="padding:4px 8px;font-size:11px">History</button></td></tr>`).join('');}
+function renderLearning(learning){const tbody=document.getElementById('learning-body');if(!learning.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--sub);padding:16px">No learning data yet — penalties accumulate as universities decline assignments</td></tr>';return;}tbody.innerHTML=learning.map(l=>{const lambda=parseFloat(l.penalty_factor||1).toFixed(3);const color=lambda<0.65?'var(--red)':lambda<0.80?'#fbbf24':'var(--amber)';return `<tr><td style="font-weight:500">${l.university_name||'#'+l.university_id}</td><td><span class="tag blue">${l.category||'General'}</span></td><td><span style="font-family:'JetBrains Mono',monospace;color:${color};font-weight:600">${lambda}</span></td><td style="font-family:'JetBrains Mono',monospace">${l.sample_count||0}</td><td style="font-size:11px;color:var(--sub)">${l.last_reason||'—'}</td></tr>`;}).join('');}
+async function runTimeoutScan(){const btn=document.getElementById('btn-scan');if(btn){btn.disabled=true;btn.textContent='⏳ Scanning…';}try{const res=await fetch('/api/admin/cron/check-timeouts',{method:'POST'});const j=await res.json();alert('Timeout scan complete — expired: '+(j.expired_ids?j.expired_ids.length:'unknown')+' assignment(s)');refreshAll();}catch(e){alert('Timeout scan failed: '+e.message);}if(btn){btn.disabled=false;btn.textContent='▶ Run Timeout Scan';}}
+async function analyzeProblem(id){if(!confirm('Run AI analysis on problem #'+id+'?'))return;try{const res=await fetch('/api/problems/'+id+'/analyze',{method:'POST'});const j=await res.json();if(j.error)alert('Error: '+j.error);else{alert('Analysis complete for #'+id+'\nCategory: '+j.classification?.category+'\nPriority: '+j.priority?.level+'\nMatches: '+j.matches?.length);refreshAll();}}catch(e){alert('Analysis failed: '+e.message);}}
+async function viewMatches(id){window.open('/api/problems/'+id+'/matches','_blank');}
+async function viewHistory(id){window.open('/api/admin/assignments/'+id+'/history','_blank');}
+function set(sel,val){const el=document.querySelector(sel);if(el)el.textContent=val??'—';}
+function fmtDate(str){if(!str)return'—';try{return new Date(str).toLocaleDateString();}catch{return str;}}
+refreshAll();
+</script>
+</body>
+</html>

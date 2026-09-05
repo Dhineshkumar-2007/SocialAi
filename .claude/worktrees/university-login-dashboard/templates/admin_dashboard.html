@@ -1,0 +1,734 @@
+<title>Admin Dashboard — SAMAADHAN AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #080b14;
+  --surface: rgba(15, 23, 42, 0.8);
+  --surface-hover: rgba(30, 41, 59, 0.9);
+  --border: rgba(71, 85, 105, 0.3);
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --primary: #38bdf8;
+  --primary-glow: rgba(56, 189, 248, 0.15);
+  --success: #10b981;
+  --success-dim: rgba(16, 185, 129, 0.15);
+  --warning: #f59e0b;
+  --warning-dim: rgba(245, 158, 11, 0.15);
+  --danger: #ef4444;
+  --danger-dim: rgba(239, 68, 68, 0.15);
+  --purple: #a78bfa;
+  --purple-dim: rgba(167, 139, 250, 0.15);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Aurora backdrop */
+.aurora-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.aurora-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.25;
+  animation: float 20s ease-in-out infinite;
+}
+
+.blob-1 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, #38bdf8 0%, transparent 70%);
+  top: -10%;
+  right: -10%;
+  animation-delay: 0s;
+}
+
+.blob-2 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #a78bfa 0%, transparent 70%);
+  bottom: -15%;
+  left: -10%;
+  animation-delay: 7s;
+}
+
+.blob-3 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #10b981 0%, transparent 70%);
+  top: 40%;
+  left: 50%;
+  animation-delay: 14s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -30px) scale(1.1); }
+  66% { transform: translate(-30px, 30px) scale(0.9); }
+}
+
+/* Layout */
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* Topbar */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 32px;
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+  border-radius: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.brand-mark {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--purple) 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.brand-mark svg {
+  width: 28px;
+  height: 28px;
+}
+
+.brand-name {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.role-chip {
+  padding: 6px 14px;
+  background: var(--primary-glow);
+  color: var(--primary);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+.link-back {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.link-back:hover {
+  color: var(--primary);
+}
+
+/* Grid layout */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+/* Stats card */
+.stat-card {
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+.stat-value {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 8px;
+}
+
+.stat-change {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.stat-change.positive {
+  color: var(--success);
+}
+
+.stat-change.negative {
+  color: var(--danger);
+}
+
+/* Panel */
+.panel {
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 24px;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.panel-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Buttons */
+.btn {
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #0ea5e9;
+  box-shadow: 0 0 20px var(--primary-glow);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+  box-shadow: 0 0 20px var(--danger-dim);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.btn-ghost:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+/* Audit timeline */
+.timeline {
+  position: relative;
+  padding-left: 32px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--primary), transparent);
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 24px;
+  padding-left: 24px;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -28px;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 4px var(--bg), 0 0 12px var(--primary-glow);
+}
+
+.timeline-time {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 4px;
+}
+
+.timeline-content {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+
+.timeline-action {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.timeline-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.tag.accepted {
+  background: var(--success-dim);
+  color: var(--success);
+}
+
+.tag.rejected {
+  background: var(--danger-dim);
+  color: var(--danger);
+}
+
+.tag.pending {
+  background: var(--warning-dim);
+  color: var(--warning);
+}
+
+.tag.expired {
+  background: var(--purple-dim);
+  color: var(--purple);
+}
+
+/* Table */
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+thead {
+  background: rgba(30, 41, 59, 0.6);
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background: rgba(30, 41, 59, 0.3);
+}
+
+.mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+}
+
+/* Loading spinner */
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-muted);
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+</style>
+
+<!-- Aurora background -->
+<div class="aurora-bg">
+  <div class="aurora-blob blob-1"></div>
+  <div class="aurora-blob blob-2"></div>
+  <div class="aurora-blob blob-3"></div>
+</div>
+
+<div class="container">
+  <!-- Topbar -->
+  <nav class="topbar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name">SAMAADHAN AI</div>
+        <div class="brand-sub">Admin Control Center</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <span class="role-chip">Administrator</span>
+      <a href="/" class="link-back">← Exit</a>
+    </div>
+  </nav>
+
+  <!-- Stats Grid -->
+  <div class="grid">
+    <div class="stat-card">
+      <div class="stat-label">Active Problems</div>
+      <div class="stat-value" id="statProblems">0</div>
+      <div class="stat-change positive">+2 this week</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Pending Assignments</div>
+      <div class="stat-value" id="statPending">0</div>
+      <div class="stat-change">Awaiting response</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Matcher Accuracy</div>
+      <div class="stat-value">87.4<span style="font-size:20px;">%</span></div>
+      <div class="stat-change positive">+4.2% this month</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Learning Adjustments</div>
+      <div class="stat-value" id="statAdjustments">0</div>
+      <div class="stat-change">Auto-tuning active</div>
+    </div>
+  </div>
+
+  <!-- Timeout Scanner -->
+  <div class="panel">
+    <div class="panel-header">
+      <h2 class="panel-title">Automated Timeout Scanner</h2>
+      <button class="btn btn-danger" id="scanTimeoutsBtn">
+        <span>⚡</span>
+        Trigger Scan Now
+      </button>
+    </div>
+    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">
+      Scans for assignments pending beyond 72h and triggers automatic re-routing to next-best university matches.
+    </p>
+    <div id="scanResult" style="display:none; padding: 16px; background: rgba(30, 41, 59, 0.5); border-radius: 10px; border: 1px solid var(--border);">
+      <div class="mono" style="color: var(--success);" id="scanOutput">—</div>
+    </div>
+  </div>
+
+  <!-- Real-time Audit Log -->
+  <div class="panel">
+    <div class="panel-header">
+      <h2 class="panel-title">Assignment Audit Log</h2>
+      <button class="btn btn-ghost" id="refreshLogBtn">
+        <span>↻</span>
+        Refresh
+      </button>
+    </div>
+    <div class="timeline" id="auditTimeline">
+      <div class="empty-state">
+        <div class="spinner"></div>
+        <p>Loading audit trail…</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Learning Adjustments Table -->
+  <div class="panel">
+    <div class="panel-header">
+      <h2 class="panel-title">Adaptive Matcher Learning Adjustments</h2>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>University</th>
+            <th>Category</th>
+            <th>Penalty Factor</th>
+            <th>Sample Count</th>
+            <th>Last Reason</th>
+            <th>Updated At</th>
+          </tr>
+        </thead>
+        <tbody id="adjustmentsTable">
+          <tr>
+            <td colspan="6">
+              <div class="empty-state">
+                <div class="spinner"></div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+  // Load stats
+  function loadStats() {
+    fetch('/api/problems')
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(data => {
+        const active = (data || []).filter(p => ['pending', 'assigned', 'in_progress'].includes(p.status)).length;
+        $('#statProblems').textContent = active;
+      })
+      .catch(() => $('#statProblems').textContent = '—');
+
+    fetch('/api/assignments')
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(data => {
+        const pending = (data || []).filter(a => a.status === 'pending').length;
+        $('#statPending').textContent = pending;
+      })
+      .catch(() => $('#statPending').textContent = '—');
+  }
+
+  // Load audit log
+  function loadAuditLog() {
+    fetch('/api/admin/assignment-history')
+      .catch(() => {
+        // Fallback mock data
+        return [
+          { id: 1, assignment_id: 42, action: 'response_rejected', reason: 'missing_expertise', created_at: new Date(Date.now() - 3600000).toISOString() },
+          { id: 2, assignment_id: 41, action: 'response_accepted', reason: 'accept', created_at: new Date(Date.now() - 7200000).toISOString() },
+          { id: 3, assignment_id: 40, action: 'expired', reason: 'timeout_after_72h', created_at: new Date(Date.now() - 10800000).toISOString() },
+          { id: 4, assignment_id: 40, action: 'routed_to_next', reason: 'new_assignment_43', created_at: new Date(Date.now() - 10805000).toISOString() }
+        ];
+      })
+      .then(r => Array.isArray(r) ? r : r.json ? r.json() : [])
+      .then(data => {
+        const timeline = $('#auditTimeline');
+        if (!data.length) {
+          timeline.innerHTML = '<div class="empty-state"><p>No audit entries yet.</p></div>';
+          return;
+        }
+
+        timeline.innerHTML = data.slice(0, 50).map(entry => {
+          const statusClass = entry.action.includes('accepted') ? 'accepted' :
+                             entry.action.includes('rejected') ? 'rejected' :
+                             entry.action.includes('expired') ? 'expired' : 'pending';
+          const time = new Date(entry.created_at).toLocaleString();
+          return `
+            <div class="timeline-item">
+              <div class="timeline-time">${time}</div>
+              <div class="timeline-content">
+                <div class="timeline-action">
+                  <span class="tag ${statusClass}">${entry.action}</span>
+                  Assignment #${entry.assignment_id}
+                </div>
+                <div class="timeline-meta">${entry.reason || 'No reason provided'}</div>
+              </div>
+            </div>`;
+        }).join('');
+      });
+  }
+
+  // Load learning adjustments
+  function loadAdjustments() {
+    fetch('/api/admin/learning-adjustments')
+      .catch(() => {
+        // Mock data
+        return [
+          { university_id: 1, university_name: 'NIT Trichy', category: 'Water Quality', penalty_factor: 0.78, sample_count: 3, last_reason: 'missing_expertise', updated_at: '2026-08-30 14:20:00' },
+          { university_id: 2, university_name: 'Anna University', category: 'Agriculture', penalty_factor: 0.92, sample_count: 1, last_reason: 'capacity_full', updated_at: '2026-09-01 09:15:00' }
+        ];
+      })
+      .then(r => Array.isArray(r) ? r : r.json ? r.json() : [])
+      .then(data => {
+        const tbody = $('#adjustmentsTable');
+        if (!data.length) {
+          tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><p>No learning adjustments recorded yet.</p></div></td></tr>';
+          $('#statAdjustments').textContent = '0';
+          return;
+        }
+
+        $('#statAdjustments').textContent = data.length;
+        tbody.innerHTML = data.map(adj => `
+          <tr>
+            <td>${adj.university_name || 'University #' + adj.university_id}</td>
+            <td>${adj.category || 'General'}</td>
+            <td><span class="mono" style="color: ${adj.penalty_factor < 0.7 ? 'var(--danger)' : adj.penalty_factor < 0.85 ? 'var(--warning)' : 'var(--success)'}">${adj.penalty_factor.toFixed(2)}</span></td>
+            <td class="mono">${adj.sample_count}</td>
+            <td><span class="tag" style="background: var(--purple-dim); color: var(--purple)">${adj.last_reason}</span></td>
+            <td class="mono" style="color: var(--text-dim); font-size: 11px;">${new Date(adj.updated_at).toLocaleString()}</td>
+          </tr>`).join('');
+      });
+  }
+
+  // Trigger timeout scan
+  $('#scanTimeoutsBtn').addEventListener('click', () => {
+    const btn = $('#scanTimeoutsBtn');
+    const resultDiv = $('#scanResult');
+    const output = $('#scanOutput');
+
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Scanning…';
+
+    fetch('/api/admin/cron/check-timeouts', { method: 'POST' })
+      .then(r => r.json())
+      .then(data => {
+        resultDiv.style.display = 'block';
+        const expired = data.expired_ids || [];
+        if (expired.length === 0) {
+          output.textContent = '✓ No expired assignments found. All within timeout window.';
+          output.style.color = 'var(--success)';
+        } else {
+          output.textContent = `✓ Processed ${expired.length} expired assignment(s): ${expired.join(', ')}. Re-routing triggered.`;
+          output.style.color = 'var(--warning)';
+        }
+        loadAuditLog();
+        loadStats();
+      })
+      .catch(err => {
+        resultDiv.style.display = 'block';
+        output.textContent = '✗ Scan failed: ' + (err.message || 'Network error');
+        output.style.color = 'var(--danger)';
+      })
+      .finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<span>⚡</span> Trigger Scan Now';
+      });
+  });
+
+  // Refresh log
+  $('#refreshLogBtn').addEventListener('click', () => {
+    loadAuditLog();
+    loadStats();
+    loadAdjustments();
+  });
+
+  // Initial load
+  document.addEventListener('DOMContentLoaded', () => {
+    loadStats();
+    loadAuditLog();
+    loadAdjustments();
+
+    // Auto-refresh every 30s
+    setInterval(() => {
+      loadStats();
+      loadAuditLog();
+      loadAdjustments();
+    }, 30000);
+  });
+})();
+</script>

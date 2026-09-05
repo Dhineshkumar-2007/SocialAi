@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#182242"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SocialSolve"><meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="/static/manifest.json"><link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+<title>University Dashboard · SocialSolve</title>
+<link rel="stylesheet" href="/static/css/socialsolve.css">
+<style>
+.dash-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:14px; margin-bottom:20px; }
+@media (max-width: 1280px) { .dash-grid { grid-template-columns:repeat(3,1fr); } }
+@media (max-width: 720px)  { .dash-grid { grid-template-columns:repeat(2,1fr); } }
+.metric-tile { background:#fff; border:1px solid var(--line); border-radius:14px; padding:18px 18px 16px; position:relative; overflow:hidden; }
+.metric-tile::before { content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--green); }
+.metric-tile.amber::before { background:#d99a2a; }
+.metric-tile.red::before   { background:#c14040; }
+.metric-tile.blue::before  { background:#2a6cd9; }
+.metric-tile small { display:block; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:700; }
+.metric-tile strong { display:block; font-family:Manrope; font-size:30px; margin-top:6px; color:var(--ink); }
+.metric-tile .delta { font-size:11px; color:var(--muted); margin-top:4px; }
+.tile-icon { position:absolute; right:14px; top:14px; font-size:18px; opacity:.4; }
+.section-grid { display:grid; grid-template-columns:1.4fr 1fr; gap:18px; }
+@media (max-width: 980px) { .section-grid { grid-template-columns:1fr; } }
+.assignment-card { border:1px solid var(--line); border-radius:14px; padding:16px; margin-top:12px; background:#fff; transition:border-color .15s; }
+.assignment-card:hover { border-color:var(--green); }
+.assignment-card .row1 { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+.assignment-card h4 { font-size:15px; margin-top:6px; }
+.match-bar { display:flex; align-items:center; gap:10px; margin-top:10px; font-size:12px; }
+.match-bar .mini-bar { flex:1; }
+.routing-pill { display:inline-flex; align-items:center; gap:5px; background:var(--mint); color:var(--green2); padding:3px 9px; border-radius:99px; font-size:11px; font-weight:700; }
+.btn-row { display:flex; gap:8px; margin-top:12px; }
+.explain-modal { position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; z-index:50; }
+.explain-modal.open { display:flex; }
+.explain-card { background:#fff; border-radius:18px; padding:24px; max-width:560px; width:92%; }
+.explain-row { display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px dashed var(--line); }
+.explain-row:last-child { border-bottom:none; }
+.explain-row span:last-child { font-family:Manrope; font-weight:700; color:var(--green); }
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+  <a class="logo" href="/"><span class="logo-mark">S</span>SocialSolve</a>
+  <nav>
+    <a class="active" href="/university">Overview</a>
+    <a href="/university/challenges">Challenges</a>
+    <a href="/university/projects">Projects</a>
+    <a href="/university/profile">Profile</a>
+  </nav>
+</aside>
+<main class="main">
+  <div class="top">
+    <div>
+      <h1 id="greeting">University Dashboard</h1>
+      <p id="uniName">Loading your institution profile…</p>
+    </div>
+    <span class="tag green">Only your assignments</span>
+  </div>
+
+  <!-- 6 Metric tiles -->
+  <div class="dash-grid">
+    <div class="metric-tile"><span class="tile-icon">📥</span><small>Assigned to You</small><strong id="m-assigned">—</strong><div class="delta">Problems routed to you</div></div>
+    <div class="metric-tile amber"><span class="tile-icon">👀</span><small>Pending Review</small><strong id="m-pending">—</strong><div class="delta">Awaiting your decision</div></div>
+    <div class="metric-tile blue"><span class="tile-icon">🔧</span><small>Active Projects</small><strong id="m-active">—</strong><div class="delta">In progress now</div></div>
+    <div class="metric-tile"><span class="tile-icon">✅</span><small>Completed</small><strong id="m-completed">—</strong><div class="delta">Solutions delivered</div></div>
+    <div class="metric-tile amber"><span class="tile-icon">🪪</span><small>Awaiting Verification</small><strong id="m-awaiting">—</strong><div class="delta">Citizen sign-off pending</div></div>
+    <div class="metric-tile"><span class="tile-icon">📈</span><small>Success Rate</small><strong id="m-success">—</strong><div class="delta">Completed / attempted</div></div>
+  </div>
+
+  <div class="section-grid">
+    <!-- Assigned Problems -->
+    <section class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+        <div>
+          <h3>Your assigned problems</h3>
+          <p class="panel-sub" style="margin-bottom:0">Only problems that the AI routing engine has assigned to your institution.</p>
+        </div>
+        <a class="btn btn-ghost" href="/university/challenges" style="font-size:13px;padding:7px 12px">View all</a>
+      </div>
+      <div id="assignmentList">
+        <div class="empty">Loading your assignments…</div>
+      </div>
+    </section>
+
+    <!-- Routing History & Side widgets -->
+    <div>
+      <section class="panel" style="margin-bottom:18px">
+        <h3>Routing history</h3>
+        <p class="panel-sub">Every problem you were offered, including declines and reroutes.</p>
+        <div id="routingList" style="margin-top:10px"><div class="empty" style="font-size:13px">No routing activity yet.</div></div>
+      </section>
+
+      <section class="panel">
+        <h3>Active projects</h3>
+        <p class="panel-sub">Solutions you are currently building.</p>
+        <div id="projectList" style="margin-top:10px"><div class="empty" style="font-size:13px">No active projects. Accept a challenge to begin.</div></div>
+      </section>
+    </div>
+  </div>
+</main>
+</div>
+
+<!-- "Why selected" explainability modal -->
+<div class="explain-modal" id="explainModal">
+  <div class="explain-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <h3 style="margin:0">Why your university was selected</h3>
+      <a href="#" onclick="closeExplain(event)" style="color:var(--muted);text-decoration:none;font-size:18px">×</a>
+    </div>
+    <p class="muted" style="font-size:13px;margin-bottom:14px">AI match breakdown for this assignment, based on your institution's profile.</p>
+    <div id="explainBody">Loading…</div>
+    <div style="margin-top:18px;display:flex;gap:8px;justify-content:flex-end">
+      <a href="#" id="explainOpenFull" class="btn btn-soft" style="font-size:13px">Open challenge →</a>
+      <button class="btn btn-primary" onclick="closeExplain(event)" style="font-size:13px">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+const pct = v => Math.max(0, Math.min(100, Math.round((Number(v) || 0) * 100)));
+
+async function cfetch(url, opts = {}) {
+  const r = await fetch(url, { credentials: 'same-origin', ...opts });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw Error(d.error || 'Request failed');
+  return d;
+}
+
+function statusTag(s) {
+  const map = {
+    assigned: ['amber', 'Pending decision'],
+    pending: ['amber', 'Pending decision'],
+    pending_review: ['amber', 'Pending decision'],
+    accepted: ['green', 'Accepted'],
+    declined: ['red', 'Declined'],
+    in_progress: ['green', 'In progress'],
+    completed: ['green', 'Completed'],
+    awaiting_verification: ['amber', 'Awaiting verification'],
+  };
+  const [cls, label] = map[s] || ['', s || '—'];
+  return `<span class="tag ${cls}">${label}</span>`;
+}
+
+function assignmentCard(a) {
+  const score = pct(a.match_score);
+  return `
+  <article class="assignment-card">
+    <div class="row1">
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          ${statusTag(a.status)}
+          <span class="tag">${esc(a.category || '—')}</span>
+        </div>
+        <h4 style="margin:6px 0 4px;overflow:hidden;text-overflow:ellipsis">${esc(a.title || 'Untitled problem')}</h4>
+        <p class="muted" style="font-size:12px;margin:0">${esc(a.address || a.location || 'Location not specified')}</p>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-family:Manrope;font-weight:800;font-size:22px;color:var(--green)">${score}%</div>
+        <div class="muted" style="font-size:11px">AI Match</div>
+      </div>
+    </div>
+    <div class="match-bar">
+      <span class="muted">Match confidence</span>
+      <div class="mini-bar"><i style="width:${score}%"></i></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-soft" data-explain='${esc(JSON.stringify(a))}' style="font-size:12px;padding:6px 11px">Why selected?</button>
+      <a class="btn btn-primary" href="/university/challenges/${a.assignment_id}" style="font-size:12px;padding:6px 11px">Review challenge →</a>
+    </div>
+  </article>`;
+}
+
+function parseReasons(reasons) {
+  if (!reasons) return null;
+  if (typeof reasons === 'object') return reasons;
+  try { return JSON.parse(reasons); } catch { return null; }
+}
+
+function renderExplain(a) {
+  const reasons = parseReasons(a.match_reasons) || {};
+  const fields = [
+    ['Domain match', reasons.domain ?? reasons.domain_match],
+    ['Research areas', reasons.research ?? reasons.research_match],
+    ['Faculty expertise', reasons.faculty ?? reasons.faculty_match],
+    ['Lab / facilities', reasons.lab ?? reasons.lab_match],
+    ['Technology', reasons.technology ?? reasons.technology_match],
+    ['Previous projects', reasons.previous ?? reasons.previous_projects],
+    ['Capacity', reasons.capacity],
+  ].filter(([_, v]) => v !== undefined && v !== null && v !== '');
+  return fields.length
+    ? fields.map(([k, v]) => `<div class="explain-row"><span>${esc(k)}</span><span>${esc(typeof v === 'number' ? Math.round(v * 100) + '%' : v)}</span></div>`).join('')
+    : '<p class="muted">No detailed breakdown is available for this assignment.</p>';
+}
+
+function openExplain(assignment) {
+  const a = JSON.parse(assignment);
+  $('#explainBody').innerHTML = renderExplain(a);
+  $('#explainOpenFull').setAttribute('href', `/university/challenges/${a.assignment_id}`);
+  $('#explainModal').classList.add('open');
+}
+function closeExplain(e) { e.preventDefault(); $('#explainModal').classList.remove('open'); }
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-explain]');
+  if (btn) { e.preventDefault(); openExplain(btn.getAttribute('data-explain')); }
+});
+$('#explainModal').addEventListener('click', e => { if (e.target.id === 'explainModal') closeExplain(e); });
+
+function projectCard(p) {
+  const prog = pct(p.project_progress ?? p.progress);
+  return `
+  <div class="assignment-card" style="margin-top:10px">
+    <div class="row1">
+      <div style="flex:1;min-width:0">
+        ${statusTag(p.project_status || p.status)}
+        <h4 style="margin:6px 0 4px">${esc(p.title || 'Untitled project')}</h4>
+        <p class="muted" style="font-size:12px;margin:0">${esc(p.citizen_name || 'Citizen')} · ${esc(p.category || '')}</p>
+      </div>
+    </div>
+    <div style="margin-top:10px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px">
+        <span>Progress</span><b style="color:var(--ink)">${prog}%</b>
+      </div>
+      <div class="bar"><i style="width:${prog}%"></i></div>
+    </div>
+    <div class="btn-row">
+      <a class="btn btn-soft" href="/university/projects/${p.project_id || p.id}/workspace" style="font-size:12px;padding:6px 11px">Open workspace</a>
+    </div>
+  </div>`;
+}
+
+function routingRow(a) {
+  return `<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px">
+    <div>
+      <b>${esc(a.title || '—')}</b>
+      <div class="muted" style="font-size:11px">${statusTag(a.status)}</div>
+    </div>
+    <div style="text-align:right">
+      <span class="muted" style="font-size:11px">${esc((a.assigned_at || '').slice(0, 10))}</span>
+    </div>
+  </div>`;
+}
+
+async function loadDashboard() {
+  try {
+    const profile = await cfetch('/api/universities/me').catch(() => null);
+    if (profile?.name) {
+      $('#uniName').textContent = `${profile.name} · Your active assignments and projects`;
+      $('#greeting').textContent = `Welcome, ${profile.name}`;
+    }
+
+    const stats = await cfetch('/api/universities/stats').catch(() => null);
+    if (stats) {
+      $('#m-assigned').textContent  = stats.assigned  ?? 0;
+      $('#m-pending').textContent   = stats.pending_review ?? 0;
+      $('#m-active').textContent    = stats.active    ?? 0;
+      $('#m-completed').textContent = stats.completed ?? 0;
+      $('#m-awaiting').textContent  = stats.awaiting_verification ?? 0;
+      $('#m-success').textContent   = `${stats.success_rate ?? 0}%`;
+    }
+
+    const challenges = await cfetch('/api/universities/challenges').catch(() => []);
+    const list = $('#assignmentList');
+    if (challenges.length) {
+      list.innerHTML = challenges.slice(0, 6).map(assignmentCard).join('');
+    } else {
+      list.innerHTML = '<div class="empty">No assignments yet. The AI engine will route new problems to you when a match is found.</div>';
+    }
+
+    const projects = await cfetch('/api/universities/projects').catch(() => []);
+    const pl = $('#projectList');
+    if (projects.length) {
+      pl.innerHTML = projects.slice(0, 3).map(projectCard).join('');
+    } else {
+      pl.innerHTML = '<div class="empty" style="font-size:13px">No active projects. Accept a challenge to begin.</div>';
+    }
+
+    // Routing history (declined or routed-out)
+    const routed = challenges.filter(c => ['declined', 'routed'].includes(c.status));
+    const rl = $('#routingList');
+    if (routed.length) {
+      rl.innerHTML = routed.slice(0, 5).map(routingRow).join('');
+    } else {
+      rl.innerHTML = '<div class="empty" style="font-size:13px">No decline or reroute activity.</div>';
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+loadDashboard();
+</script>
+</body>
+</html>

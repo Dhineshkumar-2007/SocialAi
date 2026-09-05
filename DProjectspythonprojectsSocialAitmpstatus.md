@@ -1,0 +1,1 @@
+Workspace (CSS + HTML), admin_dashboard_simple (rewritten), citizen/dashboard, index, citizen/submit all updated with amber editorial system. Remaining: admin_dashboard.html (old cyan), navbar component.

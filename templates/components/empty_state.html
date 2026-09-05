@@ -1,0 +1,11 @@
+{# Reusable empty state
+   Usage: {% include 'components/empty_state.html' with message='No problems yet' action_url='/citizen/submit' action_label='Report problem' %}
+#}
+<aside class="empty" role="status" aria-live="polite">
+  <div style="font-size:36px;opacity:.6;margin-bottom:8px" aria-hidden="true">📋</div>
+  <h4 style="margin:0 0 4px">{{ message or 'Nothing here yet' }}</h4>
+  {% if hint %}<p class="muted" style="margin:0">{{ hint }}</p>{% endif %}
+  {% if action_url %}
+  <a class="btn btn-primary" href="{{ action_url }}" style="margin-top:14px">{{ action_label or 'Get started' }}</a>
+  {% endif %}
+</aside>

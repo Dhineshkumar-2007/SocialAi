@@ -1,0 +1,76 @@
+<!-- Unified Navigation Component -->
+<!-- Pass: user_role (citizen/university/industry/admin), active_page -->
+
+<nav class="navbar">
+  <a href="/" class="logo"><span class="logo-mark">S</span>SAMAADHAN AI</a>
+
+  <button type="button" class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')" aria-label="Menu">☰</button>
+
+  <div class="nav-links" id="navLinks">
+    {% if user_role %}
+      {# ============ LOGGED IN ============ #}
+      {% if user_role == 'university' %}
+        <a href="/university" {% if active_page == 'dashboard' %}class="active"{% endif %}>Dashboard</a>
+        <a href="/university/challenges" {% if active_page == 'challenges' %}class="active"{% endif %}>Challenges</a>
+        <a href="/workspace" {% if active_page == 'workspace' %}class="active"{% endif %}>Workspace</a>
+        <a href="#" onclick="logout(); return false;">Logout</a>
+      {% elif user_role == 'citizen' %}
+        <a href="/citizen" {% if active_page == 'citizen' %}class="active"{% endif %}>Overview</a>
+        <a href="/citizen/submit" {% if active_page == 'submit' %}class="active"{% endif %}>Report</a>
+        <a href="/citizen/problems" {% if active_page == 'problems' %}class="active"{% endif %}>My Reports</a>
+        <a href="#" onclick="logout(); return false;">Logout</a>
+      {% elif user_role == 'industry' %}
+        <a href="/industry" {% if active_page == 'industry' %}class="active"{% endif %}>Dashboard</a>
+        <a href="#" onclick="logout(); return false;">Logout</a>
+      {% elif user_role == 'admin' %}
+        <a href="/admin" {% if active_page == 'admin' %}class="active"{% endif %}>Admin</a>
+        <a href="#" onclick="logout(); return false;">Logout</a>
+      {% else %}
+        <a href="#" onclick="logout(); return false;">Logout</a>
+      {% endif %}
+    {% else %}
+      {# ============ NOT LOGGED IN ============ #}
+      <a href="/">Home</a>
+      <a href="/register">Create account</a>
+      <a href="/login">Sign in</a>
+      <a href="/university/login">University Login</a>
+    {% endif %}
+  </div>
+</nav>
+
+<style>
+.navbar {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem; height: 64px;
+  background: #182242; backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+}
+.logo { font-family: 'DM Sans', system-ui, sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -0.02em; color: #F2F0EB; text-decoration: none; transition: color .15s; }
+.logo-mark { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: #C9A227; color: #0A0C14; border-radius: 7px; font-size: 16px; font-weight: 800; margin-right: 7px; }
+.logo:hover { color: #C9A227; }
+.nav-toggle { display: none; background: none; border: none; color: #F2F0EB; font-size: 22px; cursor: pointer; padding: 4px 8px; }
+.nav-links { display: flex; align-items: center; gap: 1.5rem; }
+.nav-links a { font-family: 'DM Sans', system-ui, sans-serif; font-size: 0.9rem; font-weight: 600; color: rgba(242,240,235,0.6); text-decoration: none; transition: color .15s; white-space: nowrap; }
+.nav-links a:hover { color: #C9A227; }
+.nav-links a.active { color: #C9A227; position: relative; }
+.nav-links a.active::after { content: ''; position: absolute; bottom: -22px; left: 0; right: 0; height: 2px; background: #C9A227; border-radius: 1px; }
+@media (max-width: 768px) {
+  .navbar { padding: 0 1rem; height: auto; min-height: 64px; align-items: center; }
+  .nav-toggle { display: block; }
+  .nav-links { display: none; flex-direction: column; align-items: stretch; width: 100%; gap: 0; margin-top: 0.5rem; background: #0F1832; border-radius: 10px; overflow: hidden; }
+  .nav-links.open { display: flex; }
+  .nav-links a { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.95rem; text-align: left; }
+  .nav-links a:last-child { border-bottom: none; }
+  .nav-links a.active::after { display: none; }
+  .nav-links a.active { background: rgba(201,162,39,0.08); border-left: 3px solid #C9A227; padding-left: 11px; }
+}
+</style>
+
+<script>
+async function logout() {
+  try { await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }); window.location.href = '/'; }
+  catch (e) { alert('Logout failed.'); }
+}
+</script>

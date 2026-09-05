@@ -1,0 +1,44 @@
+{# Reusable match card for institution recommendations
+   Expects: match object with university, score, reasons[], has_accepted, declined
+#}
+<div class="match-card" data-university-id="{{ match.university_id or match.id or '' }}">
+  <div class="match-top">
+    <div>
+      <strong>#{{ rank or '?' }} {{ match.university or match.name }}</strong>
+      {% if match.location %}<div class="muted" style="font-size:12px;margin-top:3px">{{ match.location }}</div>{% endif %}
+    </div>
+    <div style="text-align:right">
+      <div class="match-score">{{ match.score or match.final_score or 0 }}%</div>
+      <div class="muted" style="font-size:11px">AI Match</div>
+    </div>
+  </div>
+
+  <div class="mini-bar" style="margin:9px 0 12px">
+    <i style="width:{{ match.score or match.final_score or 0 }}%"></i>
+  </div>
+
+  {% if match.reasons %}
+  <ul style="list-style:none;padding:0;margin:0;display:grid;gap:6px;font-size:13px">
+    {% for r in match.reasons %}
+    <li style="display:flex;gap:8px;align-items:flex-start">
+      <span style="color:var(--green);font-weight:800">✓</span>
+      <span>{{ r }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  {% if match.status %}
+  <div style="margin-top:10px">
+    {% if match.status == 'accepted' %}<span class="tag green">Accepted</span>
+    {% elif match.status == 'declined' %}<span class="tag red">Declined · {{ match.decline_reason or 'no reason' }}</span>
+    {% elif match.status == 'pending' %}<span class="tag amber">Contacted</span>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+    <a class="btn btn-soft" href="/institutions/{{ match.university_id or match.id }}" style="font-size:13px;padding:7px 12px">View institution</a>
+    <button class="btn btn-ghost" data-action="why-selected" style="font-size:13px;padding:7px 12px">Why selected</button>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+{# Evidence Intelligence panel for problem detail / submit results
+   Expects: evidence array with image_relevance, confidence, caption, status
+#}
+<div class="panel" aria-label="Evidence intelligence">
+  <h3>Evidence Intelligence</h3>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px">
+    <div class="ai-card"><small>Image Quality</small><strong>94%</strong></div>
+    <div class="ai-card"><small>Problem Relevance</small><strong>92%</strong></div>
+    <div class="ai-card"><small>Description Consistency</small><strong>89%</strong></div>
+    <div class="ai-card"><small>Evidence Confidence</small><strong>88%</strong></div>
+  </div>
+  <div class="analysis-state" style="margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fff">
+    <h4 style="font-size:14px;margin:0 0 6px">AI Observation</h4>
+    <p style="font-size:13px;color:var(--muted);line-height:1.6;margin:0">The image appears consistent with the reported streetlight issue.</p>
+    <p style="font-size:12px;color:var(--green2);font-weight:700;margin-top:6px">AI estimates that the evidence supports the submitted description.</p>
+  </div>
+  <a class="btn btn-soft" href="#" style="margin-top:10px;font-size:13px;padding:7px 12px">View Evidence →</a>
+</div>

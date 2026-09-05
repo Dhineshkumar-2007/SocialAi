@@ -1,0 +1,1943 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account | SOCIOAI</title>
+
+    <style>
+
+        /* =====================================================
+           RESET
+        ===================================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            color: #102d68;
+            background: #f4faff;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        button,
+        input,
+        select {
+            font-family: inherit;
+        }
+
+
+        /* =====================================================
+           NAVBAR
+        ===================================================== */
+
+        .navbar {
+            height: 72px;
+
+            padding: 0 6.7%;
+
+            background: rgba(255,255,255,0.96);
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            position: relative;
+            z-index: 20;
+
+            border-bottom: 1px solid rgba(210,225,242,0.35);
+        }
+
+
+        /* LOGO */
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            color: #102b68;
+
+            font-size: 25px;
+            font-weight: 750;
+
+            letter-spacing: -1px;
+        }
+
+        .logo-symbol {
+            width: 28px;
+            height: 38px;
+
+            position: relative;
+        }
+
+        .logo-symbol::before,
+        .logo-symbol::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 15px;
+            height: 29px;
+
+            border: 5px solid #12bfd1;
+
+            border-radius: 15px;
+
+            transform: rotate(42deg);
+        }
+
+        .logo-symbol::before {
+            left: 3px;
+            top: 0;
+        }
+
+        .logo-symbol::after {
+            left: 9px;
+            top: 9px;
+
+            border-color: #176cf2;
+        }
+
+
+        /* NAV LINKS */
+
+        .nav-links {
+
+            display: flex;
+            align-items: center;
+
+            gap: 37px;
+
+            list-style: none;
+
+            height: 100%;
+        }
+
+        .nav-links a {
+
+            color: #11285c;
+
+            font-size: 13px;
+            font-weight: 500;
+
+            height: 100%;
+
+            display: flex;
+            align-items: center;
+
+            transition: 0.25s;
+        }
+
+        .nav-links a:hover {
+            color: #0871ed;
+        }
+
+
+        /* NAV BUTTONS */
+
+        .nav-actions {
+
+            display: flex;
+            align-items: center;
+
+            gap: 16px;
+        }
+
+        .login-btn {
+
+            width: 80px;
+            height: 36px;
+
+            border-radius: 13px;
+
+            border: 1px solid #9fc4fa;
+
+            background: white;
+
+            color: #006be9;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            cursor: pointer;
+        }
+
+        .get-started {
+
+            width: 110px;
+            height: 37px;
+
+            border: none;
+
+            border-radius: 12px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #1679f7,
+                    #1267dd
+                );
+
+            color: white;
+
+            font-size: 12px;
+            font-weight: 650;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 7px 18px
+                rgba(20,105,235,.20);
+        }
+
+
+        /* =====================================================
+           REGISTER PAGE
+        ===================================================== */
+
+        .register-page {
+
+            min-height: calc(100vh - 72px);
+
+            position: relative;
+
+            overflow: hidden;
+
+            background:
+
+                radial-gradient(
+                    circle at 20% 20%,
+                    rgba(196,229,255,.65),
+                    transparent 35%
+                ),
+
+                linear-gradient(
+                    135deg,
+                    #f0f8ff,
+                    #ffffff 52%,
+                    #eef8ff
+                );
+        }
+
+
+        /* background glow */
+
+        .register-page::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 600px;
+            height: 600px;
+
+            left: -250px;
+            top: 150px;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(170,220,255,.45),
+                    transparent 70%
+                );
+
+            border-radius: 50%;
+        }
+
+
+        .register-container {
+
+            width: 87%;
+
+            max-width: 1340px;
+
+            min-height: calc(100vh - 72px);
+
+            margin: auto;
+
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            align-items: center;
+
+            gap: 60px;
+
+            position: relative;
+
+            z-index: 2;
+
+            padding: 45px 0 55px;
+        }
+
+
+        /* =====================================================
+           LEFT SIDE
+        ===================================================== */
+
+        .register-left {
+
+            min-height: 720px;
+
+            display: flex;
+            flex-direction: column;
+
+            justify-content: center;
+
+            position: relative;
+
+            padding-left: 7px;
+        }
+
+
+        /* badge */
+
+        .join-badge {
+
+            width: fit-content;
+
+            padding: 6px 13px;
+
+            background: #dcecff;
+
+            border-radius: 20px;
+
+            color: #0871ed;
+
+            font-size: 11px;
+
+            font-weight: 700;
+
+            letter-spacing: .4px;
+
+            margin-bottom: 17px;
+        }
+
+
+        /* heading */
+
+        .register-left h1 {
+
+            max-width: 590px;
+
+            color: #102f70;
+
+            font-size: clamp(
+                45px,
+                5vw,
+                64px
+            );
+
+            line-height: 1.02;
+
+            letter-spacing: -2.8px;
+
+            font-weight: 750;
+        }
+
+        .register-left h1 span {
+
+            color: #1674eb;
+        }
+
+
+        /* description */
+
+        .left-description {
+
+            max-width: 520px;
+
+            margin-top: 20px;
+
+            color: #4d6fa5;
+
+            font-size: 17px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =====================================================
+           ROLE BENEFITS
+        ===================================================== */
+
+        .benefits {
+
+            margin-top: 32px;
+
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 30px 45px;
+
+            max-width: 570px;
+        }
+
+        .benefit {
+
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 16px;
+        }
+
+        .benefit-icon {
+
+            width: 54px;
+            height: 54px;
+
+            flex-shrink: 0;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: #e1efff;
+
+            color: #0873ed;
+
+            font-size: 24px;
+
+            box-shadow:
+                inset 0 0 0 1px
+                rgba(80,150,230,.08);
+        }
+
+        .benefit h3 {
+
+            color: #123372;
+
+            font-size: 14px;
+
+            margin-top: 2px;
+
+            margin-bottom: 6px;
+        }
+
+        .benefit p {
+
+            color: #5979a6;
+
+            font-size: 11px;
+
+            line-height: 1.55;
+        }
+
+
+        /* =====================================================
+           CITY ILLUSTRATION
+        ===================================================== */
+
+        .city-scene {
+
+            position: absolute;
+
+            bottom: -55px;
+            left: -80px;
+
+            width: 650px;
+            height: 210px;
+
+            overflow: hidden;
+
+            opacity: .68;
+        }
+
+
+        /* hills */
+
+        .hill {
+
+            position: absolute;
+
+            border-radius: 50% 50% 0 0;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #b5dded,
+                    #dceff8
+                );
+        }
+
+        .hill.one {
+
+            width: 500px;
+            height: 160px;
+
+            left: -100px;
+            bottom: 0;
+        }
+
+        .hill.two {
+
+            width: 550px;
+            height: 130px;
+
+            left: 230px;
+            bottom: -20px;
+        }
+
+
+        /* water */
+
+        .water {
+
+            position: absolute;
+
+            bottom: 0;
+            left: 0;
+
+            width: 100%;
+            height: 55px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(141,205,230,.7),
+                    rgba(196,231,244,.55)
+                );
+
+            border-radius: 50% 50% 0 0;
+        }
+
+
+        /* buildings */
+
+        .buildings {
+
+            position: absolute;
+
+            bottom: 35px;
+            left: 80px;
+
+            height: 130px;
+
+            display: flex;
+
+            align-items: flex-end;
+
+            gap: 5px;
+        }
+
+        .building {
+
+            width: 27px;
+
+            background:
+                linear-gradient(
+                    to bottom,
+                    #83bde0,
+                    #438fc8
+                );
+
+            border-radius: 2px 2px 0 0;
+
+            position: relative;
+
+            box-shadow:
+                inset 5px 0 rgba(255,255,255,.15);
+        }
+
+        .building::after {
+
+            content: "";
+
+            position: absolute;
+
+            top: 10px;
+            left: 6px;
+            right: 6px;
+            bottom: 6px;
+
+            background:
+                repeating-linear-gradient(
+                    to bottom,
+                    rgba(255,255,255,.55) 0 3px,
+                    transparent 3px 11px
+                );
+        }
+
+        .building:nth-child(1) {
+            height: 65px;
+        }
+
+        .building:nth-child(2) {
+            height: 100px;
+        }
+
+        .building:nth-child(3) {
+            height: 80px;
+        }
+
+        .building:nth-child(4) {
+            height: 125px;
+            width: 34px;
+        }
+
+        .building:nth-child(5) {
+            height: 72px;
+        }
+
+        .building:nth-child(6) {
+            height: 105px;
+        }
+
+        .building:nth-child(7) {
+            height: 140px;
+            width: 30px;
+        }
+
+        .building:nth-child(8) {
+            height: 90px;
+        }
+
+        .building:nth-child(9) {
+            height: 115px;
+        }
+
+
+        /* =====================================================
+           HANDWRITTEN TEXT
+        ===================================================== */
+
+        .handwritten {
+
+            position: absolute;
+
+            bottom: 145px;
+            left: 100px;
+
+            color: #0873ee;
+
+            font-family:
+                "Comic Sans MS",
+                "Segoe Print",
+                cursive;
+
+            font-size: 18px;
+
+            line-height: 1.15;
+
+            transform: rotate(-7deg);
+        }
+
+        .handwritten::after {
+
+            content: "↙";
+
+            display: block;
+
+            font-size: 40px;
+
+            margin-left: 35px;
+
+            margin-top: -3px;
+        }
+
+
+        /* =====================================================
+           REGISTER CARD
+        ===================================================== */
+
+        .register-card {
+
+            background:
+                rgba(255,255,255,.96);
+
+            border-radius: 20px;
+
+            padding: 43px 50px 35px;
+
+            box-shadow:
+                0 20px 55px
+                rgba(48,101,165,.12);
+
+            border: 1px solid
+                rgba(220,233,248,.8);
+
+            backdrop-filter: blur(12px);
+
+            max-width: 680px;
+
+            width: 100%;
+
+            margin-left: auto;
+        }
+
+
+        .register-card h2 {
+
+            color: #102e6d;
+
+            font-size: 37px;
+
+            line-height: 1.1;
+
+            letter-spacing: -1.4px;
+        }
+
+        .card-subtitle {
+
+            color: #607fa9;
+
+            font-size: 15px;
+
+            margin-top: 9px;
+
+            margin-bottom: 31px;
+        }
+
+
+        /* =====================================================
+           FORM
+        ===================================================== */
+
+        .register-form {
+
+            width: 100%;
+        }
+
+
+        .form-grid {
+
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 20px 18px;
+        }
+
+
+        .form-group {
+
+            display: flex;
+
+            flex-direction: column;
+        }
+
+        .form-group.full {
+
+            grid-column: 1 / -1;
+        }
+
+
+        label {
+
+            color: #112f6c;
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            margin-bottom: 8px;
+        }
+
+        label span {
+
+            color: #dc4754;
+        }
+
+
+        /* INPUT */
+
+        .input-wrapper {
+
+            position: relative;
+        }
+
+        .input-icon {
+
+            position: absolute;
+
+            left: 15px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: #7593ba;
+
+            font-size: 17px;
+
+            pointer-events: none;
+        }
+
+
+        input,
+        select {
+
+            width: 100%;
+
+            height: 47px;
+
+            border: 1px solid #d3e1f1;
+
+            border-radius: 10px;
+
+            background: #fff;
+
+            color: #1a356a;
+
+            outline: none;
+
+            font-size: 12px;
+
+            padding: 0 14px 0 47px;
+
+            transition: .2s;
+        }
+
+        input::placeholder {
+
+            color: #9aafca;
+        }
+
+        input:focus,
+        select:focus {
+
+            border-color: #5da1f4;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(41,125,235,.08);
+        }
+
+
+        /* select */
+
+        select {
+
+            appearance: none;
+
+            cursor: pointer;
+
+            color: #8aa1bf;
+        }
+
+        select:valid {
+
+            color: #1a356a;
+        }
+
+
+        .select-wrapper {
+
+            position: relative;
+        }
+
+        .select-arrow {
+
+            position: absolute;
+
+            right: 17px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: #6886ae;
+
+            pointer-events: none;
+
+            font-size: 13px;
+        }
+
+
+        /* PASSWORD */
+
+        .password-toggle {
+
+            position: absolute;
+
+            right: 14px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            border: none;
+
+            background: transparent;
+
+            color: #7791b5;
+
+            cursor: pointer;
+
+            font-size: 16px;
+        }
+
+        .password-input {
+
+            padding-right: 42px;
+        }
+
+
+        /* =====================================================
+           SUBMIT
+        ===================================================== */
+
+        .create-account-btn {
+
+            width: 100%;
+
+            height: 46px;
+
+            margin-top: 25px;
+
+            border: none;
+
+            border-radius: 9px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #167bf7,
+                    #0969df
+                );
+
+            color: white;
+
+            font-size: 12px;
+
+            font-weight: 650;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 8px 20px
+                rgba(19,111,235,.20);
+
+            transition: .25s;
+        }
+
+        .create-account-btn:hover {
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 11px 24px
+                rgba(19,111,235,.28);
+        }
+
+
+        /* =====================================================
+           DIVIDER
+        ===================================================== */
+
+        .divider {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+
+            margin: 18px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+
+            content: "";
+
+            height: 1px;
+
+            flex: 1;
+
+            background: #dbe6f3;
+        }
+
+        .divider span {
+
+            color: #7d96b7;
+
+            font-size: 11px;
+        }
+
+
+        /* =====================================================
+           GOOGLE
+        ===================================================== */
+
+        .google-btn {
+
+            width: 100%;
+
+            height: 43px;
+
+            background: white;
+
+            border: 1px solid #9fc4fa;
+
+            border-radius: 9px;
+
+            color: #18346e;
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 10px;
+        }
+
+        .google-icon {
+
+            font-size: 17px;
+
+            font-weight: 700;
+
+            color: #4285f4;
+        }
+
+
+        /* =====================================================
+           LOGIN TEXT
+        ===================================================== */
+
+        .already {
+
+            text-align: center;
+
+            margin-top: 23px;
+
+            color: #718aad;
+
+            font-size: 11px;
+        }
+
+        .already a {
+
+            color: #006eea;
+
+            font-weight: 650;
+
+            text-decoration: underline;
+
+            margin-left: 4px;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 1150px) {
+
+            .nav-links {
+                gap: 20px;
+            }
+
+            .register-container {
+                gap: 35px;
+            }
+
+            .register-card {
+                padding: 38px 35px 30px;
+            }
+
+            .register-left h1 {
+                font-size: 48px;
+            }
+        }
+
+
+        @media (max-width: 900px) {
+
+            .nav-links {
+                display: none;
+            }
+
+            .register-container {
+
+                grid-template-columns: 1fr;
+
+                width: 90%;
+
+                padding-top: 45px;
+            }
+
+            .register-left {
+
+                min-height: auto;
+
+                padding: 20px 0;
+            }
+
+            .city-scene {
+                display: none;
+            }
+
+            .handwritten {
+                display: none;
+            }
+
+            .register-left h1 {
+                font-size: 50px;
+            }
+
+            .register-card {
+                margin: 0 auto;
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            .navbar {
+                padding: 0 5%;
+            }
+
+            .logo {
+                font-size: 21px;
+            }
+
+            .login-btn {
+                width: 70px;
+            }
+
+            .get-started {
+                width: 95px;
+            }
+
+            .register-container {
+                width: 92%;
+            }
+
+            .register-left h1 {
+                font-size: 42px;
+                letter-spacing: -2px;
+            }
+
+            .left-description {
+                font-size: 14px;
+            }
+
+            .benefits {
+                grid-template-columns: 1fr;
+
+                gap: 20px;
+            }
+
+            .register-card {
+
+                padding:
+                    30px 22px 27px;
+
+                border-radius: 16px;
+            }
+
+            .register-card h2 {
+                font-size: 29px;
+            }
+
+            .card-subtitle {
+                font-size: 13px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         NAVBAR
+    ====================================================== -->
+
+    <header class="navbar">
+
+
+        <!-- LOGO -->
+
+        <a href="/" class="logo">
+
+            <span class="logo-symbol"></span>
+
+            SOCIOAI
+
+        </a>
+
+
+
+        <!-- NAVIGATION -->
+
+        <ul class="nav-links">
+
+            <li>
+                <a href="/">
+                    Home
+                </a>
+            </li>
+
+            <li>
+                <a href="#about">
+                    About
+                </a>
+            </li>
+
+            <li>
+                <a href="#citizens">
+                    For Citizens
+                </a>
+            </li>
+
+            <li>
+                <a href="#universities">
+                    For Universities
+                </a>
+            </li>
+
+            <li>
+                <a href="#industry">
+                    For Industry
+                </a>
+            </li>
+
+            <li>
+                <a href="#contact">
+                    Contact
+                </a>
+            </li>
+
+        </ul>
+
+
+
+        <!-- ACTIONS -->
+
+        <div class="nav-actions">
+
+            <button
+                class="login-btn"
+                onclick="goLogin()">
+
+                Login
+
+            </button>
+
+            <button
+                class="get-started"
+                onclick="scrollToRegister()">
+
+                Get Started
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         REGISTER PAGE
+    ====================================================== -->
+
+    <main class="register-page">
+
+
+        <div class="register-container">
+
+
+            <!-- =================================================
+                 LEFT SECTION
+            ================================================== -->
+
+            <section class="register-left">
+
+
+                <div class="join-badge">
+
+                    JOIN SOCIOAI
+
+                </div>
+
+
+                <h1>
+
+                    Be a part of
+
+                    <br>
+
+                    <span>
+                        real change.
+                    </span>
+
+                </h1>
+
+
+                <p class="left-description">
+
+                    Create your account and help us connect
+                    problems with the right people, expertise
+                    and resources.
+
+                </p>
+
+
+
+                <!-- BENEFITS -->
+
+                <div class="benefits">
+
+
+                    <!-- CITIZENS -->
+
+                    <div class="benefit">
+
+                        <div class="benefit-icon">
+                            ♙
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                For Citizens
+                            </h3>
+
+                            <p>
+                                Report and track problems
+                                in your community.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- UNIVERSITIES -->
+
+                    <div class="benefit">
+
+                        <div class="benefit-icon">
+                            ♜
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                For Universities
+                            </h3>
+
+                            <p>
+                                Provide expertise
+                                and research solutions.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- INDUSTRY -->
+
+                    <div class="benefit">
+
+                        <div class="benefit-icon">
+                            ▥
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                For Industry
+                            </h3>
+
+                            <p>
+                                Enable innovation
+                                and create impact.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- GOVERNMENT -->
+
+                    <div class="benefit">
+
+                        <div class="benefit-icon">
+                            ▤
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                For Government
+                            </h3>
+
+                            <p>
+                                Build smarter, safer
+                                and sustainable cities.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- CITY -->
+
+                <div class="city-scene">
+
+
+                    <div class="hill one"></div>
+
+                    <div class="hill two"></div>
+
+
+                    <div class="buildings">
+
+                        <div class="building"></div>
+                        <div class="building"></div>
+                        <div class="building"></div>
+                        <div class="building"></div>
+                        <div class="building"></div>
+                        <div class="building"></div>
+                        <div class="building"></div>
+                        <div class="building"></div>
+                        <div class="building"></div>
+
+                    </div>
+
+
+                    <div class="water"></div>
+
+                </div>
+
+
+
+                <!-- HANDWRITTEN -->
+
+                <div class="handwritten">
+
+                    Together for
+                    <br>
+
+                    a better tomorrow.
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =================================================
+                 REGISTER CARD
+            ================================================== -->
+
+            <section class="register-card">
+
+
+                <h2>
+                    Create Your Account
+                </h2>
+
+                <p class="card-subtitle">
+
+                    Join SOCIOAI and be part of the solution.
+
+                </p>
+
+
+
+                <!-- FORM -->
+
+                <form
+                    class="register-form"
+                    id="registerForm"
+                    method="POST"
+                    action="/auth/register">
+
+
+                    <div class="form-grid">
+
+
+                        <!-- FULL NAME -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Full Name <span>*</span>
+                            </label>
+
+                            <div class="input-wrapper">
+
+                                <span class="input-icon">
+                                    ♙
+                                </span>
+
+                                <input
+                                    type="text"
+                                    name="full_name"
+                                    placeholder="Enter your full name"
+                                    required>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- EMAIL -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Email Address <span>*</span>
+                            </label>
+
+                            <div class="input-wrapper">
+
+                                <span class="input-icon">
+                                    ✉
+                                </span>
+
+                                <input
+                                    type="email"
+                                    name="email"
+                                    placeholder="Enter your email"
+                                    required>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- PHONE -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Phone Number <span>*</span>
+                            </label>
+
+                            <div class="input-wrapper">
+
+                                <span class="input-icon">
+                                    ☎
+                                </span>
+
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    placeholder="+91 98765 43210"
+                                    required>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- PASSWORD -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Password <span>*</span>
+                            </label>
+
+                            <div class="input-wrapper">
+
+                                <span class="input-icon">
+                                    🔒
+                                </span>
+
+                                <input
+                                    id="password"
+                                    class="password-input"
+                                    type="password"
+                                    name="password"
+                                    placeholder="Create a password"
+                                    required>
+
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    onclick="togglePassword()">
+
+                                    👁
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- ROLE -->
+
+                        <div class="form-group full">
+
+                            <label>
+                                Role <span>*</span>
+                            </label>
+
+                            <div class="select-wrapper">
+
+                                <span class="input-icon">
+                                    ♙
+                                </span>
+
+                                <select
+                                    name="role"
+                                    required>
+
+                                    <option
+                                        value=""
+                                        disabled
+                                        selected>
+
+                                        Select your role
+
+                                    </option>
+
+                                    <option value="citizen">
+                                        Citizen
+                                    </option>
+
+                                    <option value="university">
+                                        University
+                                    </option>
+
+                                    <option value="industry">
+                                        Industry
+                                    </option>
+
+                                    <option value="government">
+                                        Government
+                                    </option>
+
+                                </select>
+
+                                <span class="select-arrow">
+                                    ▼
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- ORGANIZATION -->
+
+                        <div class="form-group full">
+
+                            <label>
+                                Organization
+                                <small>(Optional)</small>
+                            </label>
+
+                            <div class="input-wrapper">
+
+                                <span class="input-icon">
+                                    ▤
+                                </span>
+
+                                <input
+                                    type="text"
+                                    name="organization"
+                                    placeholder="Enter your organization name">
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- LOCATION -->
+
+                        <div class="form-group full">
+
+                            <label>
+                                Location
+                            </label>
+
+                            <div class="select-wrapper">
+
+                                <span class="input-icon">
+                                    ⌖
+                                </span>
+
+                                <select name="location">
+
+                                    <option
+                                        value=""
+                                        disabled
+                                        selected>
+
+                                        City, State
+
+                                    </option>
+
+                                    <option>
+                                        Chennai, Tamil Nadu
+                                    </option>
+
+                                    <option>
+                                        Coimbatore, Tamil Nadu
+                                    </option>
+
+                                    <option>
+                                        Trichy, Tamil Nadu
+                                    </option>
+
+                                    <option>
+                                        Madurai, Tamil Nadu
+                                    </option>
+
+                                    <option>
+                                        Salem, Tamil Nadu
+                                    </option>
+
+                                    <option>
+                                        Bengaluru, Karnataka
+                                    </option>
+
+                                    <option>
+                                        Other
+                                    </option>
+
+                                </select>
+
+                                <span class="select-arrow">
+                                    ▼
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- CREATE ACCOUNT -->
+
+                    <button
+                        type="submit"
+                        class="create-account-btn">
+
+                        Create Account
+                        &nbsp; →
+
+                    </button>
+
+
+
+                    <!-- DIVIDER -->
+
+                    <div class="divider">
+
+                        <span>
+                            or
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- GOOGLE -->
+
+                    <button
+                        type="button"
+                        class="google-btn"
+                        onclick="googleRegister()">
+
+                        <span class="google-icon">
+                            G
+                        </span>
+
+                        Continue with Google
+
+                    </button>
+
+
+
+                    <!-- LOGIN -->
+
+                    <div class="already">
+
+                        Already have an account?
+
+                        <a href="/auth/login">
+                            Login
+                        </a>
+
+                    </div>
+
+
+                </form>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script>
+
+
+        /* PASSWORD */
+
+        function togglePassword() {
+
+            const password =
+                document.getElementById("password");
+
+            if (password.type === "password") {
+
+                password.type = "text";
+
+            } else {
+
+                password.type = "password";
+
+            }
+
+        }
+
+
+
+        /* LOGIN */
+
+        function goLogin() {
+
+            window.location.href =
+                "/auth/login";
+
+        }
+
+
+
+        /* GET STARTED */
+
+        function scrollToRegister() {
+
+            document
+                .querySelector(".register-card")
+                .scrollIntoView({
+                    behavior: "smooth"
+                });
+
+        }
+
+
+
+        /* GOOGLE */
+
+        function googleRegister() {
+
+            /*
+                Replace this with your Google OAuth route:
+
+                window.location.href =
+                    "/auth/google";
+
+            */
+
+            alert(
+                "Google registration will be connected here."
+            );
+
+        }
+
+
+
+        /* FORM */
+
+        document
+            .getElementById("registerForm")
+            .addEventListener(
+                "submit",
+                function(event) {
+
+                    const password =
+                        document.getElementById(
+                            "password"
+                        ).value;
+
+                    if (password.length < 6) {
+
+                        event.preventDefault();
+
+                        alert(
+                            "Password must contain at least 6 characters."
+                        );
+
+                    }
+
+                }
+            );
+
+    </script>
+
+
+</body>
+
+</html>

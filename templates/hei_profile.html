@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HEI Profile Management — SICP Tamil Nadu</title>
+<style>
+:root{--ink:#111827;--surface:#f8fafc;--card:#fff;--border:#e2e8f0;--primary:#38bdf8;--primary-deep:#0284c7;--success:#10b981;--danger:#ef4444;--warning:#f59e0b;--purple:#a78bfa;--text:#334155;--muted:#64748b;--radius:14px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--surface);color:var(--ink);line-height:1.6;}
+.nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:16px;}
+.nav a{color:var(--text);text-decoration:none;font-weight:600;font-size:.9rem;}
+.nav a.logo{font-weight:800;font-size:1.1rem;color:var(--ink);flex:1;letter-spacing:-.02em;}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 24px;}
+h1{font-size:1.7rem;font-weight:800;letter-spacing:-.02em;margin-bottom:4px;}
+.subtitle{color:var(--muted);margin-bottom:28px;font-size:.92rem;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:24px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.card-title{font-size:1.1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;}
+.form-control{width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);font-size:.95rem;background:#fff;transition:border-color .15s;}
+.form-control:focus{outline:none;border-color:var(--primary-deep);}
+textarea.form-control{resize:vertical;min-height:90px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.tag-input-container{display:flex;flex-wrap:wrap;gap:8px;padding:8px 12px;border:1.5px solid var(--border);border-radius:10px;background:#fff;min-height:46px;}
+.tag{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:#dbeafe;color:#1e40af;border-radius:20px;font-size:.8rem;font-weight:600;}
+.tag .remove{cursor:pointer;font-weight:bold;}
+.list-item{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#f8fafc;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:10px;border:none;font-weight:700;font-size:.88rem;cursor:pointer;text-decoration:none;transition:all .15s;}
+.btn-primary{background:var(--primary-deep);color:#fff;}
+.btn-primary:hover{background:#0369a1;}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border);}
+.btn-ghost:hover{background:#f1f5f9;}
+.btn-sm{padding:6px 12px;font-size:.78rem;}
+.save-bar{position:sticky;bottom:20px;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 10px 25px rgba(0,0,0,.1);margin-top:20px;}
+@media(max-width:640px){.grid-2{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="logo">SICP Tamil Nadu</a>
+  <a href="/">Public Portal</a>
+  <a href="/university">HEI Dashboard</a>
+  <a href="/hei/inbox">Inbox</a>
+  <a href="/workspace">Workspace</a>
+  <a href="/hei/profile">Profile</a>
+</nav>
+
+<div class="wrap">
+  <h1>Institution Profile</h1>
+  <p class="subtitle">Keep your university capabilities, faculty expertise, and lab facilities updated to receive highly relevant challenge matches.</p>
+
+  <form id="profileForm">
+    <!-- BASIC INFO -->
+    <div class="card">
+      <div class="card-title">🏛 Basic Information</div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Institution Name</label>
+          <input type="text" id="uniName" class="form-control" value="Indian Institute of Technology Madras">
+        </div>
+        <div class="form-group">
+          <label>City / Location</label>
+          <input type="text" id="uniCity" class="form-control" value="Chennai">
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Contact Email</label>
+          <input type="email" id="uniEmail" class="form-control" value="dean.ic@iitm.ac.in">
+        </div>
+        <div class="form-group">
+          <label>Active Project Capacity</label>
+          <input type="number" id="uniCapacity" class="form-control" value="15" min="1" max="50">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Institution Description & Specialization</label>
+        <textarea id="uniDesc" class="form-control" rows="3">Premier national institute with world-class research in AI, water purification technology, cyber-physical systems, environmental engineering, and renewable energy.</textarea>
+      </div>
+    </div>
+
+    <!-- FACULTY & EXPERTS -->
+    <div class="card">
+      <div class="card-title">👨🏫 Faculty Experts & Mentors</div>
+      <div id="facultyList">
+        <div class="list-item">
+          <div>
+            <strong>Dr. T. Pradeep</strong> — Department of Chemistry
+            <div style="font-size:.8rem;color:var(--muted);">Expertise: Water purification, nanotechnology, affordable filtration</div>
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="this.parentElement.remove()">Remove</button>
+        </div>
+        <div class="list-item">
+          <div>
+            <strong>Dr. Mohanasankar Sivaprakasam</strong> — Department of Electrical Engineering
+            <div style="font-size:.8rem;color:var(--muted);">Expertise: Healthcare technology, IoT medical devices, rural health tech</div>
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="this.parentElement.remove()">Remove</button>
+        </div>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="addFaculty()">+ Add Faculty Mentor</button>
+    </div>
+
+    <!-- LABS & FACILITIES -->
+    <div class="card">
+      <div class="card-title">🔬 Labs & Research Facilities</div>
+      <div id="labsList">
+        <div class="list-item">
+          <div>
+            <strong>International Centre for Clean Water (ICCW)</strong>
+            <div style="font-size:.8rem;color:var(--muted);">Facilities: Advanced spectrophotometry, water testing rigs, filtration pilot units</div>
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="this.parentElement.remove()">Remove</button>
+        </div>
+        <div class="list-item">
+          <div>
+            <strong>Healthcare Technology Innovation Centre (HTIC)</strong>
+            <div style="font-size:.8rem;color:var(--muted);">Facilities: Medical device prototyping, biosensors lab, clean room</div>
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="this.parentElement.remove()">Remove</button>
+        </div>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="addLab()">+ Add Lab / Facility</button>
+    </div>
+
+    <!-- PREVIOUS PROJECTS -->
+    <div class="card">
+      <div class="card-title">📁 Past Social Innovation Projects</div>
+      <div id="projectsList">
+        <div class="list-item">
+          <div>
+            <strong>AMRIT — Arsenic and Heavy Metal Removal</strong>
+            <div style="font-size:.8rem;color:var(--muted);">Community-scale water filter deployed across 800+ rural schools in TN</div>
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="this.parentElement.remove()">Remove</button>
+        </div>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="addProject()">+ Add Past Project</button>
+    </div>
+
+    <!-- STICKY SAVE BAR -->
+    <div class="save-bar">
+      <span style="font-size:.88rem;color:var(--muted);">Updates are used immediately by the AI matching engine.</span>
+      <button type="button" class="btn btn-primary" onclick="saveProfile()">Save Profile Changes</button>
+    </div>
+  </form>
+</div>
+
+<script>
+function addFaculty() {
+  const name = prompt('Faculty Name & Department (e.g., "Dr. A. Sharma — Mechanical"):');
+  if (!name) return;
+  const exp = prompt('Areas of Expertise (e.g., "Solar energy, rural irrigation"):');
+  const div = document.createElement('div');
+  div.className = 'list-item';
+  div.innerHTML = `<div><strong>${name}</strong><div style="font-size:.8rem;color:var(--muted);">Expertise: ${exp || 'General'}</div></div><button type="button" class="btn btn-ghost btn-sm" onclick="this.parentElement.remove()">Remove</button>`;
+  document.getElementById('facultyList').appendChild(div);
+}
+
+function addLab() {
+  const name = prompt('Lab / Facility Name:');
+  if (!name) return;
+  const fac = prompt('Available Facilities & Equipment:');
+  const div = document.createElement('div');
+  div.className = 'list-item';
+  div.innerHTML = `<div><strong>${name}</strong><div style="font-size:.8rem;color:var(--muted);">Facilities: ${fac || 'General research'}</div></div><button type="button" class="btn btn-ghost btn-sm" onclick="this.parentElement.remove()">Remove</button>`;
+  document.getElementById('labsList').appendChild(div);
+}
+
+function addProject() {
+  const name = prompt('Project Title:');
+  if (!name) return;
+  const desc = prompt('Brief Impact / Description:');
+  const div = document.createElement('div');
+  div.className = 'list-item';
+  div.innerHTML = `<div><strong>${name}</strong><div style="font-size:.8rem;color:var(--muted);">${desc || 'Completed societal project'}</div></div><button type="button" class="btn btn-ghost btn-sm" onclick="this.parentElement.remove()">Remove</button>`;
+  document.getElementById('projectsList').appendChild(div);
+}
+
+function saveProfile() {
+  alert('Profile updated successfully! AI matching engine will use your updated capacity and research domains for future assignments.');
+}
+</script>
+</body>
+</html>

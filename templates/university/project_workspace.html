@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Workspace · Project</title><link rel="stylesheet" href="/static/css/socialsolve.css"><style>
+.tab-bar{display:flex;gap:6px;margin:14px 0 10px;border-bottom:1px solid var(--line);padding-bottom:4px;overflow-x:auto}
+.tab{padding:6px 12px;border-radius:10px 10px 0 0;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border:none;background:none;white-space:nowrap}
+.tab.active{color:var(--green);background:var(--mint);border-bottom:2px solid var(--green)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.ws-card{border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff;margin-top:10px}
+</style></head>
+<body><div class="app"><aside class="side"><a class="logo" href="/"><span class="logo-mark">S</span>SocialSolve</a><nav><a href="/university">Overview</a><a href="/university/challenges">Challenges</a><a class="active" href="#">Workspace</a><a href="/university/profile">Profile</a></nav></aside>
+<main class="main">
+<div class="top"><h1 id="projTitle">Project Workspace</h1><p id="projSub">Loading…</p></div>
+
+<div class="tab-bar" id="tabBar"></div>
+
+<div id="tabContent"></div>
+</main></div>
+
+<script>
+const $ = s => document.querySelector(s); const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+const pct = v => Math.round(Math.max(0, Math.min(100, (Number(v) || 0) * 100)));
+
+function tabBtn(id, label, active) { return `<button class="tab ${active ? 'active' : ''}" onclick="showTab('${id}')">${esc(label)}</button>`; }
+
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.getAttribute('onclick').includes(`'${id}'`)));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === id));
+}
+
+function loadWorkspace() {
+  const pid = window.location.pathname.split('/').pop();
+  fetch(`/api/universities/projects/${pid}`)
+    .then(r => r.json())
+    .then(d => {
+      $('#projTitle').textContent = d.title || 'Project';
+      $('#projSub').textContent = (d.problem_title || '') + ' · Status: ' + (d.project_status || '—');
+      // Build tabs
+      const tabs = [
+        ['overview', 'Overview'],
+        ['problem', 'Problem'],
+        ['ai', 'AI Analysis'],
+        ['evidence', 'Evidence'],
+        ['team', 'Team'],
+        ['milestones', 'Milestones'],
+        ['updates', 'Updates'],
+        ['testing', 'Testing'],
+        ['deployment', 'Deployment'],
+        ['impact', 'Impact'],
+      ];
+      $('#tabBar').innerHTML = tabs.map(([k, l]) => tabBtn(k, l, k === 'overview')).join('');
+
+      const panels = {
+        overview: `
+          <div class="tab-panel active" id="overview">
+            <div class="ws-card"><h3>Project status</h3><div class="bar" style="margin-top:8px"><i style="width:${pct(d.progress || d.project_progress)}%"></i></div><p style="margin-top:6px">Progress: <strong>${pct(d.progress || d.project_progress)}%</strong> · Status: <strong>${esc(d.project_status || '—')}</strong></p></div>
+            <div class="ws-card"><h3>Latest update</h3><p style="font-size:13px;color:var(--muted)">No updates yet. Use the Updates tab to log progress.</p></div>
+          </div>`,
+        problem: `
+          <div class="tab-panel" id="problem"><div class="ws-card"><h3>Problem</h3><p>${esc(d.description || d.problem_description || '')}</p><p class="muted" style="font-size:12px">Status: ${esc(d.problem_status || '—')} · Address: ${esc(d.address || d.problem_address || '—')}</p></div></div>`,
+        ai: `
+          <div class="tab-panel" id="ai"><div class="ws-card"><h3>AI Analysis</h3><p style="font-size:13px">Category: ${esc(d.category || d.problem_category || '—')} · Priority: ${esc(d.priority || d.problem_priority || '—')} · Match score: ${pct(d.match_score || 0)}%</p></div></div>`,
+        evidence: `
+          <div class="tab-panel" id="evidence"><div class="ws-card"><h3>Evidence</h3><div style="display:flex;gap:8px;flex-wrap:wrap">${(d.problem_evidence || []).map(e => `<img src="/uploads/${esc(e.filename)}" style="width:120px;height:90px;object-fit:cover;border-radius:8px;border:1px solid var(--line)">`).join('') || '<p class="muted">No evidence images.</p>'}</div></div></div>`,
+        team: `
+          <div class="tab-panel" id="team"><div class="ws-card"><h3>Team (${(d.team || []).length})</h3><ul style="font-size:13px;padding-left:16px">${(d.team || []).map(m => `<li><b>${esc(m.assignee_name || 'Member')}</b> · ${esc(m.role || '')}</li>`).join('') || '<li>No team assigned.</li>'}</ul></div></div>`,
+        milestones: `
+          <div class="tab-panel" id="milestones"><div class="ws-card"><h3>Milestones</h3><div style="display:grid;gap:10px">${(d.milestones || []).map(m => `<div style="padding:14px;border:1px solid var(--line);border-radius:10px"><h4>${esc(m.title || m.name || 'Milestone')} <span class="tag ${m.status === 'completed' ? 'green' : 'amber'}">${esc(m.status || 'pending')}</span></h4></div>`).join('') || '<p class="muted">No milestones.</p>'}</div></div>`,
+        updates: `
+          <div class="tab-panel" id="updates"><div class="ws-card"><h3>Updates</h3><p class="muted" style="font-size:13px">Log updates to keep the project record complete. (Integration with project updates endpoint coming.)</p></div></div>`,
+        testing: `
+          <div class="tab-panel" id="testing"><div class="ws-card"><h3>Field Testing</h3><p class="muted" style="font-size:13px">Record test results and evidence uploads here when testing begins.</p></div></div>`,
+        deployment: `
+          <div class="tab-panel" id="deployment"><div class="ws-card"><h3>Pilot Deployment</h3><p class="muted" style="font-size:13px">Track deployment timeline and installation evidence.</p></div></div>`,
+        impact: `
+          <div class="tab-panel" id="impact"><div class="ws-card"><h3>Impact Evaluation</h3><p class="muted" style="font-size:13px">Measure resolved people, time saved, and verified outcomes.</p></div></div>`,
+      };
+      $('#tabContent').innerHTML = Object.values(panels).join('');
+    })
+    .catch(() => $('#tabContent').innerHTML = '<div class="empty">Failed to load workspace.</div>');
+}
+loadWorkspace();
+</script>
+</body></html>

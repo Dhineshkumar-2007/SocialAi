@@ -1,0 +1,13 @@
+Flask>=3.0
+Flask-Cors>=4.0
+python-dotenv>=1.0
+numpy>=1.26
+Pillow>=10.0
+sentence-transformers>=3.0
+transformers>=4.45
+torch>=2.2
+scikit-learn>=1.4
+psycopg2-binary>=2.9
+hdbscan>=0.8.33
+xgboost>=2.1
+gunicorn>=26.2.0

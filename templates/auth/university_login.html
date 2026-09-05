@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>University Sign in — SICP Tamil Nadu</title>
+<style>
+:root{
+  --ink:#0f172a;--surface:#f8fafc;--card:#fff;--border:#e2e8f0;
+  --primary:#0284c7;--primary-deep:#075985;--success:#10b981;
+  --danger:#ef4444;--muted:#64748b;--radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  background:linear-gradient(135deg,#e0f2fe 0%,#f8fafc 60%);
+  color:var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;padding:20px;
+}
+.wrap{display:grid;grid-template-columns:1fr 1fr;max-width:920px;width:100%;gap:24px;}
+@media(max-width:760px){.wrap{grid-template-columns:1fr;}.panel-side{display:none;}}
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:36px;box-shadow:0 10px 30px rgba(2,132,199,.08);
+}
+.panel-side{
+  background:linear-gradient(160deg,var(--primary) 0%,var(--primary-deep) 100%);
+  color:#fff;border-radius:var(--radius);padding:36px;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.panel-side h2{font-size:1.4rem;letter-spacing:-.02em;margin-bottom:14px;}
+.panel-side p{font-size:.92rem;line-height:1.6;opacity:.92;margin-bottom:18px;}
+.panel-side ul{list-style:none;}
+.panel-side li{padding:8px 0;font-size:.88rem;display:flex;gap:10px;align-items:center;}
+.panel-side li::before{content:"✓";font-weight:800;color:#86efac;}
+.brand{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--primary-deep);font-weight:800;margin-bottom:6px;}
+h1{font-size:1.6rem;font-weight:800;letter-spacing:-.02em;margin-bottom:4px;}
+.subtitle{color:var(--muted);font-size:.92rem;margin-bottom:24px;}
+.field{margin-bottom:14px;}
+label{font-size:.8rem;font-weight:700;color:var(--muted);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;}
+input{
+  width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:10px;
+  font-size:.95rem;box-sizing:border-box;background:#fff;
+}
+input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(2,132,199,.15);}
+button{
+  width:100%;padding:13px;border:none;border-radius:10px;
+  background:var(--primary);color:#fff;font-weight:700;cursor:pointer;font-size:.95rem;
+  transition:background .15s;margin-top:6px;
+}
+button:hover{background:var(--primary-deep);}
+button:disabled{background:#94a3b8;cursor:not-allowed;}
+.alert{padding:11px 13px;border-radius:10px;font-size:.85rem;margin-bottom:14px;display:none;}
+.alert.error{background:#fee2e2;color:#991b1b;border:1px solid #fecaca;display:block;}
+.alert.info{background:#dbeafe;color:#1e40af;border:1px solid #bfdbfe;display:block;}
+.note{font-size:.8rem;color:var(--muted);margin-top:16px;text-align:center;line-height:1.5;}
+.note a{color:var(--primary);text-decoration:none;font-weight:600;}
+.note a:hover{text-decoration:underline;}
+.divider{text-align:center;color:var(--muted);font-size:.78rem;margin:18px 0 14px;position:relative;}
+.divider::before,.divider::after{content:"";position:absolute;top:50%;width:35%;height:1px;background:var(--border);}
+.divider::before{left:0;}.divider::after{right:0;}
+</style>
+</head>
+<body>
+{% include 'components/navbar.html' %}
+<div class="wrap">
+  <div class="panel-side">
+    <div class="brand" style="color:#bae6fd;">SICP Tamil Nadu</div>
+    <h2>Higher Education Institution Portal</h2>
+    <p>Sign in to access the challenges assigned to your university, review proposals, and manage your institutional response queue.</p>
+    <ul>
+      <li>View challenges assigned to your university only</li>
+      <li>Accept or decline within the 72-hour window</li>
+      <li>Manage active projects in your workspace</li>
+      <li>Track your institution's resolution rate</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="brand">University Sign in</div>
+    <h1>HEI Portal Login</h1>
+    <p class="subtitle">Access your university's challenge queue</p>
+
+    <div id="alert" class="alert"></div>
+
+    <form id="loginForm" onsubmit="event.preventDefault();doLogin();" autocomplete="on">
+      <div class="field">
+        <label for="email">University email</label>
+        <input id="email" name="email" type="email" placeholder="registrar@youruniversity.edu" required autofocus>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" placeholder="••••••••" required>
+      </div>
+      <button id="submitBtn" type="submit">Sign in to HEI Portal</button>
+    </form>
+
+    <div class="divider">or</div>
+    <p class="note">
+      New institution?
+      <a href="/university/register">Register your HEI account →</a>
+    </p>
+    <p class="note" style="margin-top:8px;">
+      Citizen or industry user?
+      <a href="/login">Sign in to the public portal →</a>
+    </p>
+  </div>
+</div>
+
+<script>
+async function doLogin() {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const btn = document.getElementById('submitBtn');
+  const alertBox = document.getElementById('alert');
+
+  alertBox.className = 'alert';
+  alertBox.style.display = 'none';
+
+  if (!email || !password) {
+    showAlert('error', 'Email and password are required.');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Signing in...';
+
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      showAlert('error', data.error || 'Login failed. Check your credentials.');
+      btn.disabled = false;
+      btn.textContent = 'Sign in to HEI Portal';
+      return;
+    }
+
+    // Enforce that this is a university account.
+    if (data.user.role !== 'university') {
+      showAlert('error',
+        'This portal is for universities only. ' +
+        'Your account is registered as "' + data.user.role + '". ' +
+        'Please use the public portal instead.'
+      );
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
+      btn.disabled = false;
+      btn.textContent = 'Sign in to HEI Portal';
+      return;
+    }
+
+    if (!data.user.org_id) {
+      showAlert('error',
+        'Your university account is not linked to a registered institution. ' +
+        'Please contact the SICP administrator.'
+      );
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
+      btn.disabled = false;
+      btn.textContent = 'Sign in to HEI Portal';
+      return;
+    }
+
+    window.location.href = '/university';
+  } catch (e) {
+    showAlert('error', 'Network error. Please try again.');
+    btn.disabled = false;
+    btn.textContent = 'Sign in to HEI Portal';
+  }
+}
+
+function showAlert(kind, msg) {
+  const box = document.getElementById('alert');
+  box.className = 'alert ' + kind;
+  box.textContent = msg;
+  box.style.display = 'block';
+}
+</script>
+</body>
+</html>

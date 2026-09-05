@@ -1,0 +1,1083 @@
+<title>SAMAADHAN AI Architecture Blueprint</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --bg-base: #0a0f1d;
+    --bg-surface: #111827;
+    --bg-card: #1e293b;
+    --bg-card-hover: #273549;
+    --border-color: #334155;
+    --border-accent: #3b82f6;
+
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+
+    --accent-blue: #38bdf8;
+    --accent-indigo: #6366f1;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+    --accent-cyan: #06b6d4;
+
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    padding: 2rem 1.5rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  header.header-hero {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2.5rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  }
+
+  header.header-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-indigo), var(--accent-emerald));
+  }
+
+  .badge-row {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .badge-primary { background: rgba(56, 189, 248, 0.15); color: var(--accent-blue); border: 1px solid rgba(56, 189, 248, 0.3); }
+  .badge-success { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
+  .badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.3); }
+  .badge-danger { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.3); }
+
+  h1.title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: #ffffff;
+    margin-bottom: 0.75rem;
+  }
+
+  p.subtitle {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    max-width: 900px;
+  }
+
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  @media (max-width: 1024px) {
+    .grid-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Navigation Sidebar */
+  aside.sidebar-nav {
+    position: sticky;
+    top: 2rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+  }
+
+  .nav-heading {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+  }
+
+  .nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .nav-item a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+
+  .nav-item a:hover {
+    color: var(--text-primary);
+    background: var(--bg-card);
+  }
+
+  .nav-item.active a {
+    color: var(--accent-blue);
+    background: rgba(56, 189, 248, 0.1);
+    font-weight: 600;
+  }
+
+  /* Content Sections */
+  main.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  section.doc-section {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+  }
+
+  h2.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  h2.section-title .section-num {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-indigo));
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 800;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+  }
+
+  h3.sub-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--accent-blue);
+    margin: 1.5rem 0 0.75rem 0;
+  }
+
+  p {
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+  }
+
+  /* Tables */
+  .table-responsive {
+    overflow-x: auto;
+    margin: 1.25rem 0;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+  }
+
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    text-align: left;
+  }
+
+  table.data-table th {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+  }
+
+  table.data-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-secondary);
+  }
+
+  table.data-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  table.data-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  /* Code Blocks */
+  pre.code-block {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 1.25rem;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: #e6edf3;
+    margin: 1.25rem 0;
+    line-height: 1.5;
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.15rem 0.35rem;
+    border-radius: 4px;
+    color: var(--accent-cyan);
+  }
+
+  /* Architecture Flow Cards */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.25rem;
+    margin: 1.25rem 0;
+  }
+
+  .feature-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.25rem;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .feature-card:hover {
+    border-color: var(--border-accent);
+    transform: translateY(-2px);
+  }
+
+  .card-header {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Callout Boxes */
+  .callout {
+    border-left: 4px solid var(--accent-blue);
+    background: rgba(56, 189, 248, 0.08);
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin: 1.25rem 0;
+  }
+
+  .callout-title {
+    font-weight: 700;
+    color: var(--accent-blue);
+    margin-bottom: 0.35rem;
+    font-size: 0.95rem;
+  }
+
+  .callout-danger {
+    border-left-color: var(--accent-rose);
+    background: rgba(244, 63, 94, 0.08);
+  }
+  .callout-danger .callout-title { color: var(--accent-rose); }
+
+  .callout-warning {
+    border-left-color: var(--accent-amber);
+    background: rgba(245, 158, 11, 0.08);
+  }
+  .callout-warning .callout-title { color: var(--accent-amber); }
+
+  .callout-success {
+    border-left-color: var(--accent-emerald);
+    background: rgba(16, 185, 129, 0.08);
+  }
+  .callout-success .callout-title { color: var(--accent-emerald); }
+
+  /* Math/Formula Box */
+  .formula-box {
+    background: #0f172a;
+    border: 1px dashed var(--accent-indigo);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin: 1.25rem 0;
+    font-family: var(--font-mono);
+    color: #e2e8f0;
+  }
+
+  .formula-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent-indigo);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Execution Pipeline Visualizer */
+  .pipeline-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+  }
+
+  .step-pill {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .step-arrow {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+  }
+
+  .state-badge {
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    font-weight: 600;
+  }
+  .state-submitted { background: #3b82f633; color: #60a5fa; }
+  .state-analyzing { background: #8b5cf633; color: #a78bfa; }
+  .state-matched { background: #06b6d433; color: #22d3ee; }
+  .state-pending { background: #f59e0b33; color: #fbbf24; }
+  .state-inprogress { background: #10b98133; color: #34d399; }
+  .state-completed { background: #05966933; color: #10b981; }
+  .state-rejected { background: #ef444433; color: #f87171; }
+</style>
+
+<div class="container">
+  <header class="header-hero">
+    <div class="badge-row">
+      <span class="badge badge-primary">SIH 2026 Platform</span>
+      <span class="badge badge-success">Target Architecture Review</span>
+      <span class="badge badge-warning">Zero Breaking Changes</span>
+      <span class="badge badge-primary">Incremental Refactoring</span>
+    </div>
+    <h1 class="title">SAMAADHAN AI — Architectural Blueprint</h1>
+    <p class="subtitle">Comprehensive 7-Layer Target System Architecture, Multi-Criteria Matching Engine, Automatic Deterministic Re-Routing State Machine, and 15-Point Implementation Specification.</p>
+  </header>
+
+  <div class="grid-layout">
+    <aside class="sidebar-nav">
+      <div class="nav-heading">Architecture Sections</div>
+      <ul class="nav-list">
+        <li class="nav-item active"><a href="#sec-1"><span class="section-num">01</span> Current Architecture</a></li>
+        <li class="nav-item"><a href="#sec-2"><span class="section-num">02</span> Target Architecture</a></li>
+        <li class="nav-item"><a href="#sec-3"><span class="section-num">03</span> Gap Analysis</a></li>
+        <li class="nav-item"><a href="#sec-4"><span class="section-num">04</span> Database Schema Changes</a></li>
+        <li class="nav-item"><a href="#sec-5"><span class="section-num">05</span> API Route Changes</a></li>
+        <li class="nav-item"><a href="#sec-6"><span class="section-num">06</span> AI Intelligence Pipeline</a></li>
+        <li class="nav-item"><a href="#sec-7"><span class="section-num">07</span> University Matching Design</a></li>
+        <li class="nav-item"><a href="#sec-8"><span class="section-num">08</span> Re-Routing State Machine</a></li>
+        <li class="nav-item"><a href="#sec-9"><span class="section-num">09</span> Project Lifecycle</a></li>
+        <li class="nav-item"><a href="#sec-10"><span class="section-num">10</span> Notification Architecture</a></li>
+        <li class="nav-item"><a href="#sec-11"><span class="section-num">11</span> Analytics & Learning Loop</a></li>
+        <li class="nav-item"><a href="#sec-12"><span class="section-num">12</span> Security & Access Control</a></li>
+        <li class="nav-item"><a href="#sec-13"><span class="section-num">13</span> Testing Strategy</a></li>
+        <li class="nav-item"><a href="#sec-14"><span class="section-num">14</span> Performance & Scaling</a></li>
+        <li class="nav-item"><a href="#sec-15"><span class="section-num">15</span> Files Requiring Change</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+
+      <!-- SECTION 1 -->
+      <section id="sec-1" class="doc-section">
+        <h2 class="section-title"><span class="section-num">01</span> Current Architecture State</h2>
+        <p>The current implementation of <strong>SAMAADHAN AI</strong> provides a monolithic Python Flask application structured around modular Blueprints, an in-memory or SQLite database backend with basic relational tables, and a local multi-model AI inference pipeline.</p>
+
+        <div class="card-grid">
+          <div class="feature-card">
+            <div class="card-header">Application & Routing <span class="badge badge-primary">Flask Monolith</span></div>
+            <p style="font-size:0.85rem;">Single Flask app factory in <code>app.py</code> registering Blueprints for auth, problems, universities, projects, assignments, dashboard, and notifications.</p>
+          </div>
+          <div class="feature-card">
+            <div class="card-header">AI Pipeline <span class="badge badge-success">Local PyTorch / Transformers</span></div>
+            <p style="font-size:0.85rem;">Synchronous execution of BGE-small embeddings, DeBERTa zero-shot classification, BLIP vision captioning, and regex-based skill extraction.</p>
+          </div>
+          <div class="feature-card">
+            <div class="card-header">Data Persistence <span class="badge badge-warning">SQLite / PostGIS Ready</span></div>
+            <p style="font-size:0.85rem;">SQLite with JSON columns for embeddings and skills. Migration 001 created <code>assignments</code> and <code>assignment_history</code>.</p>
+          </div>
+          <div class="feature-card">
+            <div class="card-header">UI / Presentation <span class="badge badge-primary">Jinja2 + Vanilla JS</span></div>
+            <p style="font-size:0.85rem;">Distinct dashboards for Admin, University, Industry, and Public Citizen views with real-time timers and dynamic audit logs.</p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">Current Pipeline Strengths</div>
+          The existing codebase already implements a full end-to-end flow from problem submission through AI analysis, multi-criteria matching, initial auto-assignment, and acceptance/rejection logging.
+        </div>
+      </section>
+
+      <!-- SECTION 2 -->
+      <section id="sec-2" class="doc-section">
+        <h2 class="section-title"><span class="section-num">02</span> Target 7-Layer System Architecture</h2>
+        <p>The target architecture establishes an enterprise-grade, event-driven societal intelligence and resolution platform structured across seven distinct functional layers:</p>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Layer</th>
+                <th>Target Responsibility</th>
+                <th>Target Technologies</th>
+                <th>Implementation Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. Ingestion Layer</strong></td>
+                <td>Multi-channel intake (Citizen Web, Mobile, IoT sensors, Community APIs), geo-tagging, file validation</td>
+                <td>Flask Multipart API, Leaflet Maps, WebRTC/Canvas</td>
+                <td><span class="badge badge-success">Operational</span></td>
+              </tr>
+              <tr>
+                <td><strong>2. AI Core Pipeline</strong></td>
+                <td>Dense embedding generation, zero-shot taxonomy classification, vision evidence verification, priority ranking</td>
+                <td>BGE-small, DeBERTa-v3, BLIP Vision, Scikit-learn</td>
+                <td><span class="badge badge-success">Operational</span></td>
+              </tr>
+              <tr>
+                <td><strong>3. Matching Engine</strong></td>
+                <td>5-factor university capability scoring, industry partner CSR matching, deterministic rank assignment</td>
+                <td>Cosine Similarity, Custom Heuristics, Linear Weighting</td>
+                <td><span class="badge badge-success">Operational</span></td>
+              </tr>
+              <tr>
+                <td><strong>4. Decision & Routing</strong></td>
+                <td>Deterministic 5-round auto-assignment state machine, timeout scanner (72h), admin manual override</td>
+                <td>Background Cron/Celery, State Machine Transitions</td>
+                <td><span class="badge badge-warning">Partially Automated</span></td>
+              </tr>
+              <tr>
+                <td><strong>5. Workspace Layer</strong></td>
+                <td>Execution workspace: Milestones, Tasks, Deliverables, Budget, Multi-party collaboration</td>
+                <td>Projects Blueprint, Collaboration Audit Trail</td>
+                <td><span class="badge badge-warning">Schema Present, UI Basic</span></td>
+              </tr>
+              <tr>
+                <td><strong>6. Learning Loop</strong></td>
+                <td>Impact validation, citizen feedback, continuous algorithm weighting refinement from decline reasons</td>
+                <td>Impact Metrics, Analytical Feedback Aggregator</td>
+                <td><span class="badge badge-danger">Needs Full Implementation</span></td>
+              </tr>
+              <tr>
+                <td><strong>7. Infrastructure</strong></td>
+                <td>PostgreSQL + PostGIS + pgvector, Redis Caching, Object Storage, Async Task Queues</td>
+                <td>Docker Compose, Redis, Celery / Cron, Gunicorn</td>
+                <td><span class="badge badge-warning">Dockerised, SQLite Active</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 3 -->
+      <section id="sec-3" class="doc-section">
+        <h2 class="section-title"><span class="section-num">03</span> Gap Analysis Matrix</h2>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Component / Capability</th>
+                <th>Current State</th>
+                <th>Target State</th>
+                <th>Remediation Strategy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Background Task Queue</strong></td>
+                <td>Synchronous in HTTP thread</td>
+                <td>Asynchronous execution via Redis/Celery or robust non-blocking worker</td>
+                <td>Implement lightweight worker queue fallback with threading/cron scanner for timeouts.</td>
+              </tr>
+              <tr>
+                <td><strong>Project Milestones & Deliverables</strong></td>
+                <td>Single <code>projects</code> table with JSON columns</td>
+                <td>Structured project phases (prototype &rarr; pilot &rarr; deployment) with formal sign-offs</td>
+                <td>Add dedicated milestone management API and front-end tracker in university dashboard.</td>
+              </tr>
+              <tr>
+                <td><strong>Matching Feedback Refinement</strong></td>
+                <td>Static linear weights (40/25/15/10/10)</td>
+                <td>Adaptive feedback penalty when universities decline with specific reasons</td>
+                <td>Integrate dynamic weighting adjustments in <code>ai/matcher.py</code> based on historical decline reasons.</td>
+              </tr>
+              <tr>
+                <td><strong>Citizen Feedback & Resolution Verification</strong></td>
+                <td>Problem status marked completed without citizen sign-off</td>
+                <td>Dual-verification: University marks complete &rarr; Citizen verifies resolution &rarr; Impact logged</td>
+                <td>Add verification endpoints: <code>POST /api/problems/&lt;id&gt;/verify-resolution</code>.</td>
+              </tr>
+              <tr>
+                <td><strong>Automated Timeout Daemon</strong></td>
+                <td>Manual trigger via API</td>
+                <td>Continuous scheduled background daemon checking expiration every hour</td>
+                <td>Add background daemon script and scheduled execution via Flask CLI / APScheduler.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 4 -->
+      <section id="sec-4" class="doc-section">
+        <h2 class="section-title"><span class="section-num">04</span> Database Schema Changes</h2>
+        <p>All database modifications follow strict zero-downtime, idempotent migration patterns. Existing tables are preserved, and new columns and tables are added via safe DDL.</p>
+
+        <h3 class="sub-title">New Migration: <code>002_project_workspace_and_learning_loop.sql</code></h3>
+        <pre class="code-block">
+-- 1. Project Milestones & Tasks Table
+CREATE TABLE IF NOT EXISTS project_milestones (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT,
+    stage TEXT CHECK(stage IN ('prototype', 'pilot', 'deployment', 'maintenance')) DEFAULT 'prototype',
+    target_date TEXT,
+    completed_at TEXT,
+    status TEXT CHECK(status IN ('pending', 'in_progress', 'submitted', 'verified')) DEFAULT 'pending',
+    evidence_url TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (project_id) REFERENCES projects(id)
+);
+
+-- 2. Citizen Resolution Feedback & Rating Table
+CREATE TABLE IF NOT EXISTS resolution_feedback (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    problem_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    is_resolved INTEGER NOT NULL CHECK(is_resolved IN (0, 1)),
+    rating INTEGER CHECK(rating BETWEEN 1 AND 5),
+    feedback_text TEXT,
+    photo_evidence_url TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (problem_id) REFERENCES problems(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- 3. Matcher Adaptive Learning Adjustments Table
+CREATE TABLE IF NOT EXISTS matcher_learning_adjustments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    university_id INTEGER NOT NULL,
+    category_id INTEGER,
+    skill_name TEXT,
+    penalty_factor REAL DEFAULT 1.0,
+    sample_count INTEGER DEFAULT 0,
+    last_reason TEXT,
+    updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (university_id) REFERENCES universities(id)
+);
+
+-- 4. Safe Column Additions to problems table
+-- Note: executed via try/except in migration script for SQLite compatibility
+-- ALTER TABLE problems ADD COLUMN resolution_verified_at TEXT;
+-- ALTER TABLE problems ADD COLUMN verified_by_citizen_id INTEGER;
+        </pre>
+      </section>
+
+      <!-- SECTION 5 -->
+      <section id="sec-5" class="doc-section">
+        <h2 class="section-title"><span class="section-num">05</span> Complete REST API Specification</h2>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Endpoint</th>
+                <th>Role Required</th>
+                <th>Payload / Parameters</th>
+                <th>Action & Response</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/problems</code></td>
+                <td>Public / Citizen</td>
+                <td><code>multipart/form-data</code> (title, desc, lat, lng, evidence)</td>
+                <td>Creates problem, stores files, returns <code>problem_id</code></td>
+              </tr>
+              <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/problems/&lt;id&gt;/analyze</code></td>
+                <td>Admin / System</td>
+                <td>None</td>
+                <td>Executes full AI pipeline, computes ranks, auto-assigns Rank 1</td>
+              </tr>
+              <tr>
+                <td><code>GET</code></td>
+                <td><code>/api/university/incoming</code></td>
+                <td>University</td>
+                <td>None (reads session <code>org_id</code>)</td>
+                <td>Returns pending challenges with countdown & match rationale</td>
+              </tr>
+              <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/university/challenges/&lt;id&gt;/accept</code></td>
+                <td>University</td>
+                <td>None</td>
+                <td>Accepts challenge, creates project workspace, transitions status</td>
+              </tr>
+              <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/university/challenges/&lt;id&gt;/decline</code></td>
+                <td>University</td>
+                <td><code>{"reason": "string"}</code></td>
+                <td>Rejects, logs decline reason, triggers re-routing to Rank N+1</td>
+              </tr>
+              <tr>
+                <td><code>GET</code></td>
+                <td><code>/api/projects/&lt;id&gt;/milestones</code></td>
+                <td>Authenticated</td>
+                <td>None</td>
+                <td>Lists milestones for an active resolution project</td>
+              </tr>
+              <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/projects/&lt;id&gt;/milestones</code></td>
+                <td>University / Admin</td>
+                <td><code>{"title": "...", "stage": "prototype", "target_date": "..."}</code></td>
+                <td>Creates new milestone in project workspace</td>
+              </tr>
+              <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/problems/&lt;id&gt;/verify-resolution</code></td>
+                <td>Citizen / Admin</td>
+                <td><code>{"is_resolved": true, "rating": 5, "feedback": "..."}</code></td>
+                <td>Finalizes resolution, logs impact metrics, closes problem</td>
+              </tr>
+              <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/cron/check-timeouts</code></td>
+                <td>Admin / Cron Key</td>
+                <td>None</td>
+                <td>Scans for 72h expired assignments and executes re-routing</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 6 -->
+      <section id="sec-6" class="doc-section">
+        <h2 class="section-title"><span class="section-num">06</span> AI Intelligence Pipeline Architecture</h2>
+        <p>The AI core pipeline executes in five deterministic, cascading stages upon problem submission:</p>
+
+        <div class="pipeline-steps">
+          <div class="step-pill">1. Vision Verification</div>
+          <span class="step-arrow">&rarr;</span>
+          <div class="step-pill">2. Dense Embedding</div>
+          <span class="step-arrow">&rarr;</span>
+          <div class="step-pill">3. Zero-Shot Classifier</div>
+          <span class="step-arrow">&rarr;</span>
+          <div class="step-pill">4. Geo-Cluster & Duplicates</div>
+          <span class="step-arrow">&rarr;</span>
+          <div class="step-pill">5. Priority Scoring</div>
+        </div>
+
+        <div class="formula-box">
+          <div class="formula-title">Priority Scoring Mathematical Formula</div>
+          Priority Score = (Severity &times; 0.35) + (Affected Pop &times; 0.25) + (Evidence Score &times; 0.25) + (Duplicate Count Boost &times; 0.15)
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-title">Calibrated Evidence Reliability Discount</div>
+          When evidence analysis results in low confidence (&lt; 0.40) or contradictory image captions, an automatic <strong>0.70 discount multiplier</strong> is applied to matching scores to prevent inaccurate automated dispatching while still allowing manual review.
+        </div>
+      </section>
+
+      <!-- SECTION 7 -->
+      <section id="sec-7" class="doc-section">
+        <h2 class="section-title"><span class="section-num">07</span> University Matching Engine Design</h2>
+        <p>Matching calculates a composite score $S_{\text{final}} \in [0, 1]$ across five independent evaluation criteria:</p>
+
+        <div class="formula-box">
+          <div class="formula-title">Multi-Criteria Matching Weight Matrix</div>
+          S_final = (S_semantic &times; 0.40) + (S_skills &times; 0.25) + (S_labs &times; 0.15) + (S_projects &times; 0.10) + (S_capacity &times; 0.10)
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Factor</th>
+                <th>Weight</th>
+                <th>Calculation Method</th>
+                <th>Data Source</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Semantic Alignment</strong></td>
+                <td>40%</td>
+                <td>Cosine similarity between problem text and institutional capability text</td>
+                <td><code>BAAI/bge-small-en-v1.5</code> Dense Vectors</td>
+              </tr>
+              <tr>
+                <td><strong>Faculty Skills</strong></td>
+                <td>25%</td>
+                <td>Overlap coefficient between extracted required skills and faculty expertise</td>
+                <td><code>faculty</code> table (department + expertise)</td>
+              </tr>
+              <tr>
+                <td><strong>Laboratory Facilities</strong></td>
+                <td>15%</td>
+                <td>Keyword & semantic hit rate on specialized research lab infrastructure</td>
+                <td><code>labs</code> table (name + facilities)</td>
+              </tr>
+              <tr>
+                <td><strong>Past Project History</strong></td>
+                <td>10%</td>
+                <td>Semantic relevance to previously completed societal interventions</td>
+                <td><code>previous_projects</code> table</td>
+              </tr>
+              <tr>
+                <td><strong>Current Capacity</strong></td>
+                <td>10%</td>
+                <td>Normalized remaining student/faculty bandwidth: $\min(1.0, \text{capacity} / 10)$</td>
+                <td><code>universities.capacity</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 8 -->
+      <section id="sec-8" class="doc-section">
+        <h2 class="section-title"><span class="section-num">08</span> Accept / Decline / Re-Routing State Machine</h2>
+        <p>The state machine guarantees deterministic progression with zero orphan challenges. Ranked matches are pre-computed during analysis; re-routing traverses the pre-sorted list without repeating expensive neural inference.</p>
+
+        <div class="card-grid">
+          <div class="feature-card">
+            <div class="card-header">1. Auto-Offer (Rank 1)</div>
+            <p style="font-size:0.85rem;">Problem state &rarr; <code>PENDING_UNIVERSITY_RESPONSE</code>. Assignment record created in status <code>pending</code>. 72-hour countdown timer begins.</p>
+          </div>
+          <div class="feature-card">
+            <div class="card-header">2. University Accept</div>
+            <p style="font-size:0.85rem;">Problem state &rarr; <code>IN_PROGRESS</code>. Assignment record &rarr; <code>accepted</code>. Project workspace initialized with milestone tracker.</p>
+          </div>
+          <div class="feature-card">
+            <div class="card-header">3. Decline or 72h Timeout</div>
+            <p style="font-size:0.85rem;">Assignment record &rarr; <code>rejected</code> with reason logged. System fetches Rank $N+1$ from <code>problem_university_matches</code>.</p>
+          </div>
+          <div class="feature-card">
+            <div class="card-header">4. Fallback Boundary</div>
+            <p style="font-size:0.85rem;">If all $K \le 5$ rounds are exhausted without acceptance, problem state transitions to <code>NO_UNIVERSITY_AVAILABLE</code> and alerts admin for manual allocation.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 9 -->
+      <section id="sec-9" class="doc-section">
+        <h2 class="section-title"><span class="section-num">09</span> Project Lifecycle & Execution Workspace</h2>
+        <p>Once accepted, a problem converts into an active execution project tracking four formalized developmental phases:</p>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Phase</th>
+                <th>Target Deliverables</th>
+                <th>Validation Gate</th>
+                <th>Responsible Entity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Phase 1: Prototype</strong></td>
+                <td>Feasibility study, technical blueprint, lab-scale prototype</td>
+                <td>Department Mentor Review</td>
+                <td>University Lead Faculty & Students</td>
+              </tr>
+              <tr>
+                <td><strong>Phase 2: Pilot Testing</strong></td>
+                <td>Field testing in affected geographic area, IoT sensor data</td>
+                <td>Local Municipal Authority Sign-off</td>
+                <td>University + Field Team</td>
+              </tr>
+              <tr>
+                <td><strong>Phase 3: Deployment</strong></td>
+                <td>Full infrastructure deployment, community training</td>
+                <td>Admin & Field Inspection</td>
+                <td>University + Industry Partner (CSR)</td>
+              </tr>
+              <tr>
+                <td><strong>Phase 4: Verification</strong></td>
+                <td>Citizen satisfaction rating, measurable impact metric</td>
+                <td>Citizen Dual-Verification</td>
+                <td>Reporting Citizen & Community</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 10 -->
+      <section id="sec-10" class="doc-section">
+        <h2 class="section-title"><span class="section-num">10</span> Notification & Communication Architecture</h2>
+        <p>A multi-tiered notification service delivers in-app and webhook alerts on all critical state transitions:</p>
+        <ul style="margin-left: 1.5rem; color: var(--text-secondary); line-height: 1.8;">
+          <li><code>assignment_created</code>: Sent to University Lead on initial offer with 72h expiration notice.</li>
+          <li><code>assignment_expired</code>: Sent to University & Admin when challenge times out.</li>
+          <li><code>rerouted_notice</code>: Sent to next ranked institution explaining assignment context.</li>
+          <li><code>project_milestone_submitted</code>: Sent to Admin and Citizen upon milestone completion.</li>
+          <li><code>resolution_ready_for_review</code>: Sent to reporting Citizen for final verification.</li>
+        </ul>
+      </section>
+
+      <!-- SECTION 11 -->
+      <section id="sec-11" class="doc-section">
+        <h2 class="section-title"><span class="section-num">11</span> Analytics & Continuous Learning Loop</h2>
+        <p>To eliminate repeated mis-assignments, the system implements an active learning loop:</p>
+        <div class="callout callout-success">
+          <div class="callout-title">Adaptive Feedback Weighting Engine</div>
+          When an institution declines an assignment citing <em>"lack of equipment"</em> or <em>"department overcapacity"</em>, the matcher dynamically applies a temporary penalty factor $\lambda \in [0.5, 0.8]$ to that category/skill for the next 30 days, re-ranking candidate institutions adaptively.
+        </div>
+      </section>
+
+      <!-- SECTION 12 -->
+      <section id="sec-12" class="doc-section">
+        <h2 class="section-title"><span class="section-num">12</span> Security Model & RBAC Matrix</h2>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Resource / Action</th>
+                <th>Citizen</th>
+                <th>University</th>
+                <th>Industry</th>
+                <th>Admin</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Submit Problem & Evidence</td>
+                <td><span class="badge badge-success">Full Access</span></td>
+                <td><span class="badge badge-success">Full Access</span></td>
+                <td><span class="badge badge-success">Full Access</span></td>
+                <td><span class="badge badge-success">Full Access</span></td>
+              </tr>
+              <tr>
+                <td>Trigger AI Analysis</td>
+                <td><span class="badge badge-danger">Denied</span></td>
+                <td><span class="badge badge-danger">Denied</span></td>
+                <td><span class="badge badge-danger">Denied</span></td>
+                <td><span class="badge badge-success">Full Access</span></td>
+              </tr>
+              <tr>
+                <td>Accept / Decline Offer</td>
+                <td><span class="badge badge-danger">Denied</span></td>
+                <td><span class="badge badge-success">Assigned Only</span></td>
+                <td><span class="badge badge-danger">Denied</span></td>
+                <td><span class="badge badge-warning">Override Only</span></td>
+              </tr>
+              <tr>
+                <td>Update Project Milestones</td>
+                <td><span class="badge badge-danger">Denied</span></td>
+                <td><span class="badge badge-success">Own Projects</span></td>
+                <td><span class="badge badge-success">Collaborations</span></td>
+                <td><span class="badge badge-success">Full Access</span></td>
+              </tr>
+              <tr>
+                <td>Verify Resolution</td>
+                <td><span class="badge badge-success">Own Problem</span></td>
+                <td><span class="badge badge-danger">Denied</span></td>
+                <td><span class="badge badge-danger">Denied</span></td>
+                <td><span class="badge badge-success">Full Access</span></td>
+              </tr>
+              <tr>
+                <td>View Full Audit Logs</td>
+                <td><span class="badge badge-danger">Denied</span></td>
+                <td><span class="badge badge-danger">Denied</span></td>
+                <td><span class="badge badge-danger">Denied</span></td>
+                <td><span class="badge badge-success">Full Access</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 13 -->
+      <section id="sec-13" class="doc-section">
+        <h2 class="section-title"><span class="section-num">13</span> Testing Strategy & Test Automation</h2>
+        <p>Comprehensive test suites covering unit, integration, state machine, and end-to-end user journeys:</p>
+        <div class="card-grid">
+          <div class="feature-card">
+            <div class="card-header">1. AI Model Unit Tests</div>
+            <p style="font-size:0.85rem;">Embedding vector consistency, BLIP caption fallback on corrupted images, and priority formula boundary conditions.</p>
+          </div>
+          <div class="feature-card">
+            <div class="card-header">2. State Machine Re-Routing Tests</div>
+            <p style="font-size:0.85rem;">Simulating multi-round rejection cascades from Rank 1 &rarr; Rank 2 &rarr; Rank 3 &rarr; max round fallback.</p>
+          </div>
+          <div class="feature-card">
+            <div class="card-header">3. RBAC & Security Tests</div>
+            <p style="font-size:0.85rem;">Attempted cross-organization challenge acceptance, unauthorized admin endpoint invocation, and malicious file upload filters.</p>
+          </div>
+          <div class="feature-card">
+            <div class="card-header">4. Playwright E2E Tests</div>
+            <p style="font-size:0.85rem;">Complete browser journeys: Citizen reports problem &rarr; Admin analyzes &rarr; University accepts &rarr; Project milestones tracked &rarr; Citizen verifies.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 14 -->
+      <section id="sec-14" class="doc-section">
+        <h2 class="section-title"><span class="section-num">14</span> Performance & Scaling Strategy</h2>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Bottleneck</th>
+                <th>Mitigation Strategy</th>
+                <th>Production Benchmark Target</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Transformer Model Inference</strong></td>
+                <td>ONNX Runtime quantization + model warm-up on startup + result caching</td>
+                <td>&lt; 450ms total analysis time</td>
+              </tr>
+              <tr>
+                <td><strong>Spatial & Duplicate Querying</strong></td>
+                <td>PostGIS R-Tree spatial indexing on lat/lng coordinates</td>
+                <td>&lt; 15ms per duplicate check across 100k records</td>
+              </tr>
+              <tr>
+                <td><strong>Vector Similarity Search</strong></td>
+                <td>pgvector HNSW index ($m=16$, $ef=64$) in PostgreSQL</td>
+                <td>&lt; 20ms over 50,000 institution capability vectors</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 15 -->
+      <section id="sec-15" class="doc-section">
+        <h2 class="section-title"><span class="section-num">15</span> Exact Files Requiring Modification</h2>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>File Path</th>
+                <th>Purpose of Change</th>
+                <th>Existing Functionality Reused</th>
+                <th>New Functionality Added</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>database/db.py</code></td>
+                <td>Add Migration 002 runner & tables for milestones and feedback</td>
+                <td>Connection pool, schema creation, existing seeds</td>
+                <td>Schema tables for <code>project_milestones</code> and <code>resolution_feedback</code></td>
+              </tr>
+              <tr>
+                <td><code>services/assignment_service.py</code></td>
+                <td>Complete re-routing edge cases, adaptive learning hooks, timeout trigger</td>
+                <td>Status update, notification dispatch, rank lookup</td>
+                <td>Automated loop daemon trigger, decline-reason recording, adaptive weights</td>
+              </tr>
+              <tr>
+                <td><code>routes/projects.py</code></td>
+                <td>Expose milestone management and project phase progress APIs</td>
+                <td>Project creation and listing routes</td>
+                <td>Milestone CRUD, stage progression, evidence upload per milestone</td>
+              </tr>
+              <tr>
+                <td><code>routes/problems.py</code></td>
+                <td>Add citizen verification endpoint <code>POST /&lt;id&gt;/verify-resolution</code></td>
+                <td>Problem creation, listing, analysis invocation</td>
+                <td>Resolution verification & impact feedback submission</td>
+              </tr>
+              <tr>
+                <td><code>ai/matcher.py</code></td>
+                <td>Incorporate dynamic decline penalties into multi-criteria formula</td>
+                <td>Semantic cosine, skill overlap, lab scoring</td>
+                <td>Penalty multiplier check from <code>matcher_learning_adjustments</code></td>
+              </tr>
+              <tr>
+                <td><code>static/js/university.js</code></td>
+                <td>Add project workspace milestone tracker to university dashboard</td>
+                <td>Incoming challenge review, accept/decline modal</td>
+                <td>Milestone creation, evidence submission, stage visualizer</td>
+              </tr>
+              <tr>
+                <td><code>static/js/admin.js</code></td>
+                <td>Enhance routing tracker with live audit timeline & re-route triggers</td>
+                <td>Admin KPI cards, problem table, assignment table</td>
+                <td>Live audit drilldown modal, manual re-route button, timeout simulator</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>

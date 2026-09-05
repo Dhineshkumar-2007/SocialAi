@@ -1,0 +1,8 @@
+<aside class="empty" role="alert" style="border:1px solid #f4caca;background:#fdecec;color:#a73d3d;border-radius:14px">
+  <div style="font-size:36px;margin-bottom:8px" aria-hidden="true">⚠️</div>
+  <h4 style="margin:0 0 4px">{{ title or 'Something went wrong' }}</h4>
+  <p style="margin:0">{{ message or 'Please try again or contact support if the problem persists.' }}</p>
+  {% if action_url %}
+  <a class="btn btn-soft" href="{{ action_url }}" style="margin-top:14px">{{ action_label or 'Try again' }}</a>
+  {% endif %}
+</aside>

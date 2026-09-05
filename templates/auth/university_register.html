@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Register University Account — SICP Tamil Nadu</title>
+<style>
+:root{
+  --ink:#0f172a;--surface:#f8fafc;--card:#fff;--border:#e2e8f0;
+  --primary:#0284c7;--primary-deep:#075985;--success:#10b981;
+  --danger:#ef4444;--muted:#64748b;--radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  background:linear-gradient(135deg,#e0f2fe 0%,#f8fafc 60%);
+  color:var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;padding:20px;
+}
+.wrap{display:grid;grid-template-columns:1fr 1fr;max-width:980px;width:100%;gap:24px;}
+@media(max-width:820px){.wrap{grid-template-columns:1fr;}.panel-side{display:none;}}
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:32px 36px;box-shadow:0 10px 30px rgba(2,132,199,.08);
+}
+.panel-side{
+  background:linear-gradient(160deg,var(--primary) 0%,var(--primary-deep) 100%);
+  color:#fff;border-radius:var(--radius);padding:36px;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.panel-side h2{font-size:1.4rem;letter-spacing:-.02em;margin-bottom:14px;}
+.panel-side p{font-size:.92rem;line-height:1.6;opacity:.92;margin-bottom:18px;}
+.panel-side ul{list-style:none;}
+.panel-side li{padding:8px 0;font-size:.88rem;display:flex;gap:10px;align-items:center;}
+.panel-side li::before{content:"✓";font-weight:800;color:#86efac;}
+.brand{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--primary-deep);font-weight:800;margin-bottom:6px;}
+h1{font-size:1.5rem;font-weight:800;letter-spacing:-.02em;margin-bottom:4px;}
+.subtitle{color:var(--muted);font-size:.9rem;margin-bottom:20px;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:540px){.row{grid-template-columns:1fr;}}
+.field{margin-bottom:12px;}
+label{font-size:.78rem;font-weight:700;color:var(--muted);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;}
+input,select{
+  width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;
+  font-size:.92rem;box-sizing:border-box;background:#fff;color:var(--ink);
+}
+input:focus,select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(2,132,199,.15);}
+.hint{font-size:.75rem;color:var(--muted);margin-top:4px;}
+button{
+  width:100%;padding:12px;border:none;border-radius:10px;
+  background:var(--primary);color:#fff;font-weight:700;cursor:pointer;font-size:.92rem;
+  transition:background .15s;margin-top:8px;
+}
+button:hover{background:var(--primary-deep);}
+button:disabled{background:#94a3b8;cursor:not-allowed;}
+.alert{padding:10px 12px;border-radius:10px;font-size:.85rem;margin-bottom:12px;display:none;}
+.alert.error{background:#fee2e2;color:#991b1b;border:1px solid #fecaca;display:block;}
+.alert.success{background:#dcfce7;color:#166534;border:1px solid #bbf7d0;display:block;}
+.alert.info{background:#dbeafe;color:#1e40af;border:1px solid #bfdbfe;display:block;}
+.note{font-size:.78rem;color:var(--muted);margin-top:14px;text-align:center;line-height:1.5;}
+.note a{color:var(--primary);text-decoration:none;font-weight:600;}
+.note a:hover{text-decoration:underline;}
+.divider{text-align:center;color:var(--muted);font-size:.78rem;margin:14px 0 10px;position:relative;}
+.divider::before,.divider::after{content:"";position:absolute;top:50%;width:40%;height:1px;background:var(--border);}
+.divider::before{left:0;}.divider::after{right:0;}
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="panel-side">
+    <div class="brand" style="color:#bae6fd;">SICP Tamil Nadu</div>
+    <h2>Higher Education Institution Portal</h2>
+    <p>Register your institution's lead account to start receiving matched societal challenges from the SICP platform.</p>
+    <ul>
+      <li>Pick your university from the registered list</li>
+      <li>Use an official university email</li>
+      <li>Set a strong password (min 8 characters)</li>
+      <li>Sign in to view challenges assigned to your institution</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="brand">University Sign up</div>
+    <h1>Register HEI Account</h1>
+    <p class="subtitle">For Higher Education Institutions only</p>
+
+    <div id="alert" class="alert"></div>
+
+    <form id="registerForm" onsubmit="event.preventDefault();doRegister();" autocomplete="on" novalidate>
+      <div class="field">
+        <label for="name">Your full name</label>
+        <input id="name" name="name" type="text" placeholder="e.g. Dr. Priya Sharma" required>
+        <div class="hint">The lead coordinator or authorized signatory for your institution.</div>
+      </div>
+
+      <div class="field">
+        <label for="email">University email</label>
+        <input id="email" name="email" type="email" placeholder="registrar@youruniversity.edu" required>
+        <div class="hint">Use an email issued by your institution. Public domains (gmail, yahoo) will be rejected.</div>
+      </div>
+
+      <div class="field">
+        <label for="org">Institution</label>
+        <select id="org" name="org_id" required>
+          <option value="">— Select your institution —</option>
+        </select>
+        <div class="hint">Choose the institution this account will represent. Only registered Tamil Nadu HEIs are listed.</div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" placeholder="At least 8 characters" required minlength="8">
+        </div>
+        <div class="field">
+          <label for="password2">Confirm password</label>
+          <input id="password2" name="password2" type="password" placeholder="Re-enter password" required minlength="8">
+        </div>
+      </div>
+
+      <button id="submitBtn" type="submit">Create HEI account</button>
+    </form>
+
+    <div class="divider">or</div>
+    <p class="note">
+      Already registered?
+      <a href="/university/login">Sign in to the HEI Portal →</a>
+    </p>
+    <p class="note" style="margin-top:6px;">
+      Citizen or industry user?
+      <a href="/login">Register or sign in to the public portal →</a>
+    </p>
+  </div>
+</div>
+
+<script>
+// Blocked public email domains — university accounts must use an institutional email.
+const PUBLIC_DOMAINS = new Set([
+  'gmail.com','yahoo.com','yahoo.co.in','outlook.com','hotmail.com','live.com',
+  'icloud.com','me.com','aol.com','protonmail.com','zoho.com','yandex.com',
+  'rediffmail.com','mail.com','gmx.com','msn.com','qq.com','163.com'
+]);
+
+async function loadUniversities() {
+  const sel = document.getElementById('org');
+  try {
+    // Use the public universities endpoint — read-only, no auth needed.
+    const res = await fetch('/api/universities', { credentials: 'same-origin' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const list = (data.universities || data || []);
+    if (!Array.isArray(list) || list.length === 0) {
+      sel.innerHTML = '<option value="">No registered institutions available</option>';
+      return;
+    }
+    sel.innerHTML = '<option value="">— Select your institution —</option>' +
+      list
+        .filter(u => u && u.id != null && u.name)
+        .sort((a, b) => String(a.name).localeCompare(String(b.name)))
+        .map(u => `<option value="${u.id}">${escapeHtml(u.name)}${u.city ? ' — ' + escapeHtml(u.city) : ''}</option>`)
+        .join('');
+  } catch (e) {
+    sel.innerHTML = '<option value="">Unable to load institutions. Refresh to try again.</option>';
+  }
+}
+
+function showAlert(kind, msg) {
+  const box = document.getElementById('alert');
+  box.className = 'alert ' + kind;
+  box.textContent = msg;
+  box.style.display = 'block';
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function clearAlert() {
+  const box = document.getElementById('alert');
+  box.className = 'alert';
+  box.style.display = 'none';
+  box.textContent = '';
+}
+
+function validateForm(payload) {
+  if (!payload.name || payload.name.trim().length < 2) {
+    return 'Please enter your full name.';
+  }
+  if (!payload.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) {
+    return 'Please enter a valid email address.';
+  }
+  const domain = payload.email.split('@')[1].toLowerCase();
+  if (PUBLIC_DOMAINS.has(domain)) {
+    return 'Please use an official university email — public email providers (gmail, yahoo, etc.) are not accepted for HEI accounts.';
+  }
+  if (!payload.org_id) {
+    return 'Please select your institution.';
+  }
+  if (!payload.password || payload.password.length < 8) {
+    return 'Password must be at least 8 characters.';
+  }
+  if (payload.password !== payload.password2) {
+    return 'Passwords do not match.';
+  }
+  return null;
+}
+
+async function doRegister() {
+  clearAlert();
+  const btn = document.getElementById('submitBtn');
+
+  const payload = {
+    name: document.getElementById('name').value.trim(),
+    email: document.getElementById('email').value.trim().toLowerCase(),
+    org_id: document.getElementById('org').value,
+    password: document.getElementById('password').value,
+    password2: document.getElementById('password2').value,
+  };
+
+  const err = validateForm(payload);
+  if (err) { showAlert('error', err); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Creating account…';
+
+  try {
+    const res = await fetch('/api/auth/register/common', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        account_type: 'institution',
+        name: payload.name,
+        email: payload.email,
+        password: payload.password,
+        institution: {
+          name: document.querySelector('#org option:checked').textContent.trim(),
+          institution_type: 'University',
+          city: '',
+        },
+      }),
+    });
+    const data = await res.json();
+
+    if (res.status === 201 && data.user) {
+      showAlert('success', 'Account created! Signing you in…');
+      // Auto-login so the user lands on their dashboard immediately.
+      const loginRes = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ email: payload.email, password: payload.password }),
+      });
+      if (loginRes.ok) {
+        const loginData = await loginRes.json();
+        if (loginData.user && loginData.user.role === 'university' && loginData.user.org_id) {
+          window.location.href = '/university';
+          return;
+        }
+      }
+      // Fallback: registration succeeded, send them to login page.
+      btn.innerHTML = 'Account created — redirecting…';
+      setTimeout(() => { window.location.href = '/university/login'; }, 1200);
+      return;
+    }
+
+    if (res.status === 409) {
+      showAlert('error', 'An account with that email already exists. Try signing in instead.');
+    } else if (res.status === 400) {
+      showAlert('error', data.error || 'Please check your input and try again.');
+    } else {
+      showAlert('error', data.error || 'Registration failed. Please try again later.');
+    }
+  } catch (e) {
+    showAlert('error', 'Network error. Please check your connection and try again.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Create HEI account';
+  }
+}
+
+function escapeHtml(t) {
+  const d = document.createElement('div'); d.textContent = t == null ? '' : String(t); return d.innerHTML;
+}
+
+document.addEventListener('DOMContentLoaded', loadUniversities);
+</script>
+</body>
+</html>

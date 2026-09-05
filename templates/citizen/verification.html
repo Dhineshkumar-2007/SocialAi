@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Verify Solution · SocialSolve</title><link rel="stylesheet" href="/static/css/socialsolve.css"></head>
+<body><div class="app">
+<aside class="side"><a class="logo" href="/"><span class="logo-mark">S</span>SocialSolve</a><nav><a href="/citizen">Overview</a><a href="/citizen/problems">My problems</a><a href="/citizen/submit">Report problem</a><a class="active" href="#">Verification</a><a href="/citizen/notifications">Notifications</a><a href="/citizen/profile">Profile</a></nav></aside>
+<main class="main">
+<div class="top"><div><h1>Verify Solution</h1><p>Smart Streetlight System · ABC Engineering University</p></div></div>
+<section class="panel">
+<div style="text-align:center;padding:28px">
+<h2>Did this solution solve the problem?</h2>
+<p style="color:var(--muted);margin-top:8px">Your honest answer closes the feedback loop.</p>
+<div style="display:flex;gap:16px;justify-content:center;margin-top:28px;flex-wrap:wrap">
+<button class="btn btn-primary" onclick="select('yes')" id="btn-yes" style="padding:18px 32px;font-size:18px;border-radius:16px">
+  <div style="font-size:28px">&#128077;</div>
+  <div style="margin-top:6px">YES</div>
+</button>
+<button class="btn btn-ghost" onclick="select('partial')" id="btn-partial" style="padding:18px 32px;font-size:18px;border-radius:16px">
+  <div style="font-size:28px">&#128528;</div>
+  <div style="margin-top:6px">PARTIALLY</div>
+</button>
+<button class="btn btn-ghost" onclick="select('no')" id="btn-no" style="padding:18px 32px;font-size:18px;border-radius:16px">
+  <div style="font-size:28px">&#128078;</div>
+  <div style="margin-top:6px">NO</div>
+</button>
+</div>
+<div id="feedback-form" style="display:none;margin-top:24px">
+<h3>Your feedback</h3>
+<p style="color:var(--muted);font-size:13px;margin-bottom:14px">Tell us what worked or what still needs attention.</p>
+<textarea id="feedback" placeholder="Share your experience with the solution..." style="width:100%;border:1px solid var(--line);border-radius:10px;padding:12px;font:inherit;min-height:100px;resize:vertical"></textarea>
+<div style="margin-top:14px"><h4>Upload evidence <span class="muted">(optional)</span></h4><input type="file" accept="image/*,video/*" multiple></div>
+<button class="btn btn-primary" style="margin-top:14px" onclick="submit()">Submit Verification</button>
+</div>
+<div id="submitted" style="display:none;margin-top:24px;padding:20px;border-radius:14px;background:var(--mint);color:var(--green2);text-align:center">
+<h3>Verification submitted</h3>
+<p style="margin-top:6px">Thank you for closing the loop. The institution and government have been notified.</p>
+<a class="btn btn-soft" href="/citizen/problems" style="margin-top:12px">Back to problems</a>
+</div>
+<div id="reopened" style="display:none;margin-top:24px;padding:20px;border-radius:14px;background:#fdecec;color:#a73d3d;text-align:center">
+<h3>Problem reopened</h3>
+<p style="margin-top:6px">The institution/government has been notified. SocialSolve will seek a new institution for this problem.</p>
+<a class="btn btn-soft" href="/citizen/problems" style="margin-top:12px">Back to problems</a>
+</div>
+</div>
+</section>
+</main></div>
+<script>
+let chosen = null;
+function select(v) {
+  chosen = v;
+  document.getElementById("feedback-form").style.display = "block";
+  document.querySelectorAll("button[id^=btn-]").forEach(b => { b.className = "btn btn-ghost"; b.style.padding = "18px 32px"; b.style.fontSize = "18px"; b.style.borderRadius = "16px"; });
+  var btn = document.getElementById("btn-" + v);
+  btn.className = "btn btn-primary"; btn.style.padding = "18px 32px"; btn.style.fontSize = "18px"; btn.style.borderRadius = "16px";
+}
+function submit() {
+  var fb = document.getElementById("feedback").value;
+  if (!fb.trim()) { alert("Please share your feedback before submitting."); return; }
+  if (chosen === "no") {
+    document.getElementById("reopened").style.display = "block";
+  } else {
+    document.getElementById("submitted").style.display = "block";
+  }
+  document.getElementById("feedback-form").style.display = "none";
+}
+</script>
+</body></html>
