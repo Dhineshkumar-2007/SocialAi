@@ -4,29 +4,53 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Profile · SocialSolve</title>
 <link rel="stylesheet" href="/static/css/socialsolve.css">
-<style>.profile-header{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:center}.avatar{width:120px;height:120px;border-radius:50%;border:3px solid var(--line);object-fit:cover}.meta p{color:var(--muted);font-size:13px}.fields{max-width:740px}</style>
-</head><body>
+<style>.profile-header{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:center}.avatar{width:120px;height:120px;border-radius:50%;border:3px solid var(--line);object-fit:cover;background:#e6eaf0;display:grid;place-items:center;font:800 42px system-ui;color:#475569}.meta p{color:var(--muted);font-size:13px}.fields{max-width:740px}</style>
+</head><body data-user-name="{{ user_name or '' }}">
 <div class="app">
 <aside class="side"><a class="logo" href="/"><span class="logo-mark">S</span>SocialSolve</a><nav><a href="/citizen">Overview</a><a href="/citizen/problems">My problems</a><a href="/citizen/submit">Report problem</a><a href="/citizen/notifications">Notifications</a><a class="active" href="/citizen/profile">Profile</a></nav></aside>
 <main class="main">
 <div class="top"><div><h1>Profile</h1><p>Your citizen account.</p></div></div>
 <section class="panel" style="padding:24px">
 <div class="profile-header">
-<img src="/static/img/avatar.jpg" alt="Avatar" class="avatar">
-<div><h2>Dhinesh Kumar</h2><p>Citizen since Aug 2026 · Trichy, Tamil Nadu</p><div style="margin-top:10px"><span class="tag green">Active contributor</span> <span class="tag">12 reports</span> <span class="tag">6 resolved</span></div></div>
+<div class="avatar" id="avatar">S</div>
+<div>
+  <h2 id="profName">Loading…</h2>
+  <p class="meta" id="profMeta">Citizen · {{ user_email or '' }}</p>
+  <div style="margin-top:10px"><span class="tag green">Active contributor</span></div>
+</div>
 </div>
 </section>
 <section class="panel" style="margin-top:18px;padding:24px">
 <h3>Account</h3>
-<form class="fields" onsubmit="event.preventDefault();this.innerHTML='<p style=\'color:var(--green2);font-weight:700\'>Saved.</p>'">
-<div class="field"><label>Full name</label><input value="Dhinesh Kumar" disabled></div>
-<div class="field"><label>Email</label><input type="email" value="dhinesh@example.com"></div>
-<div class="field"><label>Location (city / region)</label><input value="Trichy, Tamil Nadu"></div>
-<div class="field"><label>Notification preference</label><select><option>Email + in-app</option><option>In-app only</option></select></div>
+<form class="fields" onsubmit="event.preventDefault();this.querySelector('#saveMsg').textContent='Saved.'">
+<div class="field"><label>Full name</label><input id="inpName" name="name" value=""></div>
+<div class="field"><label>Email</label><input id="inpEmail" name="email" type="email" value="" disabled></div>
+<div class="field"><label>Phone</label><input id="inpPhone" name="phone" value=""></div>
+<div class="field"><label>Location (city / region)</label><input id="inpLoc" name="location" value=""></div>
 <button class="btn btn-primary" type="submit">Save profile</button>
+<span id="saveMsg" style="margin-left:12px;color:var(--green2);font-weight:700"></span>
 </form>
 </section>
 </main>
 </div>
+<script>
+(async function(){
+  try{
+    const r = await fetch('/api/auth/me', {credentials:'same-origin'});
+    if(!r.ok) return;
+    const {user} = await r.json();
+    if(!user) return;
+    const name = user.name || 'User';
+    const initials = (name.split(' ').map(s=>s[0]).join('').slice(0,2) || '?').toUpperCase();
+    document.getElementById('avatar').textContent = initials;
+    document.getElementById('profName').textContent = name;
+    document.getElementById('profMeta').textContent = 'Citizen · ' + (user.email || '');
+    document.getElementById('inpName').value = user.name || '';
+    document.getElementById('inpEmail').value = user.email || '';
+    document.getElementById('inpPhone').value = user.phone || '';
+    document.getElementById('inpLoc').value = user.organization_name || '';
+  }catch(e){}
+})();
+</script>
 </body>
 </html>

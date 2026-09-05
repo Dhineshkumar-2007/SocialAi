@@ -19,22 +19,22 @@ def _university_row(db, uid):
     if not u:
         return None
     row = dict(u)
-    row["faculty"] = [
-        dict(r) for r in
-        db.execute("SELECT * FROM faculty WHERE university_id=?", (uid,)).fetchall()
-    ]
-    row["labs"] = [
-        dict(r) for r in
-        db.execute("SELECT * FROM labs WHERE university_id=?", (uid,)).fetchall()
-    ]
-    row["projects"] = [
-        dict(r) for r in
-        db.execute("SELECT * FROM previous_projects WHERE university_id=?", (uid,)).fetchall()
-    ]
-    row["technologies"] = [
-        dict(r) for r in
-        db.execute("SELECT * FROM university_technologies WHERE university_id=?", (uid,)).fetchall()
-    ]
+    try:
+        row["faculty"] = [dict(r) for r in db.execute("SELECT * FROM faculty WHERE university_id=?", (uid,)).fetchall()]
+    except Exception:
+        row["faculty"] = []
+    try:
+        row["labs"] = [dict(r) for r in db.execute("SELECT * FROM labs WHERE university_id=?", (uid,)).fetchall()]
+    except Exception:
+        row["labs"] = []
+    try:
+        row["projects"] = [dict(r) for r in db.execute("SELECT * FROM previous_projects WHERE university_id=?", (uid,)).fetchall()]
+    except Exception:
+        row["projects"] = []
+    try:
+        row["technologies"] = [dict(r) for r in db.execute("SELECT * FROM university_technologies WHERE university_id=?", (uid,)).fetchall()]
+    except Exception:
+        row["technologies"] = []
     return row
 
 
@@ -46,8 +46,8 @@ def _problem_rows_for_university(db, uid, status_filter=None):
     query = """
         SELECT
             p.id, p.title, p.description, p.status,
-            p.priority, p.category, p.address,
-            p.created_at, p.assigned_at,
+            p.category, p.address,
+            p.created_at,
             a.id         AS assignment_id,
             a.status     AS assignment_status,
             COALESCE(
@@ -154,7 +154,7 @@ def get_challenge(assignment_id):
                 p.title        AS problem_title,
                 p.description  AS problem_description,
                 p.category     AS problem_category,
-                p.priority     AS problem_priority,
+                p.priority_level AS problem_priority,
                 p.status       AS problem_status,
                 p.address      AS problem_address,
                 p.created_at   AS problem_created_at,
@@ -174,7 +174,7 @@ def get_challenge(assignment_id):
         result["evidence"] = [
             dict(r) for r in
             db.execute(
-                "SELECT id, filename, uploaded_at FROM evidence WHERE problem_id=?",
+                "SELECT id, filename, created_at AS uploaded_at FROM evidence WHERE problem_id=?",
                 (row["problem_id"],)
             ).fetchall()
         ]
@@ -200,7 +200,7 @@ def get_challenge(assignment_id):
                             WHERE n.problem_id = a.problem_id AND n.university_id = a.assignee_id
                             ORDER BY n.id LIMIT 1),
                            NULL) AS reasons,
-                       a.declined_at, a.decline_reason, a.assigned_at,
+                       a.declined_at, a.decline_reason,
                        u.name AS institution_name,
                        CASE a.status
                          WHEN 'assigned'  THEN 'Pending'
@@ -211,7 +211,7 @@ def get_challenge(assignment_id):
                 FROM assignments a
                 JOIN universities u ON u.id = a.assignee_id
                 WHERE a.problem_id = ?
-                ORDER BY a.assigned_at ASC
+                ORDER BY a.created_at ASC
             """, (row["problem_id"],)).fetchall()
         ]
 
@@ -230,16 +230,15 @@ def list_university_projects():
         rows = db.execute("""
             SELECT
                 pr.id,
-                pr.title,
-                pr.description,
-                pr.status    AS project_status,
-                pr.progress  AS project_progress,
-                pr.created_at,
-                pr.updated_at,
+                pr.name          AS title,
+                pr.status        AS project_status,
+                pr.progress      AS project_progress,
+                pr.started_at,
+                pr.completed_at,
                 p.id        AS problem_id,
                 p.title     AS problem_title,
                 p.category  AS problem_category,
-                p.citizen_name,
+                p.address   AS problem_address,
                 p.status    AS problem_status,
                 a.id        AS assignment_id,
                 COALESCE(
@@ -264,7 +263,7 @@ def list_university_projects():
             JOIN projects pr ON pr.problem_id = a.problem_id AND pr.assigned_to_id = a.assignee_id
             JOIN problems p ON p.id = a.problem_id
             WHERE a.assignee_type = 'university' AND a.assignee_id = ?
-            ORDER BY pr.updated_at DESC
+            ORDER BY pr.started_at DESC
         """, (uid,)).fetchall()
         return jsonify([dict(r) for r in rows])
 
@@ -332,14 +331,13 @@ def get_project(project_id):
     uid = _uid(user)
     with get_db() as db:
         row = db.execute("""
-            SELECT pr.*,
-                   a.institution_id,
-                   p.title,
-                   p.description,
-                   p.category,
-                   p.address,
-                   p.citizen_name,
-                   p.status    AS problem_status,
+            SELECT pr.id, pr.name AS title, pr.status AS project_status,
+                   pr.progress AS project_progress, pr.problem_id,
+                   p.title      AS problem_title,
+                   p.description AS problem_description,
+                   p.category   AS problem_category,
+                   p.address    AS problem_address,
+                   p.status     AS problem_status,
                    p.created_at AS problem_created_at
             FROM projects pr
             JOIN assignments a ON a.problem_id = pr.problem_id AND a.assignee_type='university'
@@ -361,12 +359,13 @@ def get_project(project_id):
             ).fetchall()
         ]
 
-        # Institution evidence
+        # Institution evidence (project_evidence table is empty in current schema;
+        # fall back to the problem-level evidence so the UI has something to show).
         result["evidence"] = [
             dict(r) for r in
             db.execute(
-                "SELECT * FROM project_evidence WHERE project_id=? ORDER BY uploaded_at DESC",
-                (project_id,)
+                "SELECT id, filename, created_at AS uploaded_at FROM evidence WHERE problem_id=? ORDER BY created_at DESC",
+                (row["problem_id"],)
             ).fetchall()
         ]
 
@@ -386,7 +385,7 @@ def get_project(project_id):
         result["problem_evidence"] = [
             dict(r) for r in
             db.execute(
-                "SELECT id, filename, uploaded_at FROM evidence WHERE problem_id=?",
+                "SELECT id, filename, created_at AS uploaded_at FROM evidence WHERE problem_id=?",
                 (row["problem_id"],)
             ).fetchall()
         ]
@@ -412,7 +411,7 @@ def get_project(project_id):
                             WHERE n.problem_id = a.problem_id AND n.university_id = a.assignee_id
                             ORDER BY n.id LIMIT 1),
                            NULL) AS reasons,
-                       a.declined_at, a.decline_reason, a.assigned_at,
+                       a.declined_at, a.decline_reason,
                        u.name AS institution_name,
                        CASE a.status
                          WHEN 'assigned'  THEN 'Pending'
@@ -423,7 +422,7 @@ def get_project(project_id):
                 FROM assignments a
                 JOIN universities u ON u.id = a.assignee_id
                 WHERE a.problem_id = ?
-                ORDER BY a.assigned_at ASC
+                ORDER BY a.created_at ASC
             """, (row["problem_id"],)).fetchall()
         ]
 

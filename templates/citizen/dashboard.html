@@ -46,7 +46,7 @@
 @media(max-width:560px){.stats{grid-template-columns:1fr}.main{padding:20px}}
 </style>
 </head>
-<body>
+<body data-user-name="{{ user_name or '' }}">
 <div class="app">
 <aside class="side">
   <a class="logo" href="/"><span class="logo-mark">S</span>SocialSolve</a>
@@ -123,7 +123,7 @@ async function cfetch(url, opts = {}) {
 
 function setGreeting() {
   const h = new Date().getHours();
-  const name = 'Dhinesh';
+  const name = (document.body.dataset.userName || '').trim() || 'there';
   const part = h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
   $('#greeting').textContent = `Good ${part}, ${name}.`;
 }

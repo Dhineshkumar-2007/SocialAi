@@ -96,6 +96,13 @@ def create_app():
     def uploaded_file(filename):
         return send_from_directory(Config.UPLOAD_DIR, filename)
 
+    @app.get("/admin/audit")
+    def admin_audit_page():
+        user = session.get('user')
+        if not user or user.get('role') not in ('admin', 'superadmin'):
+            return redirect('/login')
+        return render_template("admin/audit.html")
+
     # Admin dashboard page — simplified single-view control panel
     @app.get("/admin")
     def admin_dashboard():
@@ -253,4 +260,7 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    import os
+    host = os.getenv("HOST", "0.0.0.0")
+    port = int(os.getenv("PORT", "5000"))
+    app.run(host=host, port=port, debug=os.getenv("FLASK_DEBUG", "false").lower() == "true")

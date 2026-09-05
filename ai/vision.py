@@ -9,9 +9,9 @@ from ai.embeddings import generate_embedding
 def get_vision():
     if not Config.AI_ENABLED:
         return None
-    from transformers import BlipProcessor, BlipForConditionalGeneration
-    processor = BlipProcessor.from_pretrained(Config.VISION_MODEL, token=Config.HF_TOKEN)
-    model = BlipForConditionalGeneration.from_pretrained(Config.VISION_MODEL, token=Config.HF_TOKEN)
+    from transformers import AutoProcessor, AutoModelForVision2Seq
+    processor = AutoProcessor.from_pretrained(Config.VISION_MODEL, token=Config.HF_TOKEN)
+    model = AutoModelForVision2Seq.from_pretrained(Config.VISION_MODEL, token=Config.HF_TOKEN)
     return processor, model
 
 

@@ -8,6 +8,26 @@ from auth.decorators import require_role
 admin_bp = Blueprint("admin", __name__, url_prefix="/api/admin")
 
 
+@admin_bp.get("/audit")
+@require_role('admin')
+def audit_trail():
+    with get_db() as db:
+        rows = db.execute("""
+            SELECT
+                p.id AS problem_id,
+                p.title,
+                p.status,
+                u.name AS actor_name,
+                u.role AS actor_role,
+                p.created_at AS time,
+                'submitted' AS action
+            FROM problems p
+            LEFT JOIN users u ON u.id = p.created_by
+            ORDER BY p.created_at DESC LIMIT 20
+        """).fetchall()
+    return jsonify({"logs": [{"time": r["time"], "action": r["action"], "actor": (r["actor_name"] or "System") + (f" ({r["actor_role"]})" if r.get("actor_role") else ""), "target": f"#{r['problem_id']}", "status": "success"} for r in map(dict, rows)]})
+
+
 @admin_bp.get("/assignment-history")
 @require_role('admin')
 def assignment_history():

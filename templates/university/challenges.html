@@ -1,35 +1,62 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Challenges — University Portal</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#182242"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SocialSolve"><meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="/static/manifest.json"><link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+<title>Challenges · SocialSolve</title>
+<link rel="stylesheet" href="/static/css/socialsolve.css">
 <style>
-:root{--ink:#0f172a;--surface:#f8fafc;--primary:#0284c7;--border:#e2e8f0;--radius:14px;}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f8fafc;color:var(--ink);padding:40px 24px;}
-.container{max-width:980px;margin:0 auto;}
-h1{font-size:1.6rem;font-weight:800;letter-spacing:-.02em;margin-bottom:4px;}
-.subtitle{color:#64748b;font-size:.92rem;margin-bottom:24px;}
-.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:0 10px 30px rgba(2,132,199,.06);margin-bottom:16px;}
-.card h2{font-size:1.1rem;margin-bottom:8px;}
-.card p{color:#64748b;font-size:.88rem;line-height:1.5;}
-.badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em;background:#dcfce7;color:#166534;}
+.container{max-width:980px;margin:0 auto;padding:34px 24px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card h2{font-size:1.05rem;margin-bottom:4px}
+.card p{color:var(--muted);font-size:.88rem}
+.badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.7rem;font-weight:700;text-transform:uppercase;background:var(--mint);color:var(--green2)}
+.badge.red{background:#fdecec;color:#a73d3d}
+.badge.amber{background:#fff4df;color:#9b650d}
+.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px}
 </style>
 </head>
-<body>
-<div class="container">
+<body data-user-name="{{ user_name or '' }}">
+<div class="app">
+{% include 'components/navbar.html' %}
+<main class="main" style="max-width:980px;padding:34px 24px;margin:0 auto">
+<div class="top" style="margin-bottom:24px">
   <h1>Assigned Challenges</h1>
-  <p class="subtitle">Challenges matched to your institution by the AI routing engine.</p>
-  <div class="card">
-    <h2>Smart Streetlight System <span class="badge">Pending</span></h2>
-    <p>Problem #42 · Community Safety · Priority: High · Assigned 2026-09-05</p>
-  </div>
-  <div class="card">
-    <h2>Green Corridor Project <span class="badge">Pending</span></h2>
-    <p>Problem #38 · Urban Planning · Priority: Medium · Assigned 2026-09-04</p>
-  </div>
-  <p style="color:#64748b;font-size:.82rem;margin-top:12px;">Data loaded from <code>/api/universities/challenges</code> (requires university login).</p>
+  <p>Challenges matched to your institution by the AI routing engine.</p>
 </div>
+<div id="challengeList">
+  <div class="empty">Loading your assignments…</div>
+</div>
+</main>
+</div>
+<script>
+(async function(){
+  try {
+    const r = await fetch('/api/universities/challenges', {credentials:'same-origin'});
+    const data = await r.json();
+    const list = document.getElementById('challengeList');
+    if (!data || !data.length) {
+      list.innerHTML = '<div class="empty">No challenges assigned yet. New problems will be routed here when a match is found.</div>';
+      return;
+    }
+    list.innerHTML = data.map(a => `
+      <a href="/university/challenges/${a.assignment_id}" style="text-decoration:none;color:inherit;display:block">
+        <div class="card">
+          <h2>${esc(a.problem_title || a.title || 'Untitled')}
+            <span class="badge ${a.problem_priority==='high'?'red':a.problem_priority==='medium'?'amber':''}">${esc(a.status || 'Pending')}</span>
+          </h2>
+          <p>Problem #${a.problem_id || a.id || '—'} · ${esc(a.problem_category || a.category || '—')} · ${esc(a.problem_priority || a.priority || '—')} priority · Assigned ${(a.created_at||'').slice(0,10)}</p>
+        </div>
+      </a>`).join('');
+  } catch(e) {
+    document.getElementById('challengeList').innerHTML = '<div class="empty">Could not load challenges.</div>';
+  }
+})();
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
+</script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/static/js/sw.js').catch(()=>{});}</script>
 </body>
 </html>
