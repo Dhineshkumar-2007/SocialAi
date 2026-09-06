@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
     <title>Report Problem · Social AI</title>
 
-    <link rel="stylesheet" href="/static/css/social-ai.css">
+    <link
+        rel="stylesheet"
+        href="/static/css/social-ai.css">
 
     <style>
+
         .report-box {
             max-width: 800px;
             margin: 30px auto;
@@ -53,6 +60,13 @@
             margin-top: 10px;
         }
 
+        .preview img {
+            width: 100px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
         #cameraPreview {
             width: 100%;
             max-height: 300px;
@@ -60,13 +74,6 @@
             background: #000;
             object-fit: cover;
             margin-top: 10px;
-        }
-
-        .preview img {
-            width: 100px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 8px;
         }
 
         .location-box {
@@ -84,8 +91,28 @@
         #result {
             margin-top: 20px;
         }
+
+        .success-box,
+        .error-box {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .success-box {
+            background: #e8f7ed;
+            border: 1px solid #a8ddb8;
+        }
+
+        .error-box {
+            background: #fdecec;
+            border: 1px solid #efaaaa;
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
@@ -102,125 +129,207 @@
                 and find suitable institutions.
             </p>
 
-            <form id="problemForm" enctype="multipart/form-data">
 
-                <!-- TITLE -->
+            <form
+                id="problemForm"
+                enctype="multipart/form-data">
+
+
+                <!-- ==================================================
+                     TITLE
+                     ================================================== -->
+
                 <div class="field">
-                    <label>Problem Title</label>
+
+                    <label for="title">
+                        Problem Title
+                    </label>
 
                     <input
                         type="text"
+                        id="title"
                         name="title"
                         placeholder="Example: Streetlights not working near bus stop"
-                        required
-                    >
+                        required>
+
                 </div>
 
 
-                <!-- DESCRIPTION -->
+                <!-- ==================================================
+                     DESCRIPTION
+                     ================================================== -->
+
                 <div class="field">
 
-                    <label>What is happening?</label>
+                    <label for="description">
+                        What is happening?
+                    </label>
 
                     <textarea
+                        id="description"
                         name="description"
                         placeholder="Describe the problem, location and people affected..."
-                        required
-                    ></textarea>
+                        required></textarea>
 
                 </div>
 
 
-                <!-- IMAGE -->
+                <!-- ==================================================
+                     IMAGE / EVIDENCE
+                     ================================================== -->
+
                 <div class="field">
 
-                    <label>Evidence Photo</label>
+                    <label>
+                        Evidence Photo
+                    </label>
+
 
                     <div class="buttons">
+
+
+                        <!-- CAMERA BUTTON -->
 
                         <button
                             type="button"
                             id="cameraBtn"
-                            class="btn btn-ghost"
-                        >
+                            class="btn btn-ghost">
+
                             📷 Camera
+
                         </button>
 
-                        <label
-                            for="evidenceInput"
-                            class="btn btn-ghost"
-                        >
-                            🖼️ Upload
-                        </label>
+
+                        <!-- GALLERY BUTTON -->
+
+                        <button
+                            type="button"
+                            id="uploadBtn"
+                            class="btn btn-ghost">
+
+                            🖼️ Gallery
+
+                        </button>
 
                     </div>
+
+
+                    <!--
+                        IMPORTANT:
+
+                        Gallery input has NO capture attribute.
+
+                        Therefore the website asks for a normal
+                        gallery/file picker.
+
+                        Camera input has capture="environment"
+                        and is ONLY triggered by Camera.
+                    -->
+
+
+                    <!-- GALLERY / FILE PICKER -->
 
                     <input
                         type="file"
                         id="evidenceInput"
                         name="evidence"
-                        accept="image/*"
+                        accept="image/jpeg,image/png,image/webp"
                         multiple
-                        hidden
-                    >
+                        hidden>
+
+
+                    <!-- NATIVE CAMERA FALLBACK -->
 
                     <input
                         type="file"
                         id="cameraInput"
                         accept="image/*"
                         capture="environment"
-                        hidden
-                    >
+                        hidden>
 
-                    <video id="cameraPreview" autoplay playsinline muted hidden></video>
+
+                    <!-- LIVE CAMERA -->
+
+                    <video
+                        id="cameraPreview"
+                        autoplay
+                        playsinline
+                        muted
+                        hidden>
+                    </video>
+
+
+                    <!-- CAMERA CONTROLS -->
 
                     <div class="buttons">
+
                         <button
                             type="button"
                             id="captureBtn"
                             class="btn btn-primary"
-                            hidden
-                        >
+                            hidden>
+
                             📸 Capture Photo
+
                         </button>
+
 
                         <button
                             type="button"
                             id="stopCameraBtn"
                             class="btn btn-ghost"
-                            hidden
-                        >
+                            hidden>
+
                             ✋ Stop Camera
+
                         </button>
+
                     </div>
 
-                    <div id="preview" class="preview"></div>
+
+                    <!-- IMAGE PREVIEW -->
+
+                    <div
+                        id="preview"
+                        class="preview">
+                    </div>
 
                 </div>
 
 
-                <!-- LOCATION -->
+                <!-- ==================================================
+                     LOCATION
+                     ================================================== -->
+
                 <div class="field">
 
-                    <label>📍 Problem Location</label>
+                    <label>
+                        📍 Problem Location
+                    </label>
+
 
                     <div class="location-box">
+
 
                         <button
                             type="button"
                             id="locationBtn"
-                            class="btn btn-ghost"
-                        >
+                            class="btn btn-ghost">
+
                             📍 Detect My Location
+
                         </button>
+
 
                         <button
                             type="button"
                             id="mapBtn"
-                            class="btn btn-ghost"
-                        >
+                            class="btn btn-ghost">
+
                             🗺️ Choose on Map
+
                         </button>
+
 
                         <p id="locationText">
                             Location not selected
@@ -228,42 +337,52 @@
 
                     </div>
 
+
+                    <!-- LOCATION DATA -->
+
                     <input
                         type="hidden"
                         name="latitude"
-                        id="latitude"
-                    >
+                        id="latitude">
+
 
                     <input
                         type="hidden"
                         name="longitude"
-                        id="longitude"
-                    >
+                        id="longitude">
+
 
                     <input
                         type="hidden"
                         name="address"
-                        id="address"
-                    >
+                        id="address">
+
 
                     <div id="map"></div>
 
                 </div>
 
 
-                <!-- SUBMIT -->
+                <!-- ==================================================
+                     SUBMIT
+                     ================================================== -->
+
                 <button
                     type="submit"
                     id="submitBtn"
-                    class="btn btn-primary"
-                >
+                    class="btn btn-primary">
+
                     Submit & Analyze
+
                 </button>
 
             </form>
 
 
-            <!-- RESULT -->
+            <!-- ==================================================
+                 RESULT
+                 ================================================== -->
+
             <div id="result"></div>
 
         </div>
@@ -275,350 +394,971 @@
 
 <script>
 
-const form = document.getElementById("problemForm");
 
-const cameraBtn = document.getElementById("cameraBtn");
-const cameraInput = document.getElementById("cameraInput");
+/* ================================================================
+   ELEMENTS
+   ================================================================ */
 
-const evidenceInput = document.getElementById("evidenceInput");
-const preview = document.getElementById("preview");
 
-const cameraPreview = document.getElementById("cameraPreview");
-const captureBtn = document.getElementById("captureBtn");
-const stopCameraBtn = document.getElementById("stopCameraBtn");
+const form =
+    document.getElementById("problemForm");
 
-const isMobile = /Android|iPhone|iPad|iPod|Mobile|Opera Mini|IEMobile/i
+
+const cameraBtn =
+    document.getElementById("cameraBtn");
+
+
+const uploadBtn =
+    document.getElementById("uploadBtn");
+
+
+const cameraInput =
+    document.getElementById("cameraInput");
+
+
+const evidenceInput =
+    document.getElementById("evidenceInput");
+
+
+const preview =
+    document.getElementById("preview");
+
+
+const cameraPreview =
+    document.getElementById("cameraPreview");
+
+
+const captureBtn =
+    document.getElementById("captureBtn");
+
+
+const stopCameraBtn =
+    document.getElementById("stopCameraBtn");
+
+
+const locationBtn =
+    document.getElementById("locationBtn");
+
+
+const latitude =
+    document.getElementById("latitude");
+
+
+const longitude =
+    document.getElementById("longitude");
+
+
+const address =
+    document.getElementById("address");
+
+
+const locationText =
+    document.getElementById("locationText");
+
+
+const result =
+    document.getElementById("result");
+
+
+let cameraStream = null;
+
+
+/* ================================================================
+   DEVICE DETECTION
+   ================================================================ */
+
+
+const isMobile =
+    /Android|iPhone|iPad|iPod|Mobile|Opera Mini|IEMobile/i
     .test(navigator.userAgent);
 
-const locationBtn = document.getElementById("locationBtn");
 
-const latitude = document.getElementById("latitude");
-const longitude = document.getElementById("longitude");
-
-const locationText = document.getElementById("locationText");
-
-const result = document.getElementById("result");
+/* ================================================================
+   GALLERY / FILE UPLOAD
+   ================================================================ */
 
 
-// CAMERA — works on mobile and desktop: live preview + capture button.
-// Falls back to the native camera capture input on mobile if getUserMedia
-// is unavailable or denied.
-cameraBtn.onclick = () => {
-    openCamera();
-};
+uploadBtn.addEventListener("click", () => {
+
+    /*
+     * IMPORTANT:
+     *
+     * This input does NOT have capture="environment".
+     *
+     * Therefore this button only opens the normal
+     * gallery/file picker.
+     */
+
+    evidenceInput.click();
+
+});
 
 
-function openCamera() {
+evidenceInput.addEventListener("change", () => {
 
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showImages(evidenceInput.files);
 
-        if (isMobile) {
+});
 
-            cameraInput.click();
+
+/* ================================================================
+   CAMERA BUTTON
+   ================================================================ */
+
+
+cameraBtn.addEventListener("click", async () => {
+
+    await openCamera();
+
+});
+
+
+/* ================================================================
+   OPEN CAMERA
+   ================================================================ */
+
+
+async function openCamera() {
+
+
+    // Stop previous camera session
+
+    stopCamera();
+
+
+    /*
+     * Try browser camera first.
+     *
+     * This gives us:
+     *
+     * Camera preview
+     * Capture button
+     * Rear camera on mobile
+     */
+
+    if (
+        navigator.mediaDevices &&
+        navigator.mediaDevices.getUserMedia
+    ) {
+
+        try {
+
+            cameraStream =
+                await navigator.mediaDevices.getUserMedia({
+
+                    video: {
+                        facingMode: {
+                            ideal: "environment"
+                        }
+                    },
+
+                    audio: false
+
+                });
+
+
+            cameraPreview.srcObject =
+                cameraStream;
+
+
+            cameraPreview.hidden =
+                false;
+
+
+            captureBtn.hidden =
+                false;
+
+
+            stopCameraBtn.hidden =
+                false;
+
+
+            await cameraPreview.play();
+
+
             return;
+
         }
 
-        alert("Camera is not supported in this browser. Use the Upload button instead.");
+        catch (error) {
 
-        return;
+            console.log(
+                "Browser camera unavailable:",
+                error
+            );
+
+        }
+
     }
 
-    // Prefer the rear camera on phones, mirroring capture="environment".
-    getUserMedia({ facingMode: "environment" }).catch(() => {
 
-        // Some desktop webcams don't expose facingMode — retry without it.
-        return getUserMedia({});
-    }).then(showCameraStream).catch(err => {
+    /*
+     * FALLBACK
+     *
+     * Only the Camera button reaches here.
+     *
+     * Gallery button never calls cameraInput.click().
+     */
 
-        if (isMobile) {
+    if (isMobile) {
 
-            // Native capture is more reliable when getUserMedia is denied.
-            cameraInput.click();
+        cameraInput.click();
 
-        } else {
+    }
 
-            alert("Could not access the camera: " + (err.message || err));
+    else {
 
-        }
-    });
+        alert(
+            "Could not access the camera. Please use the Gallery button."
+        );
+
+    }
+
 }
 
 
-function getUserMedia(videoConstraints) {
-
-    return navigator.mediaDevices.getUserMedia({
-        video: videoConstraints,
-        audio: false
-    });
-}
+/* ================================================================
+   CAPTURE PHOTO FROM LIVE CAMERA
+   ================================================================ */
 
 
-function showCameraStream(stream) {
+captureBtn.addEventListener("click", () => {
 
-    cameraPreview.srcObject = stream;
-    cameraPreview.hidden = false;
-    captureBtn.hidden = false;
-    stopCameraBtn.hidden = false;
 
-    cameraPreview.play().catch(() => {});
-}
+    if (
+        !cameraPreview.videoWidth ||
+        !cameraPreview.videoHeight
+    ) {
+
+        return;
+
+    }
+
+
+    const canvas =
+        document.createElement("canvas");
+
+
+    canvas.width =
+        cameraPreview.videoWidth;
+
+
+    canvas.height =
+        cameraPreview.videoHeight;
+
+
+    const context =
+        canvas.getContext("2d");
+
+
+    context.drawImage(
+        cameraPreview,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    canvas.toBlob(
+
+        blob => {
+
+
+            if (!blob) {
+
+                return;
+
+            }
+
+
+            const file =
+                new File(
+
+                    [blob],
+
+                    `camera_${Date.now()}.jpg`,
+
+                    {
+                        type: "image/jpeg"
+                    }
+
+                );
+
+
+            /*
+             * Preserve already selected gallery images.
+             */
+
+            const dataTransfer =
+                new DataTransfer();
+
+
+            for (
+                const existingFile
+                of evidenceInput.files
+            ) {
+
+                dataTransfer.items.add(
+                    existingFile
+                );
+
+            }
+
+
+            /*
+             * Add newly captured image.
+             */
+
+            dataTransfer.items.add(file);
+
+
+            evidenceInput.files =
+                dataTransfer.files;
+
+
+            /*
+             * Show preview.
+             */
+
+            showImages(
+                evidenceInput.files
+            );
+
+
+            /*
+             * Automatically stop camera
+             * after successful capture.
+             */
+
+            stopCamera();
+
+        },
+
+        "image/jpeg",
+
+        0.90
+
+    );
+
+});
+
+
+/* ================================================================
+   NATIVE CAMERA FALLBACK
+   ================================================================ */
+
+
+cameraInput.addEventListener("change", () => {
+
+
+    if (!cameraInput.files.length) {
+
+        return;
+
+    }
+
+
+    /*
+     * Preserve existing gallery images.
+     */
+
+    const dataTransfer =
+        new DataTransfer();
+
+
+    for (
+        const existingFile
+        of evidenceInput.files
+    ) {
+
+        dataTransfer.items.add(
+            existingFile
+        );
+
+    }
+
+
+    /*
+     * Add camera image.
+     */
+
+    for (
+        const cameraFile
+        of cameraInput.files
+    ) {
+
+        dataTransfer.items.add(
+            cameraFile
+        );
+
+    }
+
+
+    evidenceInput.files =
+        dataTransfer.files;
+
+
+    showImages(
+        evidenceInput.files
+    );
+
+
+    /*
+     * Clear camera input so the same photo
+     * can be selected again if needed.
+     */
+
+    cameraInput.value = "";
+
+});
+
+
+/* ================================================================
+   STOP CAMERA
+   ================================================================ */
+
+
+stopCameraBtn.addEventListener(
+    "click",
+    stopCamera
+);
 
 
 function stopCamera() {
 
-    if (cameraPreview.srcObject) {
 
-        cameraPreview.srcObject
+    if (cameraStream) {
+
+
+        cameraStream
             .getTracks()
-            .forEach(track => track.stop());
+            .forEach(track => {
 
-        cameraPreview.srcObject = null;
+                track.stop();
+
+            });
+
+
+        cameraStream = null;
+
     }
 
-    cameraPreview.hidden = true;
-    captureBtn.hidden = true;
-    stopCameraBtn.hidden = true;
+
+    if (cameraPreview.srcObject) {
+
+        cameraPreview.srcObject =
+            null;
+
+    }
+
+
+    cameraPreview.hidden =
+        true;
+
+
+    captureBtn.hidden =
+        true;
+
+
+    stopCameraBtn.hidden =
+        true;
+
 }
 
 
-captureBtn.onclick = () => {
-
-    if (!cameraPreview.videoWidth) return;
-
-    const canvas = document.createElement("canvas");
-
-    canvas.width = cameraPreview.videoWidth;
-    canvas.height = cameraPreview.videoHeight;
-
-    canvas.getContext("2d")
-        .drawImage(cameraPreview, 0, 0);
-
-    canvas.toBlob(blob => {
-
-        const file = new File(
-            [blob],
-            `camera_${Date.now()}.jpg`,
-            { type: "image/jpeg" }
-        );
-
-        const dataTransfer = new DataTransfer();
-
-        for (const f of evidenceInput.files)
-            dataTransfer.items.add(f);
-
-        dataTransfer.items.add(file);
-
-        evidenceInput.files = dataTransfer.files;
-
-        showImages(evidenceInput.files);
-
-    }, "image/jpeg", 0.9);
-};
+/* ================================================================
+   IMAGE PREVIEW
+   ================================================================ */
 
 
-stopCameraBtn.onclick = stopCamera;
-
-
-// CAMERA PHOTO (mobile native capture)
-cameraInput.onchange = () => {
-
-    if (cameraInput.files.length === 0)
-        return;
-
-    evidenceInput.files = cameraInput.files;
-
-    showImages(evidenceInput.files);
-};
-
-
-// UPLOAD IMAGE
-evidenceInput.onchange = () => {
-
-    showImages(evidenceInput.files);
-
-};
-
-
-// IMAGE PREVIEW
 function showImages(files) {
+
 
     preview.innerHTML = "";
 
+
     for (const file of files) {
 
-        const img = document.createElement("img");
 
-        img.src = URL.createObjectURL(file);
+        if (
+            !file.type.startsWith("image/")
+        ) {
+
+            continue;
+
+        }
+
+
+        const img =
+            document.createElement("img");
+
+
+        const objectUrl =
+            URL.createObjectURL(file);
+
+
+        img.src =
+            objectUrl;
+
+
+        img.alt =
+            "Evidence photo";
+
+
+        img.onload = () => {
+
+            URL.revokeObjectURL(
+                objectUrl
+            );
+
+        };
+
 
         preview.appendChild(img);
+
     }
+
 }
 
 
-// LOCATION
-locationBtn.onclick = () => {
+/* ================================================================
+   LOCATION
+   ================================================================ */
+
+
+locationBtn.addEventListener(
+    "click",
+    detectLocation
+);
+
+
+function detectLocation() {
+
 
     if (!navigator.geolocation) {
 
-        alert("GPS is not supported");
+        alert(
+            "GPS is not supported by this browser."
+        );
 
         return;
+
     }
 
-    locationText.textContent = "Detecting location...";
+
+    locationText.textContent =
+        "Detecting location...";
+
+
+    locationBtn.disabled =
+        true;
+
 
     navigator.geolocation.getCurrentPosition(
 
-        async position => {
+        position => {
 
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
 
-            latitude.value = lat;
-            longitude.value = lng;
+            const lat =
+                position.coords.latitude;
+
+
+            const lng =
+                position.coords.longitude;
+
+
+            /*
+             * Store coordinates.
+             */
+
+            latitude.value =
+                lat;
+
+
+            longitude.value =
+                lng;
+
+
+            /*
+             * Store simple address.
+             *
+             * You can later replace this with
+             * reverse geocoding.
+             */
+
+            address.value =
+                `${lat}, ${lng}`;
+
 
             locationText.textContent =
                 `Location detected: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
 
-            address.value =
-                `${lat}, ${lng}`;
+
+            locationBtn.disabled =
+                false;
+
         },
 
-        () => {
+
+        error => {
+
+
+            console.error(
+                "Location error:",
+                error
+            );
+
 
             locationText.textContent =
                 "Could not detect location";
 
+
+            locationBtn.disabled =
+                false;
+
+
+            if (error.code === 1) {
+
+                alert(
+                    "Location permission was denied. Please allow location access."
+                );
+
+            }
+
+        },
+
+
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
         }
+
     );
-};
+
+}
 
 
-// SUBMIT
-form.onsubmit = async (event) => {
-
-    event.preventDefault();
-
-    const button = document.getElementById("submitBtn");
-
-    button.disabled = true;
-
-    button.textContent = "Analyzing...";
-
-    result.innerHTML = "AI is analyzing your problem...";
+/* ================================================================
+   MAP BUTTON
+   ================================================================ */
 
 
-    try {
+document.getElementById("mapBtn")
+    .addEventListener("click", () => {
 
-        const data = new FormData(form);
-
-
-        // CREATE PROBLEM
-        const response = await fetch(
-            "/api/problems",
-            {
-                method: "POST",
-                body: data,
-                credentials: "same-origin"
-            }
-        );
+        const map =
+            document.getElementById("map");
 
 
-        const created = await response.json();
+        if (map.style.display === "none" ||
+            map.style.display === "") {
+
+            map.style.display =
+                "block";
 
 
-        if (!response.ok) {
+            /*
+             * Map integration can be added here.
+             *
+             * Example:
+             * Leaflet / Google Maps / Mapbox
+             */
 
-            throw new Error(
-                created.message || created.error || "Failed to submit problem"
-            );
+            map.innerHTML = `
+
+                <div style="
+                    padding:20px;
+                    text-align:center;
+                    background:#f5f5f5;
+                    border-radius:10px;
+                ">
+
+                    🗺️ Map selection can be
+                    integrated here.
+
+                    <br><br>
+
+                    Use "Detect My Location"
+                    for automatic GPS coordinates.
+
+                </div>
+
+            `;
+
         }
 
-
-        const problemId = created.problem_id;
-
-
-        // AI ANALYSIS
-        const analysisResponse = await fetch(
-            `/api/problems/${problemId}/analyze`,
-            {
-                method: "POST",
-                credentials: "same-origin"
-            }
-        );
+    });
 
 
-        const analysis = await analysisResponse.json();
+/* ================================================================
+   FORM SUBMISSION
+   ================================================================ */
 
 
-        if (!analysisResponse.ok) {
+form.addEventListener(
+    "submit",
+    async event => {
 
-            throw new Error(
-                analysis.error || "AI analysis failed"
+
+        event.preventDefault();
+
+
+        const button =
+            document.getElementById(
+                "submitBtn"
             );
-        }
 
 
-        // SHOW RESULT
+        /*
+         * Prevent duplicate submissions.
+         */
+
+        button.disabled =
+            true;
+
+
+        button.textContent =
+            "Analyzing...";
+
+
         result.innerHTML = `
 
             <div class="success-box">
 
-                <h3>✅ Analysis Complete</h3>
-
-                <p>
-                    Problem ID: <strong>#${problemId}</strong>
-                </p>
-
-                <p>
-                    Category:
-                    <strong>
-                        ${analysis.classification?.category || "Unknown"}
-                    </strong>
-                </p>
-
-                <p>
-                    Priority:
-                    <strong>
-                        ${analysis.priority?.level || "Medium"}
-                    </strong>
-                </p>
-
-                <p>
-                    Evidence Score:
-                    <strong>
-                        ${analysis.evidence_score || 0}%
-                    </strong>
-                </p>
+                🤖 AI is analyzing your problem...
 
             </div>
 
         `;
 
 
-        button.textContent = "Analyzed ✓";
+        try {
 
 
-    } catch (error) {
+            /*
+             * Create FormData.
+             *
+             * This includes:
+             *
+             * title
+             * description
+             * images
+             * latitude
+             * longitude
+             * address
+             */
 
-        result.innerHTML = `
+            const data =
+                new FormData(form);
 
-            <div class="error-box">
 
-                ❌ ${error.message}
+            /* ======================================================
+               CREATE PROBLEM
+               ====================================================== */
 
-            </div>
 
-        `;
+            const response =
+                await fetch(
 
-        button.disabled = false;
+                    "/api/problems",
 
-        button.textContent = "Submit & Analyze";
-    }
+                    {
 
-};
+                        method: "POST",
+
+                        body: data,
+
+                        credentials:
+                            "same-origin"
+
+                    }
+
+                );
+
+
+            const created =
+                await response.json();
+
+
+            if (!response.ok) {
+
+
+                throw new Error(
+
+                    created.message ||
+                    created.error ||
+                    "Failed to submit problem"
+
+                );
+
+            }
+
+
+            const problemId =
+                created.problem_id;
+
+
+            /* ======================================================
+               AI ANALYSIS
+               ====================================================== */
+
+
+            result.innerHTML = `
+
+                <div class="success-box">
+
+                    🤖 Problem created.
+
+                    <br>
+
+                    🔍 Running AI analysis...
+
+                </div>
+
+            `;
+
+
+            const analysisResponse =
+                await fetch(
+
+                    `/api/problems/${problemId}/analyze`,
+
+                    {
+
+                        method: "POST",
+
+                        credentials:
+                            "same-origin"
+
+                    }
+
+                );
+
+
+            const analysis =
+                await analysisResponse.json();
+
+
+            if (!analysisResponse.ok) {
+
+
+                throw new Error(
+
+                    analysis.error ||
+                    "AI analysis failed"
+
+                );
+
+            }
+
+
+            /* ======================================================
+               SHOW RESULT
+               ====================================================== */
+
+
+            const category =
+                analysis.classification?.category ||
+                "Unknown";
+
+
+            const priority =
+                analysis.priority?.level ||
+                "Medium";
+
+
+            const evidenceScore =
+                analysis.evidence_score ||
+                0;
+
+
+            result.innerHTML = `
+
+                <div class="success-box">
+
+                    <h3>
+                        ✅ Analysis Complete
+                    </h3>
+
+
+                    <p>
+                        Problem ID:
+                        <strong>
+                            #${problemId}
+                        </strong>
+                    </p>
+
+
+                    <p>
+                        Category:
+                        <strong>
+                            ${category}
+                        </strong>
+                    </p>
+
+
+                    <p>
+                        Priority:
+                        <strong>
+                            ${priority}
+                        </strong>
+                    </p>
+
+
+                    <p>
+                        Evidence Score:
+                        <strong>
+                            ${evidenceScore}%
+                        </strong>
+                    </p>
+
+                </div>
+
+            `;
+
+
+            button.textContent =
+                "Analyzed ✓";
+
+
+        }
+
+        catch (error) {
+
+
+            console.error(
+                "Submission error:",
+                error
+            );
+
+
+            result.innerHTML = `
+
+                <div class="error-box">
+
+                    ❌ ${error.message}
+
+                </div>
+
+            `;
+
+
+            button.disabled =
+                false;
+
+
+            button.textContent =
+                "Submit & Analyze";
+
+        }
+
+    });
+
 
 </script>
 
 </body>
+
 </html>
