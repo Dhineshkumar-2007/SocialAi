@@ -1,8 +1,8 @@
-/* SocialSolve Service Worker v1 */
+/* Social AI Service Worker v1 */
 const CACHE = 'socialsolve-v1';
 const STATIC_ASSETS = [
   '/',
-  '/static/css/socialsolve.css',
+  '/static/css/social-ai.css',
   '/static/manifest.json'
 ];
 
@@ -73,8 +73,8 @@ self.addEventListener('fetch', e => {
 // Push notification placeholder
 self.addEventListener('push', e => {
   const data = e.data?.json() || {};
-  self.registration.showNotification(data.title || 'SocialSolve', {
-    body: data.body || 'New update from SocialSolve',
+  self.registration.showNotification(data.title || 'Social AI', {
+    body: data.body || 'New update from Social AI',
     icon: '/static/icons/icon-192.png',
     badge: '/static/icons/icon-192.png',
     tag: 'socialsolve-notif',

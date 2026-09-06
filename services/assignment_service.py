@@ -604,7 +604,7 @@ def decline_assignment(assignment_id, org_id, user_id, reason):
             "problem_id": problem_id,
             "status": "rejected",
             "reason": reason,
-            "message": "Your assigned institution declined; SocialSolve is re-routing.",
+            "message": "Your assigned institution declined; Social AI is re-routing.",
         })
         try:
             Notification.create(problem_row['created_by'], 'status_changed', payload)

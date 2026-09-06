@@ -260,7 +260,13 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
-    import os
     host = os.getenv("HOST", "0.0.0.0")
     port = int(os.getenv("PORT", "5000"))
-    app.run(host=host, port=port, debug=os.getenv("FLASK_DEBUG", "false").lower() == "true")
+    debug = os.getenv("FLASK_DEBUG", "false").lower() == "true"
+
+    # Optional HTTPS: generate certs with `python scripts/gen_cert.py`
+    cert_file = os.getenv("SSL_CERTFILE")
+    key_file = os.getenv("SSL_KEYFILE")
+    ssl_context = (cert_file, key_file) if cert_file and key_file else None
+
+    app.run(host=host, port=port, debug=debug, ssl_context=ssl_context)

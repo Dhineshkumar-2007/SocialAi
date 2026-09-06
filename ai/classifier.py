@@ -356,6 +356,30 @@ GIBBERISH_PATTERNS = [
     r"^[\s\w]*([a-z]{5,})([a-z]{5,})([a-z]{5,})([a-z]{5,})\w*$",  # long repeated char runs
 ]
 
+def _spam_keyword_hits(text: str) -> int:
+    """Count spam keyword hits using whole-word / whole-phrase matching.
+
+    Naive substring matching (`kw in text`) is disabled because innocent words
+    share suffixes with spam keywords (e.g. 'learning' -> 'earn',
+    'overflowing' -> 'win', 'offered' -> 'offer') and were flagging valid
+    reports as spam (NEEDS_REVIEW -> HTTP 422).
+    """
+    import re
+    normalized = re.sub(r"[^a-z0-9\s]+", " ", text.lower())
+    hits = 0
+    for kw in SPAM_KEYWORDS:
+        kw = kw.strip()
+        if not kw:
+            continue
+        # Currency symbols are stripped by normalization, so match on raw text.
+        if any(sym in kw for sym in "₹$€£"):
+            if kw in text:
+                hits += 1
+        elif _substring_or_word(kw, normalized):
+            hits += 1
+    return hits
+
+
 def _spam_heuristics(title: str, description: str) -> dict:
     """Rule-based heuristics that feed the Decision Engine.
     Returns dict with: spam_score (0-1), notes (str), recommendation (str)."""
@@ -363,8 +387,8 @@ def _spam_heuristics(title: str, description: str) -> dict:
     notes = []
     score = 0.0
 
-    # 1. Spam keyword hits
-    spam_hits = sum(1 for kw in SPAM_KEYWORDS if kw in text)
+    # 1. Spam keyword hits (whole-word matching to avoid false positives)
+    spam_hits = _spam_keyword_hits(text)
     if spam_hits >= 2:
         score = min(1.0, score + 0.85)
         notes.append("Multiple spam keywords detected")
