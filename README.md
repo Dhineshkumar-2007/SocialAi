@@ -1,7 +1,6 @@
-<<<<<<< HEAD
-# Societal Challenge Intelligence Platform — AI MVP
+Societal Challenge Intelligence Platform — AI MVP
 
-End-to-end Flask MVP based on the SIH concept:
+End-to-end Flask MVP 
 
 Submit → Evidence → Classify → Embed → Duplicate → Skills → Priority → University Match → Project Tracking → Dashboard
 
