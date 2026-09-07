@@ -20,6 +20,7 @@ class Config:
     )
     DUPLICATE_THRESHOLD = float(os.getenv("DUPLICATE_THRESHOLD", "0.82"))
     CORS_ORIGINS = os.getenv("CORS_ORIGINS", "*")
+    TEMPLATES_AUTO_RELOAD = True
     UNIVERSITY_RESPONSE_TIMEOUT_HOURS = int(os.getenv("UNIVERSITY_RESPONSE_TIMEOUT_HOURS", "72"))
     MAX_ASSIGNMENT_ROUNDS = int(os.getenv("MAX_ASSIGNMENT_ROUNDS", "3"))
     HF_TOKEN = os.getenv("HF_TOKEN", "")

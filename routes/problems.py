@@ -103,6 +103,18 @@ def get_problem(problem_id):
         result["evidence"] = [dict(x) for x in e]
         matches = db.execute("SELECT m.*, u.name AS university, u.city FROM problem_university_matches m JOIN universities u ON u.id=m.university_id WHERE m.problem_id=? ORDER BY m.rank ASC", (problem_id,)).fetchall()
         result["matches"] = [dict(x) for x in matches]
+        links = db.execute(
+            """
+            SELECT pl.*, sp.title AS similar_title, sp.category AS similar_category,
+                   sp.status AS similar_status, sp.evidence_score AS similar_evidence_score
+            FROM problem_links pl
+            LEFT JOIN problems sp ON sp.id = pl.similar_problem_id
+            WHERE pl.problem_id=?
+            ORDER BY pl.similarity DESC
+            """,
+            (problem_id,),
+        ).fetchall()
+        result["duplicates"] = [dict(x) for x in links]
         assignments = db.execute("SELECT a.*, u.name AS university FROM assignments a LEFT JOIN universities u ON u.id=a.assignee_id WHERE a.problem_id=? ORDER BY a.id ASC", (problem_id,)).fetchall()
         result["assignments"] = [dict(x) for x in assignments]
         return jsonify(result)

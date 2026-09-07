@@ -1,3 +1,14 @@
+---
+title: SocialAI - Societal Challenge Intelligence
+emoji: 🧠
+colorFrom: blue
+colorTo: purple
+sdk: docker
+app_port: 7860
+pinned: false
+license: mit
+---
+
 Societal Challenge Intelligence Platform — AI MVP
 
 End-to-end Flask MVP 
@@ -66,6 +77,3 @@ POST `/api/projects`
 PATCH `/api/projects/<id>`
 
 See `docs/API.md`.
-=======
-# SocialAi
->>>>>>> ddcbc50cb8b59a686a97dcb7b0a08de6663c7f5c

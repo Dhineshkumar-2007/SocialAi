@@ -1,40 +1,358 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Broken Streetlights Near School · Social AI</title><link rel="stylesheet" href="/static/css/social-ai.css"></head><body><div class="app">
-<aside class="side"><a class="logo" href="/"><span class="logo-mark">S</span>Social AI</a><nav><a href="/citizen">Overview</a><a href="/citizen/problems">My problems</a><a href="/citizen/submit">Report problem</a><a class="active" href="#">Problem details</a><a href="/citizen/notifications">Notifications</a><a href="/citizen/profile">Profile</a></nav></aside>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Problem Details · Social AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Source+Serif+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/social-ai.css">
+<style>
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.side{border-right:1px solid var(--line);background:#fff;padding:24px 16px;position:sticky;top:0;height:100vh}
+.side .logo{padding:0 10px 28px;font-family:var(--font-display);font-weight:800;letter-spacing:-.03em;font-size:1.2rem}
+.side nav{display:grid;gap:4px}
+.side nav a{padding:10px 12px;border-radius:8px;color:var(--muted);font-size:14px;font-family:var(--font-display);font-weight:500;text-decoration:none;transition:all .15s}
+.side nav a.active,.side nav a:hover{background:var(--mint);color:var(--green2);font-weight:700}
+.main{padding:34px;max-width:1400px;width:100%}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:24px}
+.top p{color:var(--muted);margin:6px 0 0;font-family:var(--font-body)}
+.grid{display:grid;gap:16px}
+.two{grid-template-columns:1.35fr .65fr}
+.panel{background:#fff;border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:0 14px 14px 0;padding:22px;box-shadow:var(--shadow)}
+.panel h3{font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--ink);margin:0}
+.panel-sub{color:var(--muted);font-size:13px;margin:6px 0 20px;font-family:var(--font-body)}
+.tag{display:inline-flex;padding:5px 8px;border-radius:99px;font-size:11px;font-weight:800;background:#f1f4f3;color:#53615d}
+.tag.green{background:var(--mint);color:var(--green2)}
+.tag.amber{background:#fff4df;color:#9b650d}
+.tag.red{background:#fdecec;color:#a73d3d}
+.score{font:800 22px var(--font-display);color:var(--green)}
+.mini-bar{height:7px;background:#edf1ef;border-radius:99px;overflow:hidden}
+.mini-bar i{display:block;height:100%;background:var(--green);border-radius:99px}
+.detail-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.detail-row:last-child{border-bottom:0}
+.detail-row .lbl{color:var(--muted);font-family:var(--font-body)}
+.detail-row .val{font-weight:700;color:var(--ink);text-align:right}
+.match-card{border:1px solid var(--line);border-left:3px solid var(--mint);border-radius:0 14px 14px 0;padding:16px;margin-top:10px;background:#fff}
+.match-top{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.match-score{font:800 18px var(--font-display);color:var(--green)}
+.evidence-card{border:1px solid var(--line);border-radius:14px;padding:15px;margin-top:10px;background:#fff}
+.evidence-card .cap{font-size:13px;font-style:italic;color:#33415c;line-height:1.55;margin:8px 0}
+.chip{display:inline-block;background:#f1f4f3;color:#33415c;border-radius:99px;padding:4px 11px;margin:3px 4px 3px 0;font-size:12px;font-weight:600}
+.sub-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.sub-row:last-child{border-bottom:0}
+.sub-row .nm{font-weight:700}
+.sub-row .mt{color:var(--muted);font-size:12px}
+.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px;font-family:var(--font-body)}
+.notice{padding:30px;color:var(--muted);font-family:var(--font-body)}
+@media(max-width:900px){.app{grid-template-columns:1fr}.side{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}.side nav{display:flex;overflow:auto}.two{grid-template-columns:1fr}}
+@media(max-width:560px){.main{padding:20px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+  <a class="logo" href="/"><span class="logo-mark">S</span>Social AI</a>
+  <nav>
+    <a href="/citizen">Overview</a>
+    <a href="/citizen/problems">My problems</a>
+    <a href="/citizen/submit">Report problem</a>
+    <a class="active" href="#">Problem details</a>
+    <a href="/citizen/notifications">Notifications</a>
+    <a href="/citizen/profile">Profile</a>
+  </nav>
+</aside>
 <main class="main">
-<div class="top"><div><h1>Broken Streetlights Near School</h1><p>Infrastructure · Trichy · High priority</p></div><a class="btn btn-ghost" href="/citizen/problems">Back to problems</a></div>
-<div class="grid two" style="align-items:start">
-<section class="panel">
-<h3>Overview</h3>
-<div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap"><span class="tag green">In Progress</span><span class="tag">Infrastructure</span><span class="tag ambar">HIGH</span></div>
-<p style="margin-top:14px;color:var(--muted);line-height:1.65">Streetlights near the Government School in Trichy have been non-functional since the festival week. Multiple parents reported darkness during evening pickup hours. Evidence includes photos of unlit poles and a video showing the issue.</p>
-<div style="margin-top:18px"><h4>Location</h4><p style="color:var(--ink)">Government School, Trichy — Near bus stop</p></div>
-<div style="margin-top:14px"><h4>Evidence</h4><div class="preview-grid" style="margin-top:8px"><img src="/uploads/evidence_1.jpg" alt="Evidence" style="width:100%;height:140px;object-fit:cover;border-radius:9px;border:1px solid var(--line)"><img src="/uploads/evidence_2.jpg" alt="Evidence" style="width:100%;height:140px;object-fit:cover;border-radius:9px;border:1px solid var(--line)"></div></div>
-</section>
-<section class="panel">
-<h3>AI Analysis</h3>
-<div style="margin-top:10px"><strong>Category</strong><p>Infrastructure → Street Lighting</p></div>
-<div style="margin-top:10px"><strong>Severity / Priority</strong><p>HIGH · 87 / 100</p></div>
-<div style="margin-top:10px"><strong>Required Skills</strong><p style="font-size:13px">IoT · Embedded Systems · Electrical Engineering · Computer Vision</p></div>
-<div style="margin-top:10px"><strong>Evidence Confidence</strong><div class="mini-bar" style="margin-top:6px"><i style="width:88%"></i></div><p style="font-size:12px;color:var(--muted);margin-top:4px">88% — AI estimates evidence supports the submitted description.</p></div>
-</section>
+  <div class="top">
+    <div>
+      <h1 id="pTitle">Loading…</h1>
+      <p id="pMeta">—</p>
+    </div>
+    <a class="btn btn-ghost" href="/citizen/problems">Back to problems</a>
+  </div>
+
+  <div id="loading" class="notice">Loading analysis…</div>
+
+  <div id="content" style="display:none">
+    <div class="grid two" style="align-items:start">
+      <section class="panel">
+        <h3>Overview</h3>
+        <div id="pTags" style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap"></div>
+        <p id="pDesc" style="margin-top:14px;color:var(--muted);line-height:1.65"></p>
+        <div id="pLocation" style="margin-top:18px"></div>
+        <div id="pEvidence" style="margin-top:14px"></div>
+      </section>
+
+      <section class="panel">
+        <h3>AI Analysis</h3>
+        <div id="aiAnalysis" style="margin-top:8px"></div>
+      </section>
+    </div>
+
+    <div id="evSection" class="panel" style="margin-top:18px">
+      <h3>Evidence Analysis</h3>
+      <div id="evList"></div>
+    </div>
+
+    <section id="dupSection" class="panel" style="margin-top:18px">
+      <h3>Similar Problems</h3>
+      <div id="dupList"></div>
+    </section>
+
+    <section id="matchSection" class="panel" style="margin-top:18px">
+      <h3>Institution Matching</h3>
+      <div id="matchList"></div>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <h3>Assignment History</h3>
+      <div id="assignList" class="timeline" style="grid-template-columns:1fr;display:grid"></div>
+    </section>
+  </div>
+</main>
 </div>
-<section class="panel" style="margin-top:18px">
-<h3>Similar Problems</h3>
-<div class="problem"><div class="problem-head"><h3>Streetlights not working near Government School</h3><span class="tag">89% similar</span></div><p>Already reported by another citizen. Your evidence may add value.</p><a class="btn btn-soft" href="#">View existing problem</a></div>
-</section>
-<section class="panel" style="margin-top:18px">
-<h3>Institution Matching</h3>
-<div class="match-card" style="margin-top:8px"><div class="match-top"><strong>ABC Engineering University</strong><span class="match-score">91%</span></div><div class="mini-bar" style="margin-top:9px"><i style="width:91%"></i></div><ul style="font-size:13px;color:var(--muted);margin-top:8px;padding-left:16px"><li>✓ Smart City Lab</li><li>✓ IoT faculty</li><li>✓ Previous streetlight project</li></ul><div style="margin-top:10px"><a class="btn btn-soft" href="#">Why selected</a> <a class="btn btn-soft" href="#">View institution</a></div></div>
-<div class="match-card" style="margin-top:10px"><div class="match-top"><strong>XYZ Institute</strong><span class="match-score">87%</span></div><div class="mini-bar" style="margin-top:9px"><i style="width:87%"></i></div></div>
-<div class="match-card" style="margin-top:10px"><div class="match-top"><strong>DEF University</strong><span class="match-score">81%</span></div><div class="mini-bar" style="margin-top:9px"><i style="width:81%"></i></div></div>
-</section>
-<section class="panel" style="margin-top:18px">
-<h3>Assignment History</h3>
-<div class="timeline"><div class="timeline-item done"><span class="dot"></span><div><b>Problem Submitted</b><div class="muted">Sep 2, 2026</div></div></div><div class="timeline-item done"><span class="dot"></span><div><b>AI Analysis Complete</b><div class="muted">Sep 2</div></div></div><div class="timeline-item done"><span class="dot"></span><div><b>Institution Matched</b><div class="muted">ABC Engineering University (91%)</div></div></div><div class="timeline-item done"><span class="dot"></span><div><b>Institution Accepted</b><div class="muted">Sep 3</div></div></div><div class="timeline-item"><span class="dot"></span><div><b>Research Started</b><div class="muted">In progress</div></div></div><div class="timeline-item"><span class="dot"></span><div><b>Deployment</b></div></div><div class="timeline-item"><span class="dot"></span><div><b>Citizen Verification</b></div></div></div>
-</section>
-<section class="panel" style="margin-top:18px">
-<h3>Project</h3>
-<div><strong>Smart Streetlight System</strong> · <span class="tag">PROTOTYPE</span></div>
-<div class="mini-bar" style="margin-top:10px"><i style="width:75%"></i></div><p style="font-size:13px;color:var(--muted);margin-top:4px">Overall progress 75%</p><div style="margin-top:10px"><span class="tag green">✓ Accepted</span> <span class="tag green">✓ Research</span> <span class="tag green">✓ Requirements</span> <span class="tag green">✓ Prototype</span> <span class="tag amber">● Testing</span> <span class="tag">○ Pilot</span> <span class="tag">○ Deployment</span> <span class="tag">○ Impact Evaluation</span> <span class="tag">○ Citizen Verification</span></div><a class="btn btn-soft" href="#">View full progress</a>
-</section>
-</main></div></body></html>
+
+<script>
+const el = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+
+async function cfetch(url, opts = {}) {
+  const r = await fetch(url, { credentials: 'same-origin', ...opts });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw Error(d.error || 'Request failed');
+  return d;
+}
+
+function tag(s, color) {
+  const cls = ['green','amber','red'].includes(color) ? ` ${color}` : '';
+  return `<span class="tag${cls}">${esc(s)}</span>`;
+}
+
+function statusTag(s) {
+  const map = {
+    submitted: ['green', 'Submitted'],
+    analyzed: ['green', 'Analyzed'],
+    assigned: ['amber', 'Assigned'],
+    accepted: ['amber', 'In Progress'],
+    in_progress: ['amber', 'In Progress'],
+    completed: ['green', 'Resolved'],
+    resolved: ['green', 'Resolved'],
+    declined: ['red', 'Declined'],
+  };
+  const [cls, label] = map[s] || ['', s];
+  return `<span class="tag ${cls}">${label}</span>`;
+}
+
+function pct(v) {
+  if (v === undefined || v === null || v === '') return '—';
+  const n = Number(v);
+  if (Number.isNaN(n)) return '—';
+  return `${(n <= 1 ? n * 100 : n).toFixed(1)}%`;
+}
+
+function cap(v) {
+  if (!v) return '—';
+  return String(v).replace(/^(critical|high|medium|low)/i, s => s.toUpperCase());
+}
+
+function evStatusClass(s) {
+  s = String(s || 'pending').toLowerCase();
+  return ['supporting','uncertain','irrelevant','error','disabled'].includes(s) ? s : 'pending';
+}
+
+function renderAnalysis(p, ev, matches) {
+  const rows = [];
+
+  rows.push(detail('Category', (p.category || '—') +
+    (p.subcategory ? ` → ${p.subcategory}` : '') +
+    (typeof p.category_confidence === 'number'
+      ? ` · ${pct(p.category_confidence)}` : '')));
+
+  rows.push(detail('Priority', `${cap(p.priority_level || '—')}` +
+    (p.priority_score != null ? ` · ${pct(p.priority_score)}` : '')));
+
+  if (p.evidence_score != null) rows.push(detail('Evidence Score', pct(p.evidence_score)));
+
+  if (Array.isArray(p.skills)) {
+    rows.push(`<div class="detail-row"><span class="lbl">Required Skills</span><span class="val" style="text-align:right">${p.skills.map(s => `<span class="chip">${esc(s)}</span>`).join('')}</span></div>`);
+  }
+
+  if (Array.isArray(matches) && matches.length) {
+    rows.push(detail('Matched Institution', matches[0].university || '—'));
+  }
+
+  el('aiAnalysis').innerHTML = rows.join('');
+
+  const eRows = (Array.isArray(ev) && ev.length) ? ev.map(e => {
+    const cls = evStatusClass(e.evidence_status);
+    const label = String(e.evidence_status || 'pending').toUpperCase();
+    const conf = e.confidence != null ? `<strong>${pct(e.confidence)}</strong>` : '—';
+    const rel = e.relevance != null ? pct(e.relevance) : (e.image_relevance != null ? pct(e.image_relevance) : '—');
+    const sup = e.supports_report ? 'Supports report' : 'Does not support report';
+    return `
+    <div class="evidence-card">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+        <strong style="font-size:13px">${esc(e.filename || 'Evidence')}</strong>
+        ${tag(label, ['supporting','uncertain'].includes(cls) ? (cls==='supporting'?'green':'amber') : 'red')}
+      </div>
+      <div class="cap">“${esc(e.caption || 'No caption')}”</div>
+      <div class="detail-row"><span class="lbl">Confidence</span><span class="val">${conf}</span></div>
+      <div class="detail-row"><span class="lbl">Similarity</span><span class="val">${rel}</span></div>
+      <div class="detail-row"><span class="lbl">Decision</span><span class="val">${esc(sup)}</span></div>
+    </div>`;
+  }).join('') : '<div class="empty">No evidence uploaded.</div>';
+  el('evList').innerHTML = eRows;
+}
+
+function renderDuplicates(dups) {
+  const list = el('dupList');
+  if (!Array.isArray(dups) || !dups.length) {
+    el('dupSection').style.display = 'none';
+    return;
+  }
+  el('dupSection').style.display = '';
+  list.innerHTML = dups.map(d => {
+    const linkId = d.similar_problem_id || d.problem_id;
+    const title = d.similar_title || `Problem #${linkId}`;
+    const cat = d.similar_category ? ` · ${esc(d.similar_category)}` : '';
+    const status = d.similar_status ? ` · <span class="tag">${esc(d.similar_status)}</span>` : '';
+    const dist = typeof d.distance_km === 'number' && !isNaN(d.distance_km) ? `${d.distance_km.toFixed(1)} km away` : 'unknown distance';
+    return `
+    <div class="problem" style="margin-top:10px">
+      <div class="problem-head" style="display:flex;justify-content:space-between;gap:15px">
+        <h3 style="margin:0"><a href="/citizen/problems/${linkId}" style="color:var(--accent);text-decoration:none">${esc(title)}</a>${cat}</h3>
+        <span class="tag amber">${pct(d.similarity)} similar</span>
+      </div>
+      <p style="color:var(--muted);font-size:13px;margin:8px 0 0">${esc(dist)}${status}</p>
+    </div>`;
+  }).join('');
+}
+
+function parseList(v) {
+  if (Array.isArray(v)) return v;
+  if (!v) return [];
+  try {
+    const x = JSON.parse(String(v));
+    return Array.isArray(x) ? x : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function renderMatches(matches) {
+  const list = el('matchList');
+  if (!Array.isArray(matches) || !matches.length) {
+    el('matchSection').style.display = 'none';
+    return;
+  }
+  el('matchSection').style.display = '';
+  list.innerHTML = matches.slice(0, 5).map(m => {
+    const pctv = m.match_percent != null ? m.match_percent : (m.final_score || 0) * 100;
+    const w = Math.min(100, Math.max(0, Number(pctv)));
+    const reasons = parseList(m.explanation);
+    const reasonsHtml = reasons.length
+      ? `<ul style="font-size:13px;color:var(--muted);margin-top:8px;padding-left:16px">${reasons.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '';
+    return `
+    <div class="match-card">
+      <div class="match-top">
+        <strong>${m.rank ? `${m.rank}. ` : ''}${esc(m.university)}</strong>
+        <span class="match-score">${pct(pctv)}</span>
+      </div>
+      <div class="mini-bar" style="margin-top:9px"><i style="width:${w}%"></i></div>
+      <div style="margin-top:9px;font-size:12px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap">
+        <span>semantic ${pct(m.semantic_score)}</span>
+        <span>skills ${pct(m.skill_score)}</span>
+        <span>labs ${pct(m.lab_score)}</span>
+        <span>projects ${pct(m.project_score)}</span>
+      </div>
+      ${reasonsHtml}
+    </div>`;
+  }).join('');
+}
+
+function renderAssignments(assignments) {
+  const list = el('assignList');
+  const blocks = [
+    { done: true, t: 'Problem Submitted', d: 'Received by Social AI' },
+    { done: true, t: 'AI Analysis', d: 'Category, priority, evidence intelligence' },
+  ];
+  if (Array.isArray(assignments) && assignments.length) {
+    assignments.forEach(a => {
+      const status = String(a.status || 'pending').toLowerCase();
+      blocks.push({
+        done: ['accepted','completed','resolved','in_progress'].includes(status),
+        t: a.status ? `Institution ${a.status}` : 'Institution matched',
+        d: (a.university || '—'),
+      });
+    });
+  } else {
+    blocks.push({ done: false, t: 'Institution matched', d: 'Awaiting best-fit institution' });
+  }
+  blocks.push({ done: false, t: 'Verification', d: 'You confirm the outcome' });
+  list.innerHTML = blocks.map(b => `
+    <div class="timeline-item ${b.done ? 'done' : ''}" style="display:grid;grid-template-columns:30px 1fr;gap:12px;min-height:60px">
+      <span class="dot"></span>
+      <div><b>${esc(b.t)}</b><div class="muted">${esc(b.d)}</div></div>
+    </div>`).join('');
+}
+
+async function load() {
+  const problemId = {{ problem_id|tojson|default('') }};
+  if (!problemId) {
+    el('loading').textContent = 'No problem specified.';
+    return;
+  }
+  try {
+    const p = await cfetch(`/api/problems/${problemId}`);
+
+    // matches may come nested or attached
+    const matches = Array.isArray(p.matches) ? p.matches : [];
+    const evidence = Array.isArray(p.evidence) ? p.evidence : [];
+    const assignments = Array.isArray(p.assignments) ? p.assignments : [];
+
+    const locParts = [];
+    if (p.address) locParts.push(p.address);
+    if (p.location) locParts.push(p.location);
+    if (p.latitude != null && p.longitude != null) {
+      locParts.push(`${Number(p.latitude).toFixed(4)}, ${Number(p.longitude).toFixed(4)}`);
+    }
+
+    el('pTitle').textContent = p.title || `Problem #${problemId}`;
+    el('pMeta').textContent = [p.category || 'Uncategorized', locParts.join(' · '), cap(p.priority_level || '')].filter(Boolean).join(' · ');
+    el('pTags').innerHTML =
+      statusTag(p.status) +
+      tag(p.category || 'Uncategorized') +
+      (p.priority_level ? tag(cap(p.priority_level), p.priority_level === 'critical' ? 'red' : p.priority_level === 'high' ? 'amber' : '') : '');
+    el('pDesc').textContent = p.description || '';
+
+    if (locParts.length) {
+      el('pLocation').innerHTML = `<h4>Location</h4><p style="color:var(--ink)">${esc(locParts.join(' — '))}</p>`;
+    } else {
+      el('pLocation').style.display = 'none';
+    }
+
+    const evImgs = Array.isArray(p.evidence) && p.evidence.length
+      ? p.evidence.map(e => `<img src="/uploads/${encodeURIComponent(e.filename)}" alt="Evidence" style="width:100%;height:140px;object-fit:cover;border-radius:9px;border:1px solid var(--line)">`).join(' ')
+      : '';
+    if (evImgs) {
+      el('pEvidence').innerHTML = `<h4>Evidence</h4><div class="preview-grid" style="margin-top:8px;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px">${evImgs}</div>`;
+    }
+
+    renderAnalysis(p, evidence, matches);
+    renderDuplicates(p.duplicates || p.problem_links);
+    renderMatches(matches);
+    renderAssignments(assignments);
+
+    el('loading').style.display = 'none';
+    el('content').style.display = '';
+  } catch (e) {
+    el('loading').innerHTML = `<div class="notice">Could not load problem: ${esc(e.message)}</div>`;
+  }
+}
+
+load();
+</script>
+</body>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/static/js/sw.js').catch(()=>{});}</script>
+</html>

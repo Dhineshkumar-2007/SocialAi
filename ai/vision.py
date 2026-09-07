@@ -9,15 +9,18 @@ from ai.embeddings import generate_embedding
 def get_vision():
     if not Config.AI_ENABLED:
         return None
-    from transformers import AutoProcessor
+    from transformers import AutoImageProcessor, AutoTokenizer
     try:
         from transformers import AutoModelForVision2Seq
     except ImportError:
         # transformers >= 4.50 renamed the class
         from transformers import AutoModelForImageTextToText as AutoModelForVision2Seq
-    processor = AutoProcessor.from_pretrained(Config.VISION_MODEL, token=Config.HF_TOKEN)
+    # AutoProcessor mis-resolves some vision-encoder-decoder repos to a bare
+    # tokenizer; load the image processor and tokenizer explicitly instead.
+    image_processor = AutoImageProcessor.from_pretrained(Config.VISION_MODEL, token=Config.HF_TOKEN)
+    tokenizer = AutoTokenizer.from_pretrained(Config.VISION_MODEL, token=Config.HF_TOKEN)
     model = AutoModelForVision2Seq.from_pretrained(Config.VISION_MODEL, token=Config.HF_TOKEN)
-    return processor, model
+    return image_processor, tokenizer, model
 
 
 def cosine_similarity(a, b):
@@ -66,12 +69,12 @@ def analyze_image(path, problem_text, title=None, description=None):
             "evidence_status": "disabled",
         }
 
-    processor, model = vision
+    image_processor, tokenizer, model = vision
     try:
         image = Image.open(path).convert("RGB")
-        inputs = processor(images=image, return_tensors="pt")
+        inputs = image_processor(images=image, return_tensors="pt")
         output = model.generate(**inputs, max_new_tokens=50)
-        caption = processor.decode(output[0], skip_special_tokens=True)
+        caption = tokenizer.decode(output[0], skip_special_tokens=True)
 
         title_text = title or problem_text
         desc_text = description or problem_text
