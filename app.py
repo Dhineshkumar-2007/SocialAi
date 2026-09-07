@@ -10,42 +10,43 @@ from routes.dashboard import dashboard_bp, public_bp
 from routes.notifications import notifications_bp
 from routes.admin import admin_bp
 from auth.routes import auth_bp
-from auth.decorators import login_user, logout_user, require_role
 import os
-
-
-def _warm_ai_models():
-    """Preload the heavy AI models in the background so the first analysis
-    request doesn't pay the multi-second model-load cost."""
-    if not Config.AI_ENABLED:
-        return
-    try:
-        from ai.embeddings import generate_embedding
-        generate_embedding("warm-up")
-    except Exception:
-        pass
-    try:
-        from ai.vision import get_vision
-        get_vision()
-    except Exception:
-        pass
 
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+
     # Ensure SECRET_KEY is set
     if not app.config.get('SECRET_KEY'):
-        app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-change-me')
-    # Enable session cookies
+        app.config['SECRET_KEY'] = os.getenv(
+            'SECRET_KEY',
+            'dev-secret-change-me'
+        )
+
+    # Session cookies
     app.config['SESSION_COOKIE_HTTPONLY'] = True
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-    CORS(app, resources={r"/api/*": {"origins": Config.CORS_ORIGINS}})
+
+    CORS(
+        app,
+        resources={
+            r"/api/*": {
+                "origins": Config.CORS_ORIGINS
+            }
+        }
+    )
+
     init_db()
 
-    if Config.AI_ENABLED and not os.getenv("SOCIALAI_SKIP_WARMUP"):
-        import threading
-        threading.Thread(target=_warm_ai_models, daemon=True).start()
+    # IMPORTANT:
+    # AI models are NOT loaded during application startup.
+    #
+    # Models such as BGE/BLIP/DeBERTa are loaded lazily by the
+    # individual AI modules only when actually required.
+    #
+    # This prevents every Gunicorn worker from immediately allocating
+    # large amounts of RAM.
 
     # Register blueprints
     app.register_blueprint(auth_bp)
@@ -58,15 +59,16 @@ def create_app():
     app.register_blueprint(notifications_bp)
     app.register_blueprint(admin_bp)
 
-    # Inject user into all templates for navbar (login state / role / page locks)
+    # Inject user into templates
     @app.context_processor
     def inject_user():
         user = session.get('user') or {}
-        return dict(
-            user_role=user.get('role'),
-            user_email=user.get('email'),
-            user_name=user.get('name'),
-        )
+
+        return {
+            'user_role': user.get('role'),
+            'user_email': user.get('email'),
+            'user_name': user.get('name'),
+        }
 
     # Health endpoint
     @app.get("/")
@@ -75,16 +77,12 @@ def create_app():
 
     @app.get("/report")
     def report_page():
-        """Landing page for the report flow.
-
-        The old 4-step wizard (templates/report.html) was never wired to a
-        route, so navbar/template links to /report 404'd. Route citizens to
-        the real, login-gated submission page instead."""
         return redirect("/citizen/submit")
 
     @app.get("/api/health")
     def health():
         user = session.get('user')
+
         return jsonify({
             "status": "ok",
             "ai_enabled": Config.AI_ENABLED,
@@ -92,181 +90,316 @@ def create_app():
             "user_role": user.get('role') if user else None
         })
 
+    # Uploaded files
     @app.get("/uploads/<path:filename>")
     def uploaded_file(filename):
-        return send_from_directory(Config.UPLOAD_DIR, filename)
+        return send_from_directory(
+            Config.UPLOAD_DIR,
+            filename
+        )
 
+    # Admin audit
     @app.get("/admin/audit")
     def admin_audit_page():
         user = session.get('user')
-        if not user or user.get('role') not in ('admin', 'superadmin'):
+
+        if not user or user.get('role') not in (
+            'admin',
+            'superadmin'
+        ):
             return redirect('/login')
+
         return render_template("admin/audit.html")
 
-    # Admin dashboard page — simplified single-view control panel
+    # Admin dashboard
     @app.get("/admin")
     def admin_dashboard():
         user = session.get('user')
+
         if not user:
             return redirect('/login')
-        if user.get('role') not in ('admin', 'superadmin'):
-            return redirect('/login')
-        return render_template("admin_dashboard_simple.html")
 
-    # University login page — separate from the citizen login
+        if user.get('role') not in (
+            'admin',
+            'superadmin'
+        ):
+            return redirect('/login')
+
+        return render_template(
+            "admin_dashboard_simple.html"
+        )
+
+    # University login
     @app.get("/university/login")
     def university_login_page():
-        return render_template("auth/university_login.html")
+        return render_template(
+            "auth/university_login.html"
+        )
 
-    # University dashboard page — auth guard: only logged-in universities
+    # University dashboard
     @app.get("/university")
     def university_dashboard():
         user = session.get('user')
+
         if not user:
             return redirect('/university/login')
+
         if user.get('role') != 'university':
             return redirect('/university/login')
-        return render_template("university/dashboard.html")
 
-    # University registration page (separate from public dashboard / login)
+        return render_template(
+            "university/dashboard.html"
+        )
+
+    # Registration
     @app.get("/register")
     def common_register_page():
-        return render_template("auth/register.html")
+        return render_template(
+            "auth/register.html"
+        )
 
     @app.get("/login")
     def common_login_page():
-        return render_template("auth/login.html")
+        return render_template(
+            "auth/login.html"
+        )
 
     @app.get("/university/register")
     def university_register_page():
-        return redirect("/register?type=institution")
+        return redirect(
+            "/register?type=institution"
+        )
 
+    # University challenges
     @app.get("/university/challenges")
     def university_challenges_list():
         user = session.get('user')
+
         if not user:
             return redirect('/university/login')
+
         if user.get('role') != 'university':
             return redirect('/university/login')
-        return render_template("university/challenges.html")
 
-    @app.get("/university/challenges/<int:assignment_id>")
+        return render_template(
+            "university/challenges.html"
+        )
+
+    @app.get(
+        "/university/challenges/<int:assignment_id>"
+    )
     def university_challenge_detail(assignment_id):
         user = session.get('user')
+
         if not user:
             return redirect('/university/login')
-        return render_template("university/challenge_detail.html",
-                               assignment_id=assignment_id)
 
+        return render_template(
+            "university/challenge_detail.html",
+            assignment_id=assignment_id
+        )
+
+    # University projects
     @app.get("/university/projects")
     def university_projects_list():
         user = session.get('user')
+
         if not user:
             return redirect('/university/login')
+
         if user.get('role') != 'university':
             return redirect('/university/login')
-        return render_template("university/dashboard.html")
+
+        return render_template(
+            "university/dashboard.html"
+        )
 
     @app.get("/university/profile")
     def university_profile():
         user = session.get('user')
+
         if not user:
             return redirect('/university/login')
+
         if user.get('role') != 'university':
             return redirect('/university/login')
-        return render_template("hei_profile.html")
 
-    @app.get("/university/projects/<int:project_id>/workspace")
+        return render_template(
+            "hei_profile.html"
+        )
+
+    @app.get(
+        "/university/projects/<int:project_id>/workspace"
+    )
     def university_project_workspace(project_id):
         user = session.get('user')
+
         if not user:
             return redirect('/university/login')
+
         if user.get('role') != 'university':
             return redirect('/university/login')
-        return render_template("university/project_workspace.html",
-                               project_id=project_id)
 
-    # University workspace page
+        return render_template(
+            "university/project_workspace.html",
+            project_id=project_id
+        )
+
+    # University workspace
     @app.get("/workspace")
     def university_workspace():
         user = session.get('user')
+
         if not user:
             return redirect('/university/login')
+
         if user.get('role') != 'university':
             return redirect('/university/login')
-        return render_template("university_workspace.html")
 
-    # Industry dashboard page
+        return render_template(
+            "university_workspace.html"
+        )
+
+    # Industry dashboard
     @app.get("/industry")
     def industry_dashboard():
         user = session.get('user')
+
         if not user:
             return redirect('/login')
-        if user.get('role') not in ('industry', 'admin'):
-            return redirect('/login')
-        return render_template("industry/dashboard.html")
 
-    # Public dashboard page
+        if user.get('role') not in (
+            'industry',
+            'admin'
+        ):
+            return redirect('/login')
+
+        return render_template(
+            "industry/dashboard.html"
+        )
+
+    # Public dashboard
     @app.get("/dashboard")
     def public_dashboard():
-        return render_template("public/dashboard.html")
+        return render_template(
+            "public/dashboard.html"
+        )
 
-    # Citizen product pages
+    # Citizen dashboard
     @app.get("/citizen")
     def citizen_dashboard():
         if not session.get('user'):
             return redirect('/login')
-        return render_template("citizen/dashboard.html")
 
+        return render_template(
+            "citizen/dashboard.html"
+        )
+
+    # Citizen submit
     @app.get("/citizen/submit")
     def citizen_submit():
         if not session.get('user'):
-            return redirect('/login?next=/citizen/submit')
-        return render_template("citizen/submit.html")
+            return redirect(
+                '/login?next=/citizen/submit'
+            )
 
+        return render_template(
+            "citizen/submit.html"
+        )
+
+    # Citizen problems
     @app.get("/citizen/problems")
     def citizen_problems():
         if not session.get('user'):
             return redirect('/login')
-        return render_template("citizen/problems.html")
 
-    @app.get("/citizen/problems/<int:problem_id>")
+        return render_template(
+            "citizen/problems.html"
+        )
+
+    @app.get(
+        "/citizen/problems/<int:problem_id>"
+    )
     def citizen_problem_detail(problem_id):
         if not session.get('user'):
             return redirect('/login')
-        return render_template("citizen/problem_detail.html", problem_id=problem_id)
 
-    @app.get("/citizen/problems/<int:problem_id>/verify")
+        return render_template(
+            "citizen/problem_detail.html",
+            problem_id=problem_id
+        )
+
+    @app.get(
+        "/citizen/problems/<int:problem_id>/verify"
+    )
     def citizen_verify_problem(problem_id):
         if not session.get('user'):
             return redirect('/login')
-        return render_template("citizen/verify.html", problem_id=problem_id)
 
+        return render_template(
+            "citizen/verify.html",
+            problem_id=problem_id
+        )
+
+    # Citizen notifications
     @app.get("/citizen/notifications")
     def citizen_notifications():
         if not session.get('user'):
             return redirect('/login')
-        return render_template("citizen/notifications.html")
 
+        return render_template(
+            "citizen/notifications.html"
+        )
+
+    # Citizen profile
     @app.get("/citizen/profile")
     def citizen_profile():
         if not session.get('user'):
             return redirect('/login')
-        return render_template("citizen/profile.html")
+
+        return render_template(
+            "citizen/profile.html"
+        )
 
     return app
 
 
 app = create_app()
 
-if __name__ == "__main__":
-    host = os.getenv("HOST", "0.0.0.0")
-    port = int(os.getenv("PORT", "5000"))
-    debug = os.getenv("FLASK_DEBUG", "false").lower() == "true"
 
-    # Optional HTTPS: generate certs with `python scripts/gen_cert.py`
+if __name__ == "__main__":
+    host = os.getenv(
+        "HOST",
+        "0.0.0.0"
+    )
+
+    port = int(
+        os.getenv(
+            "PORT",
+            "5000"
+        )
+    )
+
+    debug = (
+        os.getenv(
+            "FLASK_DEBUG",
+            "false"
+        ).lower() == "true"
+    )
+
+    # Optional HTTPS
     cert_file = os.getenv("SSL_CERTFILE")
     key_file = os.getenv("SSL_KEYFILE")
-    ssl_context = (cert_file, key_file) if cert_file and key_file else None
 
-    app.run(host=host, port=port, debug=debug, ssl_context=ssl_context)
+    ssl_context = (
+        (cert_file, key_file)
+        if cert_file and key_file
+        else None
+    )
+
+    app.run(
+        host=host,
+        port=port,
+        debug=debug,
+        ssl_context=ssl_context
+    )

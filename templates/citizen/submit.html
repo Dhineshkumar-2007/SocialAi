@@ -2,13 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <meta name="theme-color" content="#182242">
 
     <title>Report Problem · Social AI</title>
 
-    <link rel="stylesheet" href="/static/css/social-ai.css">
-
     <style>
+<<<<<<< HEAD
         .app {
             display: block;
         }
@@ -22,610 +27,1700 @@
             max-width: 800px;
             margin: 30px auto;
             padding: 25px;
+=======
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7fb;
+            color: #182242;
+        }
+
+        .header {
+            background: #182242;
+            color: white;
+            padding: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .header p {
+            margin: 6px 0 0;
+            opacity: 0.8;
+            font-size: 14px;
+        }
+
+        .container {
+            width: min(900px, 94%);
+            margin: 25px auto 50px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+>>>>>>> 0e8ce786f2754cd401623b0aabf0b819f917acc4
         }
 
         .field {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
 
-        .field label {
+        label {
             display: block;
-            margin-bottom: 7px;
             font-weight: 700;
+            margin-bottom: 8px;
         }
 
         input,
         textarea {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font: inherit;
-            box-sizing: border-box;
+            border: 1px solid #d7dce7;
+            border-radius: 10px;
+            padding: 13px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #182242;
         }
 
         textarea {
-            min-height: 130px;
+            min-height: 140px;
             resize: vertical;
         }
 
-        .buttons {
+        .evidence-buttons {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
         }
 
-        .preview {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-
-        #cameraPreview {
-            width: 100%;
-            max-height: 300px;
+        button {
+            border: none;
             border-radius: 10px;
-            background: #000;
-            object-fit: cover;
-            margin-top: 10px;
+            padding: 12px 18px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
         }
 
-        .preview img {
-            width: 100px;
-            height: 80px;
+        .btn-primary {
+            background: #182242;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e9edf5;
+            color: #182242;
+        }
+
+        .btn-danger {
+            background: #d93025;
+            color: white;
+        }
+
+        button:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .camera-container {
+            display: none;
+            margin-top: 15px;
+            background: #111;
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #cameraVideo {
+            display: block;
+            width: 100%;
+            max-height: 500px;
             object-fit: cover;
-            border-radius: 8px;
+        }
+
+        .camera-controls {
+            display: flex;
+            gap: 10px;
+            padding: 12px;
+            background: #111;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .preview-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #eee;
+            aspect-ratio: 1;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .remove-image {
+            position: absolute;
+            right: 6px;
+            top: 6px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            padding: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 16px;
         }
 
         .location-box {
-            padding: 15px;
-            border: 1px solid #ddd;
+            background: #f2f5fa;
+            padding: 14px;
             border-radius: 10px;
+            font-size: 14px;
         }
 
-        #map {
-            height: 300px;
-            margin-top: 15px;
+        .location-status {
+            margin-top: 8px;
+            color: #555;
+        }
+
+        .status {
             display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            white-space: pre-wrap;
         }
 
-        #result {
+        .status.info {
+            display: block;
+            background: #e8f0fe;
+            color: #174ea6;
+        }
+
+        .status.success {
+            display: block;
+            background: #e6f4ea;
+            color: #137333;
+        }
+
+        .status.error {
+            display: block;
+            background: #fce8e6;
+            color: #c5221f;
+        }
+
+        .analysis-card {
+            display: none;
             margin-top: 20px;
+            border-radius: 14px;
+            background: #f8f9fc;
+            padding: 20px;
+        }
+
+        .analysis-card.show {
+            display: block;
+        }
+
+        .analysis-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 10px 0;
+            border-bottom: 1px solid #e1e4eb;
+        }
+
+        .analysis-row:last-child {
+            border-bottom: none;
+        }
+
+        .analysis-label {
+            font-weight: 700;
+        }
+
+        .score {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .submit-button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 15px;
+            font-size: 16px;
+        }
+
+        .small-text {
+            margin-top: 7px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                padding: 17px;
+            }
+
+            .evidence-buttons button {
+                flex: 1;
+                min-width: 130px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<div class="app">
+<header class="header">
+    <h1>Report a Problem</h1>
+    <p>Help your community by reporting real-world problems.</p>
+</header>
 
-    <main class="main">
+<main class="container">
 
-        <div class="report-box panel">
+    <div class="card">
 
-            <h1>Report a Community Problem</h1>
+        <form id="problemForm">
 
-            <p>
-                Submit the problem and Social AI will analyze it
-                and find suitable institutions.
-            </p>
+            <!-- TITLE -->
+            <div class="field">
+                <label for="title">Problem Title</label>
 
-            <form id="problemForm" enctype="multipart/form-data">
-
-                <!-- TITLE -->
-                <div class="field">
-                    <label>Problem Title</label>
-
-                    <input
-                        type="text"
-                        name="title"
-                        placeholder="Example: Streetlights not working near bus stop"
-                        required
-                    >
-                </div>
-
-
-                <!-- DESCRIPTION -->
-                <div class="field">
-
-                    <label>What is happening?</label>
-
-                    <textarea
-                        name="description"
-                        placeholder="Describe the problem, location and people affected..."
-                        required
-                    ></textarea>
-
-                </div>
-
-
-                <!-- IMAGE -->
-                <div class="field">
-
-                    <label>Evidence Photo</label>
-
-                    <div class="buttons">
-
-                        <button
-                            type="button"
-                            id="cameraBtn"
-                            class="btn btn-ghost"
-                        >
-                            📷 Camera
-                        </button>
-
-                        <label
-                            for="evidenceInput"
-                            class="btn btn-ghost"
-                        >
-                            🖼️ Upload
-                        </label>
-
-                    </div>
-
-                    <input
-                        type="file"
-                        id="evidenceInput"
-                        name="evidence"
-                        accept="image/*"
-                        multiple
-                        hidden
-                    >
-
-                    <input
-                        type="file"
-                        id="cameraInput"
-                        accept="image/*"
-                        capture="environment"
-                        hidden
-                    >
-
-                    <video id="cameraPreview" autoplay playsinline muted hidden></video>
-
-                    <div class="buttons">
-                        <button
-                            type="button"
-                            id="captureBtn"
-                            class="btn btn-primary"
-                            hidden
-                        >
-                            📸 Capture Photo
-                        </button>
-
-                        <button
-                            type="button"
-                            id="stopCameraBtn"
-                            class="btn btn-ghost"
-                            hidden
-                        >
-                            ✋ Stop Camera
-                        </button>
-                    </div>
-
-                    <div id="preview" class="preview"></div>
-
-                </div>
-
-
-                <!-- LOCATION -->
-                <div class="field">
-
-                    <label>📍 Problem Location</label>
-
-                    <div class="location-box">
-
-                        <button
-                            type="button"
-                            id="locationBtn"
-                            class="btn btn-ghost"
-                        >
-                            📍 Detect My Location
-                        </button>
-
-                        <button
-                            type="button"
-                            id="mapBtn"
-                            class="btn btn-ghost"
-                        >
-                            🗺️ Choose on Map
-                        </button>
-
-                        <p id="locationText">
-                            Location not selected
-                        </p>
-
-                    </div>
-
-                    <input
-                        type="hidden"
-                        name="latitude"
-                        id="latitude"
-                    >
-
-                    <input
-                        type="hidden"
-                        name="longitude"
-                        id="longitude"
-                    >
-
-                    <input
-                        type="hidden"
-                        name="address"
-                        id="address"
-                    >
-
-                    <div id="map"></div>
-
-                </div>
-
-
-                <!-- SUBMIT -->
-                <button
-                    type="submit"
-                    id="submitBtn"
-                    class="btn btn-primary"
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    placeholder="Example: Non-functional streetlight"
+                    required
+                    maxlength="200"
                 >
-                    Submit & Analyze
-                </button>
+            </div>
 
-            </form>
+            <!-- DESCRIPTION -->
+            <div class="field">
+                <label for="description">Description</label>
 
+                <textarea
+                    id="description"
+                    name="description"
+                    placeholder="Describe the problem clearly..."
+                    required
+                    maxlength="5000"
+                ></textarea>
+            </div>
 
-            <!-- RESULT -->
-            <div id="result"></div>
+            <!-- EVIDENCE -->
+            <div class="field">
+
+                <label>Evidence Photo</label>
+
+                <div class="evidence-buttons">
+
+                    <!-- CAMERA -->
+                    <button
+                        type="button"
+                        class="btn-primary"
+                        id="cameraButton"
+                    >
+                        📷 Camera
+                    </button>
+
+                    <!-- GALLERY -->
+                    <button
+                        type="button"
+                        class="btn-secondary"
+                        id="galleryButton"
+                    >
+                        🖼️ Gallery
+                    </button>
+
+                </div>
+
+                <!--
+                    IMPORTANT:
+
+                    Camera input:
+                    capture="environment"
+
+                    Gallery input:
+                    NO capture attribute
+                -->
+
+                <input
+                    type="file"
+                    id="cameraInput"
+                    accept="image/*"
+                    capture="environment"
+                    hidden
+                >
+
+                <input
+                    type="file"
+                    id="evidenceInput"
+                    accept="image/jpeg,image/png,image/webp"
+                    multiple
+                    hidden
+                >
+
+                <div class="small-text">
+                    Add photos that provide evidence for the reported problem.
+                </div>
+
+                <!-- CAMERA -->
+                <div
+                    class="camera-container"
+                    id="cameraContainer"
+                >
+
+                    <video
+                        id="cameraVideo"
+                        autoplay
+                        playsinline
+                    ></video>
+
+                    <div class="camera-controls">
+
+                        <button
+                            type="button"
+                            class="btn-primary"
+                            id="captureButton"
+                        >
+                            📸 Capture
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn-danger"
+                            id="stopCameraButton"
+                        >
+                            ✕ Close
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <canvas
+                    id="cameraCanvas"
+                    hidden
+                ></canvas>
+
+                <!-- PREVIEW -->
+                <div
+                    class="preview-grid"
+                    id="previewGrid"
+                ></div>
+
+            </div>
+
+            <!-- LOCATION -->
+            <div class="field">
+
+                <label>Location</label>
+
+                <div class="location-box">
+
+                    <div id="locationText">
+                        Location not detected
+                    </div>
+
+                    <div
+                        class="location-status"
+                        id="locationStatus"
+                    ></div>
+
+                    <button
+                        type="button"
+                        class="btn-secondary"
+                        id="locationButton"
+                        style="margin-top:10px;"
+                    >
+                        📍 Detect Location
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- HIDDEN LOCATION -->
+            <input
+                type="hidden"
+                id="latitude"
+                name="latitude"
+            >
+
+            <input
+                type="hidden"
+                id="longitude"
+                name="longitude"
+            >
+
+            <input
+                type="hidden"
+                id="address"
+                name="address"
+            >
+
+            <!-- SUBMIT -->
+            <button
+                type="submit"
+                class="btn-primary submit-button"
+                id="submitButton"
+            >
+                🚀 Submit Problem
+            </button>
+
+        </form>
+
+        <!-- STATUS -->
+        <div
+            id="status"
+            class="status"
+        ></div>
+
+        <!-- ANALYSIS -->
+        <div
+            id="analysisCard"
+            class="analysis-card"
+        >
+
+            <h2>🤖 AI Analysis</h2>
+
+            <div class="analysis-row">
+                <span class="analysis-label">
+                    Category
+                </span>
+
+                <span id="analysisCategory">
+                    -
+                </span>
+            </div>
+
+            <div class="analysis-row">
+                <span class="analysis-label">
+                    Priority
+                </span>
+
+                <span id="analysisPriority">
+                    -
+                </span>
+            </div>
+
+            <div class="analysis-row">
+                <span class="analysis-label">
+                    Evidence Score
+                </span>
+
+                <span
+                    id="analysisEvidence"
+                    class="score"
+                >
+                    -
+                </span>
+            </div>
+
+            <div class="analysis-row">
+                <span class="analysis-label">
+                    Assigned University
+                </span>
+
+                <span id="analysisUniversity">
+                    -
+                </span>
+            </div>
 
         </div>
 
-    </main>
+    </div>
 
-</div>
+</main>
 
 
 <script>
 
-const form = document.getElementById("problemForm");
+    /* =========================================================
+       ELEMENTS
+    ========================================================= */
 
-const cameraBtn = document.getElementById("cameraBtn");
-const cameraInput = document.getElementById("cameraInput");
+    const form = document.getElementById("problemForm");
 
-const evidenceInput = document.getElementById("evidenceInput");
-const preview = document.getElementById("preview");
+    const titleInput =
+        document.getElementById("title");
 
-const cameraPreview = document.getElementById("cameraPreview");
-const captureBtn = document.getElementById("captureBtn");
-const stopCameraBtn = document.getElementById("stopCameraBtn");
+    const descriptionInput =
+        document.getElementById("description");
 
-const isMobile = /Android|iPhone|iPad|iPod|Mobile|Opera Mini|IEMobile/i
-    .test(navigator.userAgent);
+    const cameraButton =
+        document.getElementById("cameraButton");
 
-const locationBtn = document.getElementById("locationBtn");
+    const galleryButton =
+        document.getElementById("galleryButton");
 
-const latitude = document.getElementById("latitude");
-const longitude = document.getElementById("longitude");
+    const cameraInput =
+        document.getElementById("cameraInput");
 
-const locationText = document.getElementById("locationText");
+    const evidenceInput =
+        document.getElementById("evidenceInput");
 
-const result = document.getElementById("result");
+    const cameraContainer =
+        document.getElementById("cameraContainer");
+
+    const cameraVideo =
+        document.getElementById("cameraVideo");
+
+    const cameraCanvas =
+        document.getElementById("cameraCanvas");
+
+    const captureButton =
+        document.getElementById("captureButton");
+
+    const stopCameraButton =
+        document.getElementById("stopCameraButton");
+
+    const previewGrid =
+        document.getElementById("previewGrid");
+
+    const locationButton =
+        document.getElementById("locationButton");
+
+    const locationText =
+        document.getElementById("locationText");
+
+    const locationStatus =
+        document.getElementById("locationStatus");
+
+    const latitude =
+        document.getElementById("latitude");
+
+    const longitude =
+        document.getElementById("longitude");
+
+    const address =
+        document.getElementById("address");
+
+    const submitButton =
+        document.getElementById("submitButton");
+
+    const statusBox =
+        document.getElementById("status");
+
+    const analysisCard =
+        document.getElementById("analysisCard");
+
+    const analysisCategory =
+        document.getElementById("analysisCategory");
+
+    const analysisPriority =
+        document.getElementById("analysisPriority");
+
+    const analysisEvidence =
+        document.getElementById("analysisEvidence");
+
+    const analysisUniversity =
+        document.getElementById("analysisUniversity");
 
 
-// CAMERA — works on mobile and desktop: live preview + capture button.
-// Falls back to the native camera capture input on mobile if getUserMedia
-// is unavailable or denied.
-cameraBtn.onclick = () => {
-    openCamera();
-};
+    /* =========================================================
+       STATE
+    ========================================================= */
+
+    let cameraStream = null;
+
+    let selectedFiles = [];
 
 
-function openCamera() {
+    /* =========================================================
+       STATUS
+    ========================================================= */
 
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    function showStatus(message, type = "info") {
 
-        if (isMobile) {
+        statusBox.className = "status " + type;
 
-            cameraInput.click();
+        statusBox.textContent = message;
+
+        statusBox.style.display = "block";
+    }
+
+
+    function hideStatus() {
+
+        statusBox.style.display = "none";
+
+        statusBox.textContent = "";
+
+    }
+
+
+    /* =========================================================
+       CAMERA
+    ========================================================= */
+
+    cameraButton.addEventListener("click", async () => {
+
+        /*
+         * First try browser camera API.
+         */
+
+        if (
+            navigator.mediaDevices &&
+            navigator.mediaDevices.getUserMedia
+        ) {
+
+            try {
+
+                cameraStream =
+                    await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: {
+                                ideal: "environment"
+                            }
+                        },
+                        audio: false
+                    });
+
+                cameraVideo.srcObject =
+                    cameraStream;
+
+                cameraContainer.style.display =
+                    "block";
+
+                return;
+
+            } catch (error) {
+
+                console.warn(
+                    "getUserMedia failed:",
+                    error
+                );
+
+            }
+
+        }
+
+        /*
+         * Fallback to native camera input.
+         *
+         * This is ONLY used by Camera button.
+         */
+
+        cameraInput.click();
+
+    });
+
+
+    /* =========================================================
+       CAPTURE CAMERA PHOTO
+    ========================================================= */
+
+    captureButton.addEventListener("click", () => {
+
+        if (!cameraStream) {
             return;
         }
 
-        alert("Camera is not supported in this browser. Use the Upload button instead.");
+        const videoWidth =
+            cameraVideo.videoWidth;
 
-        return;
-    }
+        const videoHeight =
+            cameraVideo.videoHeight;
 
-    // Prefer the rear camera on phones, mirroring capture="environment".
-    getUserMedia({ facingMode: "environment" }).catch(() => {
+        if (!videoWidth || !videoHeight) {
 
-        // Some desktop webcams don't expose facingMode — retry without it.
-        return getUserMedia({});
-    }).then(showCameraStream).catch(err => {
+            showStatus(
+                "Camera is not ready yet. Please wait a moment.",
+                "error"
+            );
 
-        if (isMobile) {
-
-            // Native capture is more reliable when getUserMedia is denied.
-            cameraInput.click();
-
-        } else {
-
-            alert("Could not access the camera: " + (err.message || err));
-
+            return;
         }
-    });
-}
 
+        cameraCanvas.width =
+            videoWidth;
 
-function getUserMedia(videoConstraints) {
+        cameraCanvas.height =
+            videoHeight;
 
-    return navigator.mediaDevices.getUserMedia({
-        video: videoConstraints,
-        audio: false
-    });
-}
+        const context =
+            cameraCanvas.getContext("2d");
 
-
-function showCameraStream(stream) {
-
-    cameraPreview.srcObject = stream;
-    cameraPreview.hidden = false;
-    captureBtn.hidden = false;
-    stopCameraBtn.hidden = false;
-
-    cameraPreview.play().catch(() => {});
-}
-
-
-function stopCamera() {
-
-    if (cameraPreview.srcObject) {
-
-        cameraPreview.srcObject
-            .getTracks()
-            .forEach(track => track.stop());
-
-        cameraPreview.srcObject = null;
-    }
-
-    cameraPreview.hidden = true;
-    captureBtn.hidden = true;
-    stopCameraBtn.hidden = true;
-}
-
-
-captureBtn.onclick = () => {
-
-    if (!cameraPreview.videoWidth) return;
-
-    const canvas = document.createElement("canvas");
-
-    canvas.width = cameraPreview.videoWidth;
-    canvas.height = cameraPreview.videoHeight;
-
-    canvas.getContext("2d")
-        .drawImage(cameraPreview, 0, 0);
-
-    canvas.toBlob(blob => {
-
-        const file = new File(
-            [blob],
-            `camera_${Date.now()}.jpg`,
-            { type: "image/jpeg" }
+        context.drawImage(
+            cameraVideo,
+            0,
+            0,
+            videoWidth,
+            videoHeight
         );
 
-        const dataTransfer = new DataTransfer();
+        cameraCanvas.toBlob(
+            blob => {
 
-        for (const f of evidenceInput.files)
-            dataTransfer.items.add(f);
+                if (!blob) {
 
-        dataTransfer.items.add(file);
+                    showStatus(
+                        "Could not capture image.",
+                        "error"
+                    );
 
-        evidenceInput.files = dataTransfer.files;
+                    return;
+                }
 
-        showImages(evidenceInput.files);
+                const file = new File(
+                    [blob],
+                    `camera_${Date.now()}.jpg`,
+                    {
+                        type: "image/jpeg"
+                    }
+                );
 
-    }, "image/jpeg", 0.9);
-};
+                selectedFiles.push(file);
 
+                renderPreviews();
 
-stopCameraBtn.onclick = stopCamera;
+                stopCamera();
 
+            },
+            "image/jpeg",
+            0.9
+        );
 
-// CAMERA PHOTO (mobile native capture)
-cameraInput.onchange = () => {
-
-    if (cameraInput.files.length === 0)
-        return;
-
-    evidenceInput.files = cameraInput.files;
-
-    showImages(evidenceInput.files);
-};
-
-
-// UPLOAD IMAGE
-evidenceInput.onchange = () => {
-
-    showImages(evidenceInput.files);
-
-};
+    });
 
 
-// IMAGE PREVIEW
-function showImages(files) {
+    /* =========================================================
+       STOP CAMERA
+    ========================================================= */
 
-    preview.innerHTML = "";
+    stopCameraButton.addEventListener(
+        "click",
+        stopCamera
+    );
 
-    for (const file of files) {
 
-        const img = document.createElement("img");
+    function stopCamera() {
 
-        img.src = URL.createObjectURL(file);
+        if (cameraStream) {
 
-        preview.appendChild(img);
+            cameraStream
+                .getTracks()
+                .forEach(track => track.stop());
+
+            cameraStream = null;
+
+        }
+
+        cameraVideo.srcObject = null;
+
+        cameraContainer.style.display =
+            "none";
+
     }
-}
 
 
-// LOCATION
-locationBtn.onclick = () => {
+    /* =========================================================
+       CAMERA NATIVE INPUT
+    ========================================================= */
 
-    if (!navigator.geolocation) {
+    cameraInput.addEventListener(
+        "change",
+        event => {
 
-        alert("GPS is not supported");
+            const files =
+                Array.from(event.target.files || []);
 
-        return;
-    }
+            if (files.length > 0) {
 
-    locationText.textContent = "Detecting location...";
+                selectedFiles.push(
+                    ...files
+                );
 
-    navigator.geolocation.getCurrentPosition(
+                renderPreviews();
 
-        async position => {
+            }
 
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
+            /*
+             * Reset input so the same image
+             * can be selected again.
+             */
 
-            latitude.value = lat;
-            longitude.value = lng;
-
-            locationText.textContent =
-                `Location detected: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-
-            address.value =
-                `${lat}, ${lng}`;
-        },
-
-        () => {
-
-            locationText.textContent =
-                "Could not detect location";
+            cameraInput.value = "";
 
         }
     );
-};
 
 
-// SUBMIT
-form.onsubmit = async (event) => {
+    /* =========================================================
+       GALLERY
+    ========================================================= */
 
-    event.preventDefault();
+    galleryButton.addEventListener(
+        "click",
+        () => {
 
-    const button = document.getElementById("submitBtn");
+            /*
+             * IMPORTANT:
+             * No cameraInput here.
+             */
 
-    button.disabled = true;
+            evidenceInput.click();
 
-    button.textContent = "Analyzing...";
-
-    result.innerHTML = "AI is analyzing your problem...";
-
-
-    try {
-
-        const data = new FormData(form);
+        }
+    );
 
 
-        // CREATE PROBLEM
-        const response = await fetch(
-            "/api/problems",
-            {
-                method: "POST",
-                body: data,
-                credentials: "same-origin"
+    evidenceInput.addEventListener(
+        "change",
+        event => {
+
+            const files =
+                Array.from(event.target.files || []);
+
+            if (files.length > 0) {
+
+                selectedFiles.push(
+                    ...files
+                );
+
+                renderPreviews();
+
+            }
+
+            /*
+             * Reset input.
+             */
+
+            evidenceInput.value = "";
+
+        }
+    );
+
+
+    /* =========================================================
+       PREVIEW
+    ========================================================= */
+
+    function renderPreviews() {
+
+        previewGrid.innerHTML = "";
+
+        selectedFiles.forEach(
+            (file, index) => {
+
+                const item =
+                    document.createElement("div");
+
+                item.className =
+                    "preview-item";
+
+                const img =
+                    document.createElement("img");
+
+                img.src =
+                    URL.createObjectURL(file);
+
+                img.alt =
+                    "Evidence photo";
+
+                const removeButton =
+                    document.createElement("button");
+
+                removeButton.type =
+                    "button";
+
+                removeButton.className =
+                    "remove-image";
+
+                removeButton.textContent =
+                    "×";
+
+                removeButton.addEventListener(
+                    "click",
+                    () => {
+
+                        selectedFiles.splice(
+                            index,
+                            1
+                        );
+
+                        renderPreviews();
+
+                    }
+                );
+
+                item.appendChild(img);
+
+                item.appendChild(
+                    removeButton
+                );
+
+                previewGrid.appendChild(item);
+
             }
         );
 
+    }
 
-        const created = await response.json();
 
+    /* =========================================================
+       LOCATION
+    ========================================================= */
+
+    locationButton.addEventListener(
+        "click",
+        detectLocation
+    );
+
+
+    function detectLocation() {
+
+        if (!navigator.geolocation) {
+
+            locationStatus.textContent =
+                "Geolocation is not supported by this browser.";
+
+            return;
+
+        }
+
+        locationStatus.textContent =
+            "Detecting your location...";
+
+        locationButton.disabled = true;
+
+        navigator.geolocation.getCurrentPosition(
+
+            position => {
+
+                const lat =
+                    position.coords.latitude;
+
+                const lng =
+                    position.coords.longitude;
+
+                latitude.value =
+                    lat;
+
+                longitude.value =
+                    lng;
+
+                /*
+                 * Store coordinates as address fallback.
+                 *
+                 * Backend accepts address separately.
+                 */
+
+                address.value =
+                    `${lat}, ${lng}`;
+
+                locationText.textContent =
+                    `📍 ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+
+                locationStatus.textContent =
+                    "Location detected successfully.";
+
+                locationButton.disabled =
+                    false;
+
+            },
+
+            error => {
+
+                console.error(
+                    "Location error:",
+                    error
+                );
+
+                locationStatus.textContent =
+                    "Unable to detect location. You can still submit the report.";
+
+                locationButton.disabled =
+                    false;
+
+            },
+
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 60000
+            }
+
+        );
+
+    }
+
+
+    /* =========================================================
+       JSON RESPONSE HELPER
+       ========================================================= */
+
+    async function readResponse(response) {
+
+        /*
+         * Read text FIRST.
+         *
+         * This prevents:
+         *
+         * Unexpected token '<'
+         *
+         * when Flask returns HTML.
+         */
+
+        const text =
+            await response.text();
+
+        const contentType =
+            response.headers.get(
+                "content-type"
+            ) || "";
+
+        console.log(
+            "HTTP STATUS:",
+            response.status
+        );
+
+        console.log(
+            "CONTENT TYPE:",
+            contentType
+        );
+
+        console.log(
+            "RAW RESPONSE:",
+            text
+        );
+
+
+        /*
+         * Empty response
+         */
+
+        if (!text.trim()) {
+
+            throw new Error(
+                `Server returned an empty response (${response.status}).`
+            );
+
+        }
+
+
+        /*
+         * Detect HTML.
+         */
+
+        if (
+            text.trim().startsWith("<") ||
+            contentType.includes("text/html")
+        ) {
+
+            let message =
+                `Server returned HTML instead of JSON. HTTP ${response.status}.`;
+
+            if (response.status === 404) {
+
+                message +=
+                    "\nPossible cause: API route not found.";
+
+            }
+
+            else if (
+                response.status === 401
+            ) {
+
+                message +=
+                    "\nYou are not logged in.";
+
+            }
+
+            else if (
+                response.status === 403
+            ) {
+
+                message +=
+                    "\nYou do not have permission to access this route.";
+
+            }
+
+            else if (
+                response.status >= 500
+            ) {
+
+                message +=
+                    "\nThe Flask server encountered an error.";
+
+            }
+
+            console.error(
+                "HTML RESPONSE:",
+                text
+            );
+
+            throw new Error(message);
+
+        }
+
+
+        /*
+         * Parse JSON.
+         */
+
+        let data;
+
+        try {
+
+            data =
+                JSON.parse(text);
+
+        } catch (error) {
+
+            console.error(
+                "JSON PARSE ERROR:",
+                error
+            );
+
+            console.error(
+                "SERVER RESPONSE:",
+                text
+            );
+
+            throw new Error(
+                `Invalid JSON response from server (HTTP ${response.status}).`
+            );
+
+        }
+
+
+        /*
+         * HTTP error
+         */
 
         if (!response.ok) {
 
-            throw new Error(
-                created.message || created.error || "Failed to submit problem"
-            );
+            const message =
+                data.message ||
+                data.error ||
+                data.detail ||
+                `Request failed with HTTP ${response.status}.`;
+
+            const err =
+                new Error(message);
+
+            err.data =
+                data;
+
+            err.status =
+                response.status;
+
+            throw err;
+
         }
 
 
-        const problemId = created.problem_id;
+        return data;
+
+    }
 
 
-        // AI ANALYSIS
-        const analysisResponse = await fetch(
-            `/api/problems/${problemId}/analyze`,
-            {
-                method: "POST",
-                credentials: "same-origin"
+    /* =========================================================
+       SUBMIT PROBLEM
+    ========================================================= */
+
+    form.addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+            hideStatus();
+
+            analysisCard.classList.remove(
+                "show"
+            );
+
+
+            /*
+             * Validate fields.
+             */
+
+            const title =
+                titleInput.value.trim();
+
+            const description =
+                descriptionInput.value.trim();
+
+
+            if (!title) {
+
+                showStatus(
+                    "Please enter a problem title.",
+                    "error"
+                );
+
+                titleInput.focus();
+
+                return;
+
             }
+
+
+            if (!description) {
+
+                showStatus(
+                    "Please describe the problem.",
+                    "error"
+                );
+
+                descriptionInput.focus();
+
+                return;
+
+            }
+
+
+            /*
+             * Disable submit.
+             */
+
+            submitButton.disabled =
+                true;
+
+            submitButton.textContent =
+                "⏳ Submitting...";
+
+
+            try {
+
+                /*
+                 * IMPORTANT:
+                 *
+                 * Do NOT manually set
+                 * Content-Type.
+                 *
+                 * Browser automatically sets
+                 * multipart/form-data boundary.
+                 */
+
+                const formData =
+                    new FormData();
+
+                formData.append(
+                    "title",
+                    title
+                );
+
+                formData.append(
+                    "description",
+                    description
+                );
+
+
+                /*
+                 * Location
+                 */
+
+                if (latitude.value) {
+
+                    formData.append(
+                        "latitude",
+                        latitude.value
+                    );
+
+                }
+
+                if (longitude.value) {
+
+                    formData.append(
+                        "longitude",
+                        longitude.value
+                    );
+
+                }
+
+                if (address.value) {
+
+                    formData.append(
+                        "address",
+                        address.value
+                    );
+
+                }
+
+
+                /*
+                 * Evidence
+                 *
+                 * Backend expects:
+                 *
+                 * request.files.getlist("evidence")
+                 */
+
+                selectedFiles.forEach(
+                    file => {
+
+                        formData.append(
+                            "evidence",
+                            file,
+                            file.name
+                        );
+
+                    }
+                );
+
+
+                console.log(
+                    "Submitting problem..."
+                );
+
+                console.log(
+                    "Files:",
+                    selectedFiles
+                );
+
+
+                /*
+                 * POST /api/problems
+                 */
+
+                const response =
+                    await fetch(
+                        "/api/problems",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Accept":
+                                    "application/json"
+                            },
+
+                            credentials:
+                                "same-origin",
+
+                            body:
+                                formData
+                        }
+                    );
+
+
+                const data =
+                    await readResponse(
+                        response
+                    );
+
+
+                console.log(
+                    "CREATE PROBLEM RESPONSE:",
+                    data
+                );
+
+
+                const problemId =
+                    data.problem_id;
+
+
+                if (!problemId) {
+
+                    throw new Error(
+                        "Problem was submitted but server did not return problem_id."
+                    );
+
+                }
+
+
+                showStatus(
+                    `Problem submitted successfully.\nProblem ID: ${problemId}\n\nStarting AI analysis...`,
+                    "info"
+                );
+
+
+                /*
+                 * AI ANALYSIS
+                 */
+
+                submitButton.textContent =
+                    "🤖 AI Analyzing...";
+
+
+                const analysisResponse =
+                    await fetch(
+                        `/api/problems/${problemId}/analyze`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Accept":
+                                    "application/json"
+                            },
+
+                            credentials:
+                                "same-origin"
+                        }
+                    );
+
+
+                const analysis =
+                    await readResponse(
+                        analysisResponse
+                    );
+
+
+                console.log(
+                    "AI ANALYSIS:",
+                    analysis
+                );
+
+
+                /*
+                 * Display AI result.
+                 */
+
+                displayAnalysis(
+                    analysis
+                );
+
+
+                showStatus(
+                    "✅ Problem submitted and AI analysis completed successfully.",
+                    "success"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "SUBMISSION ERROR:",
+                    error
+                );
+
+
+                let message =
+                    error.message ||
+                    "Something went wrong.";
+
+
+                /*
+                 * Special authentication errors.
+                 */
+
+                if (
+                    error.status === 401
+                ) {
+
+                    message =
+                        "🔐 Authentication required.\nPlease log in and try again.";
+
+                }
+
+
+                if (
+                    error.status === 403
+                ) {
+
+                    message =
+                        "⛔ You do not have permission to submit this problem.";
+
+                }
+
+
+                showStatus(
+                    "❌ " + message,
+                    "error"
+                );
+
+            } finally {
+
+                submitButton.disabled =
+                    false;
+
+                submitButton.textContent =
+                    "🚀 Submit Problem";
+
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       DISPLAY AI ANALYSIS
+    ========================================================= */
+
+    function displayAnalysis(data) {
+
+        analysisCard.classList.add(
+            "show"
         );
 
 
-        const analysis = await analysisResponse.json();
+        /*
+         * Category
+         */
 
-
-        if (!analysisResponse.ok) {
-
-            throw new Error(
-                analysis.error || "AI analysis failed"
+        analysisCategory.textContent =
+            getValue(
+                data,
+                [
+                    "category",
+                    "classification",
+                    "problem_category"
+                ]
             );
+
+
+        /*
+         * Priority
+         */
+
+        analysisPriority.textContent =
+            getValue(
+                data,
+                [
+                    "priority",
+                    "priority_level"
+                ]
+            );
+
+
+        /*
+         * Evidence
+         */
+
+        let evidence =
+            getValue(
+                data,
+                [
+                    "evidence_score",
+                    "evidenceScore",
+                    "similarity",
+                    "image_similarity"
+                ]
+            );
+
+
+        if (
+            typeof evidence === "number"
+        ) {
+
+            /*
+             * If model returns 0.3949,
+             * display 39.5%.
+             *
+             * If model returns 39.49,
+             * display 39.5%.
+             */
+
+            if (evidence <= 1) {
+
+                evidence =
+                    evidence * 100;
+
+            }
+
+            evidence =
+                evidence.toFixed(1) + "%";
+
         }
 
 
-        // SHOW RESULT
-        result.innerHTML = `
-
-            <div class="success-box">
-
-                <h3>✅ Analysis Complete</h3>
-
-                <p>
-                    Problem ID: <strong>#${problemId}</strong>
-                </p>
-
-                <p>
-                    Category:
-                    <strong>
-                        ${analysis.classification?.category || "Unknown"}
-                    </strong>
-                </p>
-
-                <p>
-                    Priority:
-                    <strong>
-                        ${analysis.priority?.level || "Medium"}
-                    </strong>
-                </p>
-
-                <p>
-                    Evidence Score:
-                    <strong>
-                        ${analysis.evidence_score || 0}%
-                    </strong>
-                </p>
-
-            </div>
-
-        `;
+        analysisEvidence.textContent =
+            evidence || "-";
 
 
-        button.textContent = "Analyzed ✓";
+        /*
+         * University
+         */
+
+        let university = "-";
 
 
-    } catch (error) {
+        if (
+            data.auto_assignment
+        ) {
 
-        result.innerHTML = `
+            university =
+                data.auto_assignment.university ||
+                data.auto_assignment.university_name ||
+                "-";
 
-            <div class="error-box">
+        }
 
-                ❌ ${error.message}
 
-            </div>
+        if (
+            university === "-" &&
+            data.university
+        ) {
 
-        `;
+            university =
+                data.university;
 
-        button.disabled = false;
+        }
 
-        button.textContent = "Submit & Analyze";
+
+        analysisUniversity.textContent =
+            university;
+
     }
 
-};
+
+    /* =========================================================
+       GET VALUE HELPER
+    ========================================================= */
+
+    function getValue(
+        object,
+        keys
+    ) {
+
+        for (
+            const key of keys
+        ) {
+
+            if (
+                object[key] !== undefined &&
+                object[key] !== null &&
+                object[key] !== ""
+            ) {
+
+                return object[key];
+
+            }
+
+        }
+
+        return "-";
+
+    }
+
+
+    /* =========================================================
+       PAGE LOAD
+    ========================================================= */
+
+    window.addEventListener(
+        "beforeunload",
+        () => {
+
+            stopCamera();
+
+        }
+    );
 
 </script>
 
