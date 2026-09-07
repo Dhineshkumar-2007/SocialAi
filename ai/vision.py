@@ -9,7 +9,12 @@ from ai.embeddings import generate_embedding
 def get_vision():
     if not Config.AI_ENABLED:
         return None
-    from transformers import AutoProcessor, AutoModelForVision2Seq
+    from transformers import AutoProcessor
+    try:
+        from transformers import AutoModelForVision2Seq
+    except ImportError:
+        # transformers >= 4.50 renamed the class
+        from transformers import AutoModelForImageTextToText as AutoModelForVision2Seq
     processor = AutoProcessor.from_pretrained(Config.VISION_MODEL, token=Config.HF_TOKEN)
     model = AutoModelForVision2Seq.from_pretrained(Config.VISION_MODEL, token=Config.HF_TOKEN)
     return processor, model
